@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Tài Khoản</title>
+</head>
+<body>
+
+    <h1>Đăng Ký</h1>
+
+    <form action="/register" method="POST">
+        <div>
+            <label for="username">Tên người dùng:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <br>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <br>
+        <div>
+            <label for="password">Mật khẩu:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <br>
+        <div>
+            <label for="confirm_password">Xác nhận Mật khẩu:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+        </div>
+        <br>
+
+        <button type="submit">Đăng Ký</button>
+    </form>
+
+    <hr>
+    <% if (locals.error) { %>
+        <p style="color: red; font-weight: bold;">Lỗi: <%= error %></p>
+    <% } %>
+    <p>
+        Đã có tài khoản? <a href="/login">Đăng nhập ngay</a>
+    </p>
+</body>
+</html>

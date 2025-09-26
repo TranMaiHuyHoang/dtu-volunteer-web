@@ -1,0 +1,30 @@
+GET http://localhost:3000/
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "dangtunaminh@gmail.com",
+    "password": "password"
+}
+
+
+###
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+    "email": "tuanminh4@gmail.com",
+    "password": "Password123",
+    "username": "tuanminh4"
+}
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "tuanminh4@gmail.com",
+    "password": "Password123"
+}
