@@ -3,7 +3,7 @@ const { hashPassword } = require('../utils/hash');
 
 const userSchema = new mongoose.Schema({
   googleId: {type: String, unique: true, sparse : true },
-  username: { type: String, required: true, trim: true },
+  username: { type: String, trim: true },
   email: {
     type: String, required: true, unique: true,
     set: (value) => typeof value === 'string' ? value.trim().toLowerCase() : value
