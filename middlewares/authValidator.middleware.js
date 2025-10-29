@@ -1,4 +1,4 @@
-const { usernameRules, emailRules, passwordRules } = require('./authValidationRules');
+const { usernameRules, emailRules, passwordRules } = require('./authValidationRules.middleware');
 
 // 1. Validator Đăng ký
 // Register cần username, email, và password
