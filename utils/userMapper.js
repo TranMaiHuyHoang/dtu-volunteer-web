@@ -2,7 +2,6 @@
 const formatUserInfo = (user, provider = 'local') => {
    const id = getProviderId(user, provider);
    const baseInfo = getBaseInfo(user);
-
    return {
        id,
        ...baseInfo,
@@ -11,9 +10,11 @@ const formatUserInfo = (user, provider = 'local') => {
 }
 
 const getBaseInfo = (user) => {
+  const userRole = user.role || 'volunteer';
     return {
     displayName: user.displayName || user.username,
     email: user.email,
+    role: userRole,
   };
 }
 
@@ -34,6 +35,7 @@ const mapUserData = (user, provider = 'local') => {
     sub: id,
     name: baseInfo.displayName,
     email: baseInfo.email,
+    role: baseInfo.role,
     provider, // thêm để biết token từ đâu sinh ra
   };
 
