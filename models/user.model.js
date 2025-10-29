@@ -8,7 +8,13 @@ const userSchema = new mongoose.Schema({
     type: String, required: true, unique: true,
     set: (value) => typeof value === 'string' ? value.trim().toLowerCase() : value
   },
-  password: { type: String, required: function() { return !this.googleId; } }
+  password: { type: String, required: function() { return !this.googleId; } },
+  role: {
+    type: String,
+    enum: ['admin', 'organizer', 'volunteer'], // Chỉ chấp nhận các giá trị này
+    default: 'volunteer', // Vai trò mặc định cho người dùng mới
+    required: true // Bắt buộc phải có vai trò
+  }
 });
 
 

@@ -4,22 +4,32 @@ const app = express();
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-var auth = require('./routes/auth');
-const profile = require('./routes/welcome.js');
+const mainRouter = require('./routes/index');
 // Set up Global configuration access
 const dotenv = require('dotenv');
 const flash = require('connect-flash');
 const passport = require('passport');
-var morgan = require('morgan')
 // HTTP request logger middleware for node.js
-app.use(morgan('tiny')); 
-require("./utils/passportConfig.js");
+ require("./utils/passportConfig.js");
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./config/swagger.js'); // Import file cấu hình Swagger
+const { errorHandler } = require('./middlewares/errorHandler.middleware.js');
+const logger = require('./config/logger');
 
 dotenv.config();
+//var morgan = require('morgan')
+// app.use(morgan('tiny'));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// Middleware cho API docs
+const swaggerEndpoint = '/api-docs';
+app.use(
+  swaggerEndpoint, 
+  swaggerUi.serve, 
+  swaggerUi.setup(swaggerSpecs, { explorer: true })
+);
 
 // Use express - session middleware
 app.use(session({
@@ -40,7 +50,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(flash());
 
-
 // Middleware để đưa flash messages vào locals (dùng được trong template)
 app.use((req, res, next) => {
   res.locals.error_msg = req.flash('error'); // Lấy thông báo lỗi
@@ -56,29 +65,51 @@ app.use(express.json());
 // Parse form data
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', auth);
-app.use('/profile', profile );
 
 
 // Thêm middleware để ghi log mỗi khi có yêu cầu đến server
 app.use((req, res, next) => {
-  console.log('Middleware đang chạy');
+  logger.http(`[${req.method}] ${req.originalUrl}`, {
+    ip: req.ip,
+    userAgent: req.get('user-agent'),
+    body: req.body,
+    query: req.query,
+    params: req.params
+  });
   next();
 });
 
-
+app.use('/', mainRouter);
+app.use(errorHandler); // Đảm bảo middleware xử lý lỗi được đặt sau tất cả các route khác
 
 
 let PORT = process.env.PORT || 3000;
 
 const connectToMongoDB = async () => {
-  console.log(process.env.MONGO_URL);
-  await mongoose.connect(process.env.MONGO_URL);
-  console.log("Connected to myDB");
-}
-connectToMongoDB().catch((err) => console.error(err))
+    // 1. Log khi bắt đầu kết nối
+    logger.info(`Attempting to connect to MongoDB at: ${process.env.MONGO_URL}`); 
 
+    try {
+        await mongoose.connect(process.env.MONGO_URL);
+        // 2. Log thành công
+        logger.info("✅ Connected to myDB successfully!"); 
+    } catch (error) {
+        // 3. Log chi tiết lỗi khi kết nối thất bại
+        logger.error("❌ Failed to connect to MongoDB!");
+        logger.error(`Error details: ${error.message}`);
+        // Có thể log cả stack trace nếu cần debug sâu
+        // logger.error(error); 
+        
+        // **Quan trọng:** Ném lỗi ra ngoài để hàm gọi (.catch) hoặc process (nếu không có .catch) biết và xử lý tiếp (ví dụ: thoát ứng dụng, thử lại,...)
+        throw error; 
+    }
+}
+connectToMongoDB().catch((err) => {
+    logger.error("Application cannot start without database connection.");
+    // Có thể thêm: process.exit(1); nếu lỗi DB là lỗi nghiêm trọng cần dừng ứng dụng.
+});
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  logger.info(`Server running on http://localhost:${PORT}`);
+  logger.info(`Docs có sẵn tại: http://localhost:${PORT}${swaggerEndpoint}`);
 });
 

@@ -1,8 +1,11 @@
-GET http://localhost:3000/
+@baseUrl = http://localhost:3000
+
+
+GET {{baseUrl}}
 
 ###
 
-POST http://localhost:3000/login
+POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
@@ -12,7 +15,16 @@ Content-Type: application/json
 
 
 ###
-POST http://localhost:3000/register
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "email": "tuanminh6@gmail.com",
+    "password": "Password123",
+    "username": "tuanminh6"
+}
+###
+POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
@@ -20,11 +32,72 @@ Content-Type: application/json
     "password": "Password123",
     "username": "tuanminh4"
 }
+
+
 ###
-POST http://localhost:3000/login
+
+# @name loginRequest
+POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
     "email": "tuanminh4@gmail.com",
     "password": "Password123"
 }
+
+### nếu là Admin
+# @name loginRequest
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "thisisadmin@gmail.com",
+    "password": "Password123"
+}
+
+
+###
+# Gán biến @userToken bằng thuộc tính token từ phản hồi đăng nhập
+@userToken = {{loginRequest.response.body.token}}
+
+# @name profileRequest
+GET {{baseUrl}}/profile
+Authorization: Bearer {{userToken}}
+
+
+
+###
+GET {{baseUrl}}/logout
+
+
+
+###
+
+### Create Notification
+POST {{baseUrl}}/notifications
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "userId": "68fcbf65522d0ac03ce02bff", 
+  "message": "Bạn có một thông báo mới từ hệ thống"
+}
+
+# Example Request:
+# {
+#   "userId": "60d0fe4f5311236168a109ca",
+#   "message": "Bạn có một thông báo mới từ hệ thống"
+# }
+
+### Example Response
+# {
+#   "message": "Đã gửi thông báo",
+#   "note": {
+#     "_id": "60d0fe4f5311236168a109cb",
+#     "userId": "60d0fe4f5311236168a109ca",
+#     "message": "Bạn có một thông báo mới từ hệ thống",
+#     "isRead": false,
+#     "createdAt": "2025-10-27T13:55:33.000Z",
+#     "__v": 0
+#   }
+# }

@@ -2,3 +2,6 @@ notes/
 .env
 node_modules
 .venv/
+logs/
+eslint.config.mjs
+
