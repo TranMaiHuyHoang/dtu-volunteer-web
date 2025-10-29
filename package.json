@@ -1,4 +1,28 @@
 {
+  "name": "volunteer_system",
+  "version": "1.0.0",
+  "description": "Volunteer management system using Node.js, Express, SQL Server and MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1",
+    "mssql": "^12.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
+{
   "dependencies": {
     "bcrypt": "^6.0.0",
     "connect-flash": "^0.1.1",
@@ -40,3 +64,5 @@
     "jest": "^30.2.0"
   }
 }
+
+
