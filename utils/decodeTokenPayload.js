@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const logger = require('../config/logger');
 /**
  * Hàm Xác minh Token (Hàm tiện ích nội bộ)
  * @param {string} token - JWT cần xác minh.
@@ -11,8 +11,8 @@ const decodeTokenPayload = (token) => {
         return jwt.verify(token, process.env.JWT_SECRET); 
     } catch (error) {
         // Bắt lỗi hết hạn, chữ ký sai, v.v.
-        console.error('LỖI GIẢI MÃ JWT:', error.name); 
-        console.error('Chi tiết:', error.message);
+        logger.error('LỖI GIẢI MÃ JWT:', error.name); 
+        logger.error('Chi tiết:', error.message);
         return null;
     }
 };
