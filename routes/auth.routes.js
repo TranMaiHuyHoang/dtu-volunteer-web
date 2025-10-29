@@ -1,10 +1,10 @@
 
 const express = require('express');
 const router = express.Router();
-const { handleRegister, handleLogin, googleCallback } = require('../controllers/authController');
+const { handleRegister, handleLogin, googleCallback } = require('../controllers/auth.controller');
 
-const { loginValidator, registerValidator } = require('../middlewares/authValidator');
-const handleValidationErrors = require('../middlewares/validationHandler');
+const { loginValidator, registerValidator } = require('../middlewares/authValidator.middleware');
+const handleValidationErrors = require('../middlewares/validationHandler.middleware');
 const myPassport = require('../utils/passportConfig');
 
 

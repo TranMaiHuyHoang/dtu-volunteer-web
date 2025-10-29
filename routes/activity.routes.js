@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true }); // Để truy cập :activityId từ route cha
-const { registerForActivity, listActivityRegistrations } = require('../controllers/registrationController');
+//const {listMyRegistrations, listRegistrationsForProject, registerForProject, updateRegistrationStatus}= require('../controllers/registration.controller');
+
+const registerForActivity = (req, res) => {
+    res.send("Register for activity");
+};
+
+const listActivityRegistrations = (req, res) => {
+    res.send("List activity registrations");
+};
 
 /**
  * @swagger
