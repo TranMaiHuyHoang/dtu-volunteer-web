@@ -13,7 +13,7 @@ const passport = require('passport');
  require("./utils/passportConfig.js");
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger.js'); // Import file cấu hình Swagger
-const { errorHandler } = require('./middlewares/errorHandler.js');
+const { errorHandler } = require('./middlewares/errorHandler.middleware.js');
 const logger = require('./config/logger');
 
 dotenv.config();
