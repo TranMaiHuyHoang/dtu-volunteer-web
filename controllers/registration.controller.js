@@ -1,31 +1,35 @@
 const { Project } = require('../models/project.model');
 const { Registration } = require('../models/registration.model');
-
-const registerForProject = async (req, res) => {
+const registrationService = require('../services/registration.service');
+const logger = require('../config/logger');
+const registerForProjectHandler = async (req, res, next) => {
   try {
     const { projectId } = req.body;
-    if (!projectId) return res.status(400).json({ message: 'Thiếu projectId' });
+    const userId = req.user.sub; // Lấy ID từ thuộc tính JWT đã gán
 
-    // kiểm tra project tồn tại
-    const project = await Project.findById(projectId);
-    if (!project) return res.status(404).json({ message: 'Dự án không tồn tại' });
+    logger.debug(`Kiểm tra dữ liệu: ProjectID=${projectId} | UserID=${userId}`);
+    const reg = await registrationService.registerForProject(projectId, userId);
 
-    // check unique: một user không đăng ký 2 lần cho 1 project
-    const exists = await Registration.findOne({ projectId, userId: req.user._id });
-    if (exists) return res.status(409).json({ message: 'Bạn đã đăng ký dự án này' });
-
-    const reg = new Registration({
-      projectId,
-      userId: req.user._id,
-      status: 'pending'
+    res.status(201).json({
+      message: 'Đăng ký thành công',
+      reg
     });
-    await reg.save();
-    res.status(201).json({ message: 'Đăng ký thành công', reg });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 };
 
+/**
+ * Lấy danh sách đăng ký của một dự án
+ * 
+ * @param {Object} req - yêu cầu
+ * @param {Object} res - phản hồi
+ * @param {string} req.params.projectId - ID của dự án
+ * 
+ * @return {Object} - danh sách đăng ký của dự án
+ * 
+ * @throws {Error} - Lỗi xảy ra khi thực hiện
+ */
 const listRegistrationsForProject = async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -76,8 +80,8 @@ const updateRegistrationStatus = async (req, res) => {
 
 
 module.exports = {
-    registerForProject,
-    listRegistrationsForProject,
-    listMyRegistrations,
-    updateRegistrationStatus,
+  registerForProjectHandler,
+  listRegistrationsForProject,
+  listMyRegistrations,
+  updateRegistrationStatus,
 }
