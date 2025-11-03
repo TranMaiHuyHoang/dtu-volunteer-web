@@ -3,12 +3,6 @@ const { verifyPassword } = require('../utils/hash');
 const { generateAccessToken } = require('../utils/generateAccessToken'); // Hàm tạo JWT
 const AuthError = require('../errors/AuthError');
 const { mapUserData, formatUserInfo } = require('../utils/userMapper');
-// const formatUserResponse = (user) => ({
-//   userId: user._id,
-//   email: user.email,
-//   username: user.username,
-//   role: user.role,
-// });
 
 const buildAuthResponse = (user, provider = 'local') => {
   const { payload, userInfo } = mapUserData(user, provider);
@@ -81,10 +75,16 @@ const loginWithGoogle = async (googleUser) => {
     throw new AuthError('Xác thực không thành công.', 401);
   }
 
-  console.log(`Người dùng ${googleUser.displayName} đăng nhập thành công và nhận JWT.`);
+  console.log(`Người dùng ${googleUser.email} đăng nhập thành công và nhận JWT.`);
 
-  return buildAuthResponse(googleUser, 'google');
+  const { token, user: userInfo } = buildAuthResponse(googleUser, 'google');
+  
+  return { token, user: userInfo };
 };
 
 
-module.exports = { registerUser,loginUser, loginWithGoogle };
+module.exports = { 
+  registerUser,
+  loginUser, 
+  loginWithGoogle
+};
