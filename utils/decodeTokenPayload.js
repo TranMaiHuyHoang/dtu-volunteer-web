@@ -1,18 +1,28 @@
 const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
+
+// Đảm bảo tải biến môi trường
+require('dotenv').config();
+
+// Lấy JWT_SECRET từ biến môi trường (nhất quán với generateAccessToken.js)
+const JWT_SECRET = process.env.JWT_SECRET;
+
 /**
- * Hàm Xác minh Token (Hàm tiện ích nội bộ)
- * @param {string} token - JWT cần xác minh.
- * @returns {object|null} - Payload đã giải mã nếu token hợp lệ.
+ * Hàm xác minh và decode JWT token (verify + decode)
+ * @param {string} token - JWT token cần xác minh và decode
+ * @returns {object|null} - Payload đã decode nếu token hợp lệ, null nếu không hợp lệ
  */
 const decodeTokenPayload = (token) => {
+    if (!token) {
+        return null;
+    }
+
     try {
-        // Trả về payload đã giải mã
-        return jwt.verify(token, process.env.JWT_SECRET); 
+        // jwt.verify() vừa verify chữ ký vừa decode payload
+        return jwt.verify(token, JWT_SECRET);
     } catch (error) {
-        // Bắt lỗi hết hạn, chữ ký sai, v.v.
-        logger.error('LỖI GIẢI MÃ JWT:', error.name); 
-        logger.error('Chi tiết:', error.message);
+        // Bắt lỗi: token hết hạn, chữ ký sai, format sai, v.v.
+        logger.error(`LỖI XÁC MINH JWT: ${error.name} - ${error.message}`);
         return null;
     }
 };
