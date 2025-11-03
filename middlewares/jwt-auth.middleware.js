@@ -1,9 +1,19 @@
-// Tệp: src/middleware/auth.middleware.js
+/**
+ * Middleware xác thực JWT token
+ * Flow: Lấy token từ Authorization header -> Verify và decode -> Gắn payload vào req.user
+ */
 const { getTokenFromHeader } = require('../utils/getTokenFromHeader');
 const { decodeTokenPayload } = require('../utils/decodeTokenPayload');
 const logger = require('../config/logger');
+
+/**
+ * Middleware xác thực JWT token từ Authorization header
+ * @param {object} req - Express request object
+ * @param {object} res - Express response object
+ * @param {function} next - Express next middleware function
+ */
 function verifyToken(req, res, next) {
-    // 1. Lấy token từ header
+    // 1. Lấy token từ header Authorization
     const token = getTokenFromHeader(req);
     if (!token) {
         logger.warn('AUTH_FAIL: Token không được cung cấp.');
@@ -11,8 +21,9 @@ function verifyToken(req, res, next) {
             message: 'Không được ủy quyền. Vui lòng cung cấp token.'
         });
     }
-    const decodedPayload = decodeTokenPayload(token);
 
+    // 2. Verify và decode JWT token
+    const decodedPayload = decodeTokenPayload(token);
     if (!decodedPayload) {
         logger.warn('AUTH_FAIL: Token không hợp lệ (lỗi giải mã/xác minh).');
         return res.status(401).json({
@@ -20,10 +31,9 @@ function verifyToken(req, res, next) {
         });
     }
 
-    // 4. Gắn Payload vào Request
+    // 3. Gắn Payload vào Request object
     req.user = decodedPayload;
-    logger.info(`LOG-AUTH: ✅ OK | UserID: ${decodedPayload.sub} | Role: ${decodedPayload.role}`);
-
+    logger.info(`LOG-AUTH: ✅ OK | UserID (Sub): ${decodedPayload.sub} | Role: ${decodedPayload.role}`);
     next();
 }
 
