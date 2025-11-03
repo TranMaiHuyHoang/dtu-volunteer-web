@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { 
-  registerForProject, 
+  registerForProjectHandler, 
   listRegistrationsForProject, 
   listMyRegistrations, 
   updateRegistrationStatus 
-} = require('../controllers/registration.controller');
+} = require('../controllers/registration.controller.js');
 const { verifyToken } = require('../middlewares/jwt-auth.middleware.js');
 
 /**
@@ -28,17 +28,8 @@ const { verifyToken } = require('../middlewares/jwt-auth.middleware.js');
  *               projectId:
  *                 type: string
  *                 description: ID của dự án muốn đăng ký
- *     responses:
- *       201:
- *         description: Đăng ký thành công
- *       400:
- *         description: Thiếu thông tin bắt buộc
- *       404:
- *         description: Không tìm thấy dự án
- *       409:
- *         description: Đã đăng ký dự án này trước đó
  */
-router.post('/', verifyToken, registerForProject);
+router.post('/', verifyToken, registerForProjectHandler);
 
 /**
  * @swagger

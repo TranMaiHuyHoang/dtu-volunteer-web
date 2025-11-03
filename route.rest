@@ -67,9 +67,11 @@ Authorization: Bearer {{userToken}}
 
 
 ###
+# @name logoutRequest
 GET {{baseUrl}}/logout
-
-
+##dán cookie từ trình duyệt vào đây để test google login
+##Cookie: connect.sid=
+ 
 
 ###
 
@@ -101,3 +103,26 @@ Authorization: Bearer {{userToken}}
 #     "__v": 0
 #   }
 # }
+
+POST {{baseUrl}}/registrations
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "projectId": "69048a5fc142b32af2157b72" 
+    // Thay ID dự án thực tế vào đây
+}
+
+###
+
+POST {{baseUrl}}/projects
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "title": "Dự án Môi Trường Xanh",
+    "description": "Tham gia vào chiến dịch làm sạch môi trường tại địa phương.",
+    "location": "Hà Nội",
+    "date": "2024-12-15T09:00:00Z",
+    "capacity": 50
+}

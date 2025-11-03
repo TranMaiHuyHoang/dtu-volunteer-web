@@ -1,0 +1,56 @@
+/* Layout CSS
+header {
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+header nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+header nav a {
+    text-decoration: none;
+    color: #495057;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+header nav a:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 200px);
+}
+
+footer {
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    border-top: 1px solid #dee2e6;
+    text-align: center;
+    color: #6c757d;
+    margin-top: auto;
+}
+
+footer p {
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+} */
+

@@ -1,23 +1,39 @@
 const logger = require('../config/logger');
 
 /**
- * Lấy JWT từ header Authorization dạng "Bearer <token>".
- * @param {object} req - Đối tượng request (req) của Express.
- * @returns {string | null} - Token JWT hoặc null nếu không tìm thấy/sai định dạng.
+ * Lấy JWT token từ Authorization header hoặc từ cookie
+ * Priority: Authorization header (Bearer token) > Cookie (accessToken)
+ * @param {object} req - Express request object
+ * @returns {string|null} - JWT token hoặc null nếu không tìm thấy
  */
 const getTokenFromHeader = (req) => {
+    // Ưu tiên 1: Lấy từ Authorization header (cho REST client)
     const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith('Bearer')) {
-        // Trường hợp 1: Header không có hoặc sai định dạng
-        logger.warn('LOG-AUTH: ❌ Thiếu hoặc lỗi Auth Header');
-        return null;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
+        if (token && token.trim()) {
+            const trimmedToken = token.trim();
+            // Kiểm tra format JWT cơ bản (có 3 phần: header.payload.signature)
+            if (trimmedToken.split('.').length === 3) {
+                logger.info(`LOG-AUTH: ✅ Token được trích xuất từ Authorization header (${trimmedToken.substring(0, 10)}...)`);
+                return trimmedToken;
+            } else {
+                logger.warn(`LOG-AUTH: ⚠️ Token từ Authorization header có format không hợp lệ (không phải JWT với 3 phần): ${trimmedToken.substring(0, 20)}`);
+            }
+        } else {
+            logger.warn(`LOG-AUTH: ⚠️ Token từ Authorization header là empty hoặc chỉ có spaces`);
+        }
     }
     
-    // Trường hợp 2: Lấy token thành công
-    const token = authHeader.split(' ')[1];
-    // Chỉ log việc lấy token thành công, không log payload ở đây
-    logger.info(`LOG-AUTH: ✅ Token được trích xuất (${token.substring(0, 5)}...)`);
-    return token;
+    // Ưu tiên 2: Lấy từ cookie (đơn giản hơn, tự động gửi kèm request)
+    const tokenFromCookie = req.cookies?.accessToken || req.signedCookies?.accessToken;
+    if (tokenFromCookie) {
+        logger.info(`LOG-AUTH: ✅ Token được trích xuất từ cookie (${tokenFromCookie.substring(0, 5)}...)`);
+        return tokenFromCookie;
+    }
+    
+    // Không tìm thấy token
+    logger.warn('LOG-AUTH: ❌ Không tìm thấy token trong Authorization header hoặc cookie');
+    return null;
 };
 module.exports = {getTokenFromHeader};

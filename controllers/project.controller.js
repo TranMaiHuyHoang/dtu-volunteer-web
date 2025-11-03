@@ -1,14 +1,19 @@
 const Project = require('../models/project.model');
-
-exports.createProject = async (req, res) => {
+const projectService = require('../services/project.service');
+const createProjectHandler = async (req, res, next) => {
   try {
-    const data = req.body;
-    data.createdBy = req.user._id; // yêu cầu auth
-    const project = new Project(data);
-    await project.save();
-    res.status(201).json({ message: 'Tạo dự án thành công', project });
+    const projectData = req.body;
+
+    const createdById = req.user.sub;
+
+    const project = await projectService.createProject(projectData, createdById);
+
+    res.status(201).json({
+      message: 'Tạo dự án thành công',
+      project
+    });
   } catch (err) {
-    res.status(400).json({ message: 'Lỗi khi tạo dự án', error: err.message });
+    next(err);
   }
 };
 
@@ -75,4 +80,8 @@ exports.deleteProject = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+};
+
+module.exports = {
+  createProjectHandler
 };

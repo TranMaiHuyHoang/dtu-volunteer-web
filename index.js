@@ -15,13 +15,20 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger.js'); // Import file cấu hình Swagger
 const { errorHandler } = require('./middlewares/errorHandler.middleware.js');
 const logger = require('./config/logger');
-
+const { postLogoutLog } = require('./middlewares/logout.middleware.js');
 dotenv.config();
 //var morgan = require('morgan')
 // app.use(morgan('tiny'));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+
+// Thêm middleware để xử lý dữ liệu JSON
+app.use(express.json());
+// Parse form data
+app.use(express.urlencoded({ extended: true }));
+
 
 // Middleware cho API docs
 const swaggerEndpoint = '/api-docs';
@@ -34,15 +41,29 @@ app.use(
 // Use express - session middleware
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  cookie: { maxAge: 60000 },
+  cookie: { maxAge: 60000,
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'lax'
+   },
   resave: false,
   saveUninitialized: true // khuyến khích dùng false để tuân thủ luật bảo mật (GDPR) và giảm thiểu rác session
 }));
 
+
+if (process.env.NODE_ENV !== 'production') {
+    app.use((req, res, next) => {
+        if (req.sessionID) {
+            logger.debug(`🌐 REQUEST: Session ID: ${req.sessionID} | URL: ${req.originalUrl}`);
+        }
+        next();
+    });
+}
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Middleware to serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Use cookie - parser middleware
@@ -60,11 +81,6 @@ app.use((req, res, next) => {
 
 
 
-// Thêm middleware để xử lý dữ liệu JSON
-app.use(express.json());
-// Parse form data
-app.use(express.urlencoded({ extended: true }));
-
 
 
 // Thêm middleware để ghi log mỗi khi có yêu cầu đến server
@@ -80,6 +96,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/', mainRouter);
+
+
+app.use(postLogoutLog); // Middleware xử lý lỗi logout
 app.use(errorHandler); // Đảm bảo middleware xử lý lỗi được đặt sau tất cả các route khác
 
 

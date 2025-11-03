@@ -1,6 +1,7 @@
 const authService = require('../services/authService');
 const logger = require('../config/logger');
-
+const { successfulLogoutLog } = require('../middlewares/logout.middleware');
+const { setAccessTokenCookie, clearAccessTokenCookie } = require('../utils/authCookie');
 const handleRegister = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
@@ -31,11 +32,16 @@ const handleLogin = async (req, res, next) => {
         
         const { user: userData, token } = await authService.loginUser(email, password);
         logger.info(`Đăng nhập thành công: ${email}`);
-
+        req.session.userId = userData.id;
+        
+        // Lưu token vào cookie (httpOnly, secure)
+        setAccessTokenCookie(res, token);
+        
+        logger.debug(`Session ID sau đăng nhập: ${req.session.id} cho User ID: ${userData.id}`);
         res.status(200).json({
             status: 'success',
             message: 'Đăng nhập thành công.',
-            token,
+            token, // Trả về token trong body để REST client có thể test (web app không cần, đã có cookie)
             user: userData
         });
     } catch (error) {
@@ -49,15 +55,18 @@ const handleLogin = async (req, res, next) => {
 
 const googleCallback = async (req, res, next) => {
   try {
-    const { user : userData, token } = await authService.loginWithGoogle(req.user);
+    const { user: userData, token } = await authService.loginWithGoogle(req.user);
     logger.info(`Đăng nhập thành công qua Google: ${userData.email}`);
-
-    res.status(200).json({
-      status: 'success',
-      message: 'Đăng nhập thành công, sử dụng token này để xác thực API.',
-      token,
-      user: userData
-    });
+    
+    // Lưu token vào cookie
+    setAccessTokenCookie(res, token);
+    
+    // Tạo session với userId (để logout)
+    req.session.userId = userData.id;
+    logger.debug(`Session được tạo: User ID: ${userData.id} | Session ID: ${req.session.id}`);
+    
+    // Redirect thẳng về home (không cần trang success trung gian)
+    res.redirect('/home.html');
   } catch (error) {
     logger.error(`Lỗi đăng nhập qua Google: ${error.message}`, {
       error: error.stack,
@@ -67,4 +76,20 @@ const googleCallback = async (req, res, next) => {
 };
 
 
-module.exports = { handleRegister, handleLogin, googleCallback };
+const handleLogout = (req, res, next) => {
+    // Xóa accessToken cookie
+    clearAccessTokenCookie(res);
+    
+    req.session.destroy(err => {
+        if (err) {
+            logger.error(`Lỗi khi hủy session ${sessionIdToLog} cho User ${userIdToLog}: ${err.message}`);
+            // Nếu có lỗi khi hủy session, đính kèm context và chuyển lỗi
+            err.logoutContext = req.logoutContext; 
+            return next(err); // Chuyển sang postLogoutLog (Error Handler)
+        }
+
+        successfulLogoutLog(req, res, next);
+    });
+};
+
+module.exports = { handleRegister, handleLogin, googleCallback, handleLogout };
