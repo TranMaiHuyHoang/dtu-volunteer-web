@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đang đăng xuất...</title>
+    <link rel="stylesheet" href="/css/message.css">
+</head>
+<body>
+    <h1>Đang đăng xuất...</h1>
+    <div id="response" class="message-container"></div>
+
+    <script src="/js/layout.js"></script>
+    <script>
+        // Tự động gọi logout khi trang load
+        window.onload = function() {
+            logout('/login.html');
+        };
+    </script>
+</body>
+</html>
+
