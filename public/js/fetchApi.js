@@ -1,21 +1,14 @@
 /**
- * Hàm tiện ích để gọi API (Client-side)
- * @param {string} endpoint - Ví dụ: '/login', '/register', '/profile'
- * @param {string} method - Ví dụ: 'GET', 'POST', 'PUT'
- * @param {object} [data=null] - Dữ liệu gửi đi (JSON body)
- * @param {string} [bearerToken=''] - Token xác thực (Authorization header)
- * @param {object} [options={}] - Tùy chọn bổ sung
- * @param {boolean} [options.useSession=false] - Sử dụng session cookie (credentials: 'include')
- * @returns {Promise<object>} - Response data đã parse JSON
+ * Gọi API với Bearer token hoặc session cookie
+ * @param {string} endpoint - '/login', '/register', '/profile'
+ * @param {string} method - 'GET', 'POST', 'PUT', 'DELETE'
+ * @param {object} [data=null] - Dữ liệu gửi đi (JSON)
+ * @param {string} [bearerToken=''] - Bearer token
+ * @param {object} [options={}] - { useSession: boolean }
  */
 async function fetchApi(endpoint, method, data = null, bearerToken = '', options = {}) {
-    const { useSession = false } = options || {};
-    const baseUrl = window.location.origin;
-    const url = `${baseUrl}${endpoint}`;
-    
-    const headers = {
-        'Content-Type': 'application/json',
-    };
+    const url = `${window.location.origin}${endpoint}`;
+    const headers = { 'Content-Type': 'application/json' };
     
     if (bearerToken) {
         headers['Authorization'] = `Bearer ${bearerToken}`;
@@ -24,25 +17,31 @@ async function fetchApi(endpoint, method, data = null, bearerToken = '', options
     const config = {
         method,
         headers,
-        // Chỉ thêm body nếu phương thức là POST/PUT/PATCH và có dữ liệu
-        body: data ? JSON.stringify(data) : undefined, 
+        body: data ? JSON.stringify(data) : undefined
     };
 
-    // Thêm credentials nếu dùng session
-    if (useSession) {
+    if (options.useSession) {
         config.credentials = 'include';
     }
 
     const res = await fetch(url, config);
 
     if (res.ok) {
-        // Trả về JSON nếu thành công
         return res.json();
     }
 
-    // Xử lý lỗi tập trung: Đọc thông báo lỗi từ body hoặc dùng trạng thái mặc định
+    // Xử lý lỗi
     const errorData = await res.json().catch(() => ({ message: res.statusText }));
-    // Ném ra lỗi để hàm gọi có thể bắt (try...catch)
+    
+    // Token hết hạn → redirect về login
+    if (res.status === 401 && errorData.expired) {
+        if (typeof saveRedirectURL === 'function') {
+            saveRedirectURL(window.location.pathname + window.location.search);
+        }
+        window.location.href = '/login.html';
+        return;
+    }
+    
     throw new Error(errorData.message || res.statusText || `Lỗi HTTP: ${res.status}`);
 }
 

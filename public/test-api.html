@@ -2,29 +2,38 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test API</title>
     <link rel="stylesheet" href="/css/message.css">
+    <link rel="stylesheet" href="/css/layout.css">
 </head>
 <body>
-    <h1>Test Backend API</h1>
+    <header></header>
     
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <main>
+        <h1>Test Backend API</h1>
+        
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        
+        <h2>Register</h2>
+        <input type="text" id="regUsername" placeholder="Username">
+        <input type="email" id="regEmail" placeholder="Email">
+        <input type="password" id="regPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+        
+        <h2>Profile (cần token)</h2>
+        <button onclick="getProfile()">Get Profile</button>
+        
+        <h2>Response:</h2>
+        <pre id="response"></pre>
+    </main>
     
-    <h2>Register</h2>
-    <input type="text" id="regUsername" placeholder="Username">
-    <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPassword" placeholder="Password">
-    <button onclick="register()">Register</button>
+    <footer></footer>
     
-    <h2>Profile (cần token)</h2>
-    <button onclick="getProfile()">Get Profile</button>
-    
-    <h2>Response:</h2>
-    <pre id="response"></pre>
-    
+    <script src="/js/message.js"></script>
     <script src="/js/fetchApi.js"></script>
     <script src="/js/layout.js"></script>
 

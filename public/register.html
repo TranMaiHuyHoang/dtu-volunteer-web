@@ -2,21 +2,30 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng Ký Tài Khoản</title>
     <link rel="stylesheet" href="/css/message.css">
+    <link rel="stylesheet" href="/css/layout.css">
 </head>
 <body>
-    <h1>Đăng Ký</h1>
+    <header></header>
     
-    <input type="text" id="username" placeholder="Username">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="register()">Đăng Ký</button>
+    <main>
+        <h1>Đăng Ký</h1>
+        
+        <input type="text" id="username" placeholder="Username">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="register()">Đăng Ký</button>
+        
+        <p>Đã có tài khoản? <a href="/login.html">Đăng nhập ngay</a></p>
+        
+        <div id="response" class="message-container"></div>
+    </main>
     
-    <p>Đã có tài khoản? <a href="/login.html">Đăng nhập ngay</a></p>
-    
-    <div id="response" class="message-container"></div>
+    <footer></footer>
 
+    <script src="/js/message.js"></script>
     <script src="/js/layout.js"></script>
     <script>
         const baseUrl = window.location.origin;
