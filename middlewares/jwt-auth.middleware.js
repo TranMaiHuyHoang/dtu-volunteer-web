@@ -1,63 +1,37 @@
+const { getTokenFromHeader } = require('../utils/getTokenFromHeader');
+const { clearAccessTokenCookie } = require('../utils/authCookie');
+const jwt = require('jsonwebtoken');
+const logger = require('../config/logger');
+require('dotenv').config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
 /**
  * Middleware xác thực JWT token
- * Flow: Lấy token từ Authorization header -> Verify và decode -> Gắn payload vào req.user
- */
-const { getTokenFromHeader } = require('../utils/getTokenFromHeader');
-const { decodeTokenPayload } = require('../utils/decodeTokenPayload');
-const logger = require('../config/logger');
-
-/**
- * Middleware xác thực JWT token từ Authorization header
- * @param {object} req - Express request object
- * @param {object} res - Express response object
- * @param {function} next - Express next middleware function
  */
 function verifyToken(req, res, next) {
-    // 1. Lấy token từ header Authorization
     const token = getTokenFromHeader(req);
     if (!token) {
-        logger.warn('AUTH_FAIL: Token không được cung cấp.');
-        return res.status(401).json({
-            message: 'Không được ủy quyền. Vui lòng cung cấp token.'
-        });
+        return res.status(401).json({ message: 'Không được ủy quyền. Vui lòng cung cấp token.' });
     }
 
-    // 2. Verify và decode JWT token
-    const decodedPayload = decodeTokenPayload(token);
-    if (!decodedPayload) {
-        logger.warn('AUTH_FAIL: Token không hợp lệ (lỗi giải mã/xác minh).');
-        return res.status(401).json({
-            message: 'Token không hợp lệ hoặc đã hết hạn.'
-        });
+    try {
+        const payload = jwt.verify(token, JWT_SECRET);
+        req.user = payload;
+        logger.info(`LOG-AUTH: ✅ OK | UserID: ${payload.sub} | Role: ${payload.role}`);
+        next();
+    } catch (error) {
+        // Token hết hạn: xóa cookie và trả về 401
+        if (error.name === 'TokenExpiredError') {
+            clearAccessTokenCookie(res);
+            return res.status(401).json({ message: 'Token đã hết hạn. Vui lòng đăng nhập lại.', expired: true });
+        }
+        
+        // Token không hợp lệ
+        logger.warn('AUTH_FAIL: Token không hợp lệ.');
+        return res.status(401).json({ message: 'Token không hợp lệ.' });
     }
-
-    // 3. Gắn Payload vào Request object
-    req.user = decodedPayload;
-    logger.info(`LOG-AUTH: ✅ OK | UserID (Sub): ${decodedPayload.sub} | Role: ${decodedPayload.role}`);
-    next();
 }
-
-/**
- * Xác thực token và kiểm tra quyền truy cập của Admin
- * 
- * @param {object} req - Đối tượng request (req) của Express
- * @param {object} res - Đối tượng response (res) của Express
- * @param {function} next - Hàm callback để gọi hàm tiếp theo
- */
-// function verifyTokenAndAdminAuth(req, res, next) {
-//     verifyToken(req, res, () => {
-//         // Kiểm tra nếu là Admin hoặc của chính chủ
-//        if (req.user.id == req.params.id || req.user.role === 'admin') {
-//         next();
-//        }
-//        else {
-//             // Không phải Admin
-//             return res.status(403).json({
-//                 message: 'Bạn không có quyền truy cập (Yêu cầu quyền Admin).'
-//             });
-//         }
-//     });
-// }
 
 // --- MIDDLEWARE ỦY QUYỀN (AUTHORIZATION) ---
 

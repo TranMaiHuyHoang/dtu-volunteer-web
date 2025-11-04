@@ -1,189 +1,81 @@
 /**
- * Module quản lý UI trạng thái authentication
- * Tập trung tất cả logic liên quan đến hiển thị/ẩn các element authentication
- * Sử dụng cách render lại thay vì thao tác DOM trực tiếp
+ * Auth UI - Quản lý header navigation và redirect sau login
  */
 
-/**
- * Kiểm tra trạng thái đăng nhập từ server bằng cách gọi API protected
- * @returns {Promise<boolean>} true nếu đã đăng nhập, false nếu chưa
- */
+// Kiểm tra trạng thái đăng nhập
 async function checkAuthStatus() {
+    const path = window.location.pathname;
+    if (path.includes('/login') || path.includes('/register') || path.includes('/logout')) {
+        return false;
+    }
+    
     try {
-        // Kiểm tra bằng cách gọi API protected, nếu thành công thì đã đăng nhập
-        const res = await fetch('/profile', {
-            method: 'GET',
-            credentials: 'include' // Đảm bảo gửi cookie
-        });
-        
-        return res.ok; // 200 OK = đã đăng nhập, 401/403 = chưa đăng nhập
-    } catch (error) {
-        console.error('Lỗi kiểm tra trạng thái đăng nhập:', error);
+        const res = await fetch('/profile', { credentials: 'include' });
+        return res.ok;
+    } catch {
         return false;
     }
 }
 
-/**
- * Render header dựa trên trạng thái đăng nhập
- * @param {boolean} isLoggedIn - Trạng thái đăng nhập (true: đã đăng nhập, false: chưa đăng nhập)
- */
+// Render header navigation
 function renderHeader(isLoggedIn) {
-    let navContainer = document.querySelector('nav[data-nav-container]');
-    if (!navContainer) {
-        // Fallback nếu không tìm thấy container
-        navContainer = document.querySelector('header nav');
-        if (!navContainer) {
-            console.warn('Không tìm thấy nav container để render header');
-            return;
-        }
-    }
+    const nav = document.querySelector('nav[data-nav-container]') || document.querySelector('header nav');
+    if (!nav) return;
     
-    // Render các link cố định
-    let navHTML = `
+    const commonLinks = `
         <a href="/">Trang chủ</a>
         <a href="/home.html">Test API</a>
     `;
     
-    // Render các link dựa trên trạng thái đăng nhập
-    if (isLoggedIn) {
-        // Đã đăng nhập: hiển thị Profile và Logout
-        navHTML += `
-            <a href="/profile">Hồ sơ</a>
-            <a href="#" data-action="logout">Đăng xuất</a>
-        `;
-    } else {
-        // Chưa đăng nhập: hiển thị Đăng nhập và Đăng ký
-        navHTML += `
-            <a href="/login.html">Đăng nhập</a>
-            <a href="/register">Đăng ký</a>
-        `;
-    }
+    const authLinks = isLoggedIn
+        ? `<a href="/profile">Hồ sơ</a> <a href="#" onclick="logout(); return false;">Đăng xuất</a>`
+        : `<a href="/login.html">Đăng nhập</a> <a href="/register">Đăng ký</a>`;
     
-    // Render lại toàn bộ nav
-    navContainer.innerHTML = navHTML;
+    nav.innerHTML = commonLinks + authLinks;
 }
 
-/**
- * Cập nhật UI dựa trên trạng thái đăng nhập (render lại)
- * @param {boolean} isLoggedIn - Trạng thái đăng nhập (true: đã đăng nhập, false: chưa đăng nhập)
- */
-function updateAuthUI(isLoggedIn) {
-    renderHeader(isLoggedIn);
-    setupEventDelegation();
-}
-
-/**
- * Thiết lập Event Delegation cho các action trong header
- * Sử dụng kỹ thuật ủy quyền sự kiện để xử lý event cho các element được render mới
- */
-function setupEventDelegation() {
-    const navContainer = document.querySelector('nav[data-nav-container]') || document.querySelector('header nav');
-    if (!navContainer) return;
-    
-    // Xóa listener cũ nếu có
-    const existingHandler = navContainer._delegationHandler;
-    if (existingHandler) {
-        navContainer.removeEventListener('click', existingHandler);
-    }
-    
-    // Tạo handler mới
-    const delegationHandler = function(event) {
-        const target = event.target.closest('a[data-action]');
-        if (!target) return;
-        
-        const action = target.getAttribute('data-action');
-        
-        switch (action) {
-            case 'logout':
-                event.preventDefault();
-                if (typeof logout === 'function') {
-                    logout();
-                } else {
-                    console.error('Hàm logout() chưa được định nghĩa');
-                }
-                break;
-            default:
-                console.warn(`Action không được xử lý: ${action}`);
-        }
-    };
-    
-    // Lưu handler để có thể xóa sau này
-    navContainer._delegationHandler = delegationHandler;
-    
-    // Gắn event listener vào container (event delegation)
-    navContainer.addEventListener('click', delegationHandler);
-}
-
-/**
- * Cập nhật UI từ server (kiểm tra auth status và cập nhật UI)
- */
+// Cập nhật UI dựa trên trạng thái đăng nhập
 async function refreshAuthUI() {
     const isLoggedIn = await checkAuthStatus();
-    updateAuthUI(isLoggedIn);
+    renderHeader(isLoggedIn);
     return isLoggedIn;
 }
 
-/**
- * Cập nhật UI khi đã đăng nhập thành công
- */
+// Wrapper functions cho backward compatibility
 function showLoggedInUI() {
-    updateAuthUI(true);
+    renderHeader(true);
 }
 
-/**
- * Cập nhật UI khi đã logout
- */
 function showLoggedOutUI() {
-    updateAuthUI(false);
+    renderHeader(false);
 }
 
-/**
- * Lưu URL trang trước đó để redirect về sau khi đăng nhập
- * @param {string} url - URL cần lưu (nếu không cung cấp, sẽ lấy từ referrer hoặc current URL)
- */
+// Redirect sau login - Lưu và khôi phục URL trang trước đó
 function saveRedirectURL(url = null) {
     if (url) {
         sessionStorage.setItem('redirectAfterLogin', url);
         return;
     }
     
-    // Nếu có referrer và không phải trang login/auth, lưu referrer
+    // Tự động lấy từ referrer nếu cùng domain và không phải trang auth
     if (document.referrer && 
         !document.referrer.includes('/login') && 
         !document.referrer.includes('/auth/google')) {
         try {
             const referrerUrl = new URL(document.referrer);
-            // Chỉ lưu nếu referrer là cùng domain
-            if (referrerUrl.origin === window.location.origin) {
-                const redirectUrl = referrerUrl.pathname + referrerUrl.search;
-                // Chỉ lưu nếu chưa có redirect URL được lưu
-                if (!sessionStorage.getItem('redirectAfterLogin')) {
-                    sessionStorage.setItem('redirectAfterLogin', redirectUrl);
-                }
+            if (referrerUrl.origin === window.location.origin && 
+                !sessionStorage.getItem('redirectAfterLogin')) {
+                sessionStorage.setItem('redirectAfterLogin', referrerUrl.pathname + referrerUrl.search);
             }
         } catch (e) {
-            // Ignore nếu không parse được URL
+            // Ignore invalid URL
         }
     }
 }
 
-/**
- * Lấy URL redirect đã lưu và xóa khỏi sessionStorage
- * @param {string} defaultUrl - URL mặc định nếu không có URL được lưu
- * @returns {string} URL để redirect
- */
-function getAndClearRedirectURL(defaultUrl = '/home.html') {
+function redirectAfterLogin(defaultUrl = '/home.html') {
     const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || defaultUrl;
     sessionStorage.removeItem('redirectAfterLogin');
-    return redirectUrl;
-}
-
-/**
- * Redirect về trang cũ sau khi đăng nhập thành công
- * @param {string} defaultUrl - URL mặc định nếu không có URL được lưu
- */
-function redirectAfterLogin(defaultUrl = '/home.html') {
-    const redirectUrl = getAndClearRedirectURL(defaultUrl);
     window.location.href = redirectUrl;
 }
 
