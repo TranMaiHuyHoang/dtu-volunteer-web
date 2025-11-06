@@ -4,12 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link rel="stylesheet" href="/css/message.css">
-    <link rel="stylesheet" href="/css/layout.css">
 </head>
 <body>
-    <header></header>
-    
     <main>
         <h1>Login</h1>
         <a href='#' onclick="handleGoogleLogin(event)">Đăng nhập bằng Google</a>
@@ -22,16 +18,13 @@
         
         <div id="response" class="message-container"></div>
     </main>
-    
-    <footer></footer>
 
-    <script src="/js/message.js"></script>
-    <script src="/js/authUI.js"></script>
-    <script src="/js/fetchApi.js"></script>
+    <script src="/js/utils/authUI.js"></script>
+    <script src="/js/utils/fetchApi.js"></script>
+    <script src="/js/utils/promiseHelper.js"></script>
     <script src="/js/layout.js"></script>
     <script>
         // Lưu URL trang trước đó để redirect về sau khi đăng nhập
-        // Sử dụng hàm từ authUI.js
         if (typeof saveRedirectURL === 'function') {
             saveRedirectURL();
         }
@@ -39,11 +32,9 @@
         // Xử lý click vào link Google OAuth
         function handleGoogleLogin(event) {
             event.preventDefault();
-            // Đảm bảo đã lưu redirect URL trước khi redirect đến Google
             if (typeof saveRedirectURL === 'function') {
                 saveRedirectURL();
             }
-            // Redirect đến Google OAuth
             window.location.href = '/auth/google';
         }
         
@@ -51,43 +42,36 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
-            // Validation cơ bản
             if (!email || !password) {
                 showMessage('Vui lòng nhập đầy đủ email và mật khẩu', 'error');
                 return;
             }
             
-            try {
-                const data = await fetchApi('/login', 'POST', { email, password });
-                
-                if (data.status === 'success') {
-                    // Token đã được lưu vào HTTP-only cookie tự động
-                    
-                    // Cập nhật UI để hiển thị trạng thái đã đăng nhập
-                    if (typeof showLoggedInUI === 'function') {
-                        showLoggedInUI();
-                    }
-                    
-                    // Redirect về trang cũ hoặc trang mặc định
-                    if (typeof redirectAfterLogin === 'function') {
-                        showMessage('Đăng nhập thành công! Đang chuyển hướng...', 'success');
-                        setTimeout(() => {
-                            redirectAfterLogin();
-                        }, 1000);
-                    } else {
-                        // Fallback nếu authUI.js chưa load
-                        showMessage('Đăng nhập thành công! Đang chuyển hướng...', 'success');
-                        setTimeout(() => {
-                            window.location.href = '/home.html';
-                        }, 1000);
-                    }
-                } else {
-                    // Hiển thị thông báo lỗi trực quan
-                    const errorMessage = data.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
-                    showMessage(errorMessage, 'error');
-                }
-            } catch (error) {
+            // Sử dụng to() từ promiseHelper thay vì try-catch
+            const [error, data] = await to(
+                fetchApi('/login', 'POST', { email, password })
+            );
+            
+            if (error) {
                 showMessage('Có lỗi xảy ra: ' + error.message, 'error');
+                return;
+            }
+            
+            if (data.status === 'success') {
+                if (typeof showLoggedInUI === 'function') {
+                    showLoggedInUI();
+                }
+                
+                if (typeof redirectAfterLogin === 'function') {
+                    showMessage('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+                    setTimeout(() => redirectAfterLogin(), 1000);
+                } else {
+                    showMessage('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+                    setTimeout(() => window.location.href = '/', 1000);
+                }
+            } else {
+                const errorMessage = data.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
+                showMessage(errorMessage, 'error');
             }
         }
     </script>

@@ -4,12 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng Ký Tài Khoản</title>
-    <link rel="stylesheet" href="/css/message.css">
-    <link rel="stylesheet" href="/css/layout.css">
 </head>
 <body>
-    <header></header>
-    
     <main>
         <h1>Đăng Ký</h1>
         
@@ -22,14 +18,11 @@
         
         <div id="response" class="message-container"></div>
     </main>
-    
-    <footer></footer>
 
-    <script src="/js/message.js"></script>
+    <script src="/js/utils/fetchApi.js"></script>
+    <script src="/js/utils/promiseHelper.js"></script>
     <script src="/js/layout.js"></script>
     <script>
-        const baseUrl = window.location.origin;
-        
         async function register() {
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
@@ -41,23 +34,22 @@
                 return;
             }
             
-            try {
-                const res = await fetch(`${baseUrl}/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, password })
-                });
-                const data = await res.json();
-                
-                if (data.status === 'success') {
-                    showMessage('Đăng ký thành công! Chuyển đến trang đăng nhập...', 'success');
-                    setTimeout(() => window.location.href = '/login.html', 2000);
-                } else {
-                    const errorMessage = data.message || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.';
-                    showMessage(errorMessage, 'error');
-                }
-            } catch (error) {
+            // Sử dụng to() từ promiseHelper thay vì try-catch
+            const [error, data] = await to(
+                fetchApi('/register', 'POST', { username, email, password })
+            );
+            
+            if (error) {
                 showMessage('Có lỗi xảy ra: ' + error.message, 'error');
+                return;
+            }
+            
+            if (data.status === 'success') {
+                showMessage('Đăng ký thành công! Chuyển đến trang đăng nhập...', 'success');
+                setTimeout(() => window.location.href = '/login.html', 2000);
+            } else {
+                const errorMessage = data.message || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.';
+                showMessage(errorMessage, 'error');
             }
         }
     </script>
