@@ -27,7 +27,9 @@
     "test": "jest",
     "start": "nodemon ./bin/www",
     "start:watch": "nodemon ./bin/www",
-    "dev": "cross-env DEBUG=express:* nodemon index.js"
+    "dev": "cross-env DEBUG=express:* nodemon index.js",
+    "test:esm": "node utils/example-usage.test.js",
+    "example:simple": "node examples/simple-usage.js"
   },
   "keywords": [],
   "author": "",

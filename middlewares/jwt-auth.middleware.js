@@ -44,7 +44,7 @@ const permit = (...allowedRoles) => {
         const user = req.user; // Đã có do verifyToken chạy trước
 
         const userRole = (user && user.role) ? user.role : 'KHÔNG XÁC ĐỊNH';
-        const userId = (user && user.userId) ? user.userId : 'N/A'; // Giả sử payload có userId
+        const userId = (user && user.sub) ? user.sub : (user && user.userId) ? user.userId : 'N/A';
         // Kiểm tra nếu vai trò người dùng CÓ trong danh sách cho phép
         if (user && allowedRoles.includes(user.role)) {
             next();

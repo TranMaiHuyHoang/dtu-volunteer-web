@@ -65,8 +65,8 @@ const googleCallback = async (req, res, next) => {
     req.session.userId = userData.id;
     logger.debug(`Session được tạo: User ID: ${userData.id} | Session ID: ${req.session.id}`);
     
-    // Redirect thẳng về home (không cần trang success trung gian)
-    res.redirect('/home.html');
+    // Redirect thẳng về trang chủ (không cần trang success trung gian)
+    res.redirect('/');
   } catch (error) {
     logger.error(`Lỗi đăng nhập qua Google: ${error.message}`, {
       error: error.stack,

@@ -14,7 +14,7 @@ const createNotification = async (req, res) => {
 
 const listNotificationsForUser = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.sub;
     const notes = await Notification.find({ userId }).sort({ createdAt: -1 });
     res.json(notes);
   } catch (err) {
@@ -59,7 +59,7 @@ const markAsRead = async (req, res) => {
 
 const markAllAsRead = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.sub;
     await Notification.updateMany(
       { userId, isRead: false },
       { $set: { isRead: true } }

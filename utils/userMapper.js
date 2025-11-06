@@ -26,13 +26,13 @@ const mapUserData = (user, provider = 'local') => {
   // Các trường chung
   const baseInfo = getBaseInfo(user);
 
-  // Mỗi provider có id riêng
-
-    const id = getProviderId(user, provider);
+  // Luôn dùng MongoDB ObjectId (_id) cho JWT sub, không dùng Google ID
+  // Google ID chỉ là trường phụ (unique secondary index) để tìm user
+  const mongoObjectId = user._id ? user._id.toString() : user.id;
 
   // Tạo payload theo chuẩn JWT
   const payload = {
-    sub: id,
+    sub: mongoObjectId, // Luôn là MongoDB ObjectId
     name: baseInfo.displayName,
     email: baseInfo.email,
     role: baseInfo.role,

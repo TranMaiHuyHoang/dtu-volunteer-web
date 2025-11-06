@@ -51,14 +51,14 @@ app.use(session({
 }));
 
 
-if (process.env.NODE_ENV !== 'production') {
-    app.use((req, res, next) => {
-        if (req.sessionID) {
-            logger.debug(`🌐 REQUEST: Session ID: ${req.sessionID} | URL: ${req.originalUrl}`);
-        }
-        next();
-    });
-}
+// if (process.env.NODE_ENV !== 'production') {
+//     app.use((req, res, next) => {
+//         if (req.sessionID) {
+//             logger.debug(`🌐 REQUEST: Session ID: ${req.sessionID} | URL: ${req.originalUrl}`);
+//         }
+//         next();
+//     });
+// }
 
 
 app.use(passport.initialize());
