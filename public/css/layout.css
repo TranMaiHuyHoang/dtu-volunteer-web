@@ -29,7 +29,8 @@ header nav a:hover {
 
 main {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0;
+    margin-left: 2rem;
     padding: 2rem 1rem;
     min-height: calc(100vh - 200px);
 }

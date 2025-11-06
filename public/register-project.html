@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Hoạt Động Thiện Nguyện</title>
+</head>
+<body>
+    <main>
+        <h1>Đăng Ký Hoạt Động Thiện Nguyện</h1>
+        
+        <div id="logout-message" class="message-container"></div>
+        <div id="response" class="message-container"></div>
+        
+        <section id="registration-form">
+            <h2>Thông tin đăng ký</h2>
+            <form id="registerForm" onsubmit="registerForProject(event)">
+                <div>
+                    <label for="projectId">ID Dự án/Hoạt động:</label>
+                    <input type="text" id="projectId" name="projectId" required placeholder="Nhập ID dự án hoặc hoạt động">
+                </div>
+                <button type="submit">Đăng Ký</button>
+            </form>
+        </section>
+        
+        <section id="my-registrations" style="margin-top: 2rem;">
+            <h2>Đăng ký của tôi</h2>
+            <button onclick="loadMyRegistrations()">Xem danh sách đăng ký của tôi</button>
+            <div id="registrations-list"></div>
+        </section>
+    </main>
+
+    <script src="/js/utils/fetchApi.js"></script>
+    <script src="/js/utils/promiseHelper.js"></script>
+    <script src="/js/utils/fetchHelper.js"></script>
+    <script src="/js/layout.js"></script>
+    <script>
+        async function registerForProject(event) {
+            event.preventDefault();
+            
+            const projectId = document.getElementById('projectId').value.trim();
+            
+            if (!projectId) {
+                showMessage('Vui lòng nhập ID dự án hoặc hoạt động', 'error', 'response');
+                return;
+            }
+            
+            const [error, data] = await to(
+                fetchApi('/registrations', 'POST', { projectId }, '', { useSession: true })
+            );
+            
+            if (error) {
+                showMessage(error.message || 'Đăng ký thất bại. Vui lòng thử lại.', 'error', 'response');
+                return;
+            }
+            
+            showMessage(data.message || 'Đăng ký thành công!', 'success', 'response');
+            document.getElementById('registerForm').reset();
+            
+            if (data.message) {
+                setTimeout(() => loadMyRegistrations(), 1000);
+            }
+        }
+        
+        async function loadMyRegistrations() {
+            const listContainer = document.getElementById('registrations-list');
+            
+            const [error, registrations] = await to(
+                fetchApi('/registrations/my-registrations', 'GET', null, '', { useSession: true })
+            );
+            
+            if (error) {
+                setElementHTML('registrations-list', `<p style="color: red;">Lỗi khi tải danh sách: ${error.message}</p>`);
+                return;
+            }
+            
+            if (Array.isArray(registrations) && registrations.length > 0) {
+                const html = `
+                    <table style="width: 100%; margin-top: 1rem; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background-color: #f0f0f0;">
+                                <th style="padding: 0.5rem; border: 1px solid #ddd;">Dự án/Hoạt động</th>
+                                <th style="padding: 0.5rem; border: 1px solid #ddd;">Trạng thái</th>
+                                <th style="padding: 0.5rem; border: 1px solid #ddd;">Ngày đăng ký</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${registrations.map(reg => `
+                                <tr>
+                                    <td style="padding: 0.5rem; border: 1px solid #ddd;">
+                                        ${reg.projectId?.title || reg.projectId || 'N/A'}
+                                    </td>
+                                    <td style="padding: 0.5rem; border: 1px solid #ddd;">
+                                        <span style="padding: 0.25rem 0.5rem; border-radius: 4px; 
+                                            ${reg.status === 'approved' ? 'background-color: #d4edda; color: #155724;' : 
+                                              reg.status === 'rejected' ? 'background-color: #f8d7da; color: #721c24;' : 
+                                              'background-color: #fff3cd; color: #856404;'}">
+                                            ${reg.status === 'approved' ? 'Đã duyệt' : 
+                                              reg.status === 'rejected' ? 'Đã từ chối' : 
+                                              'Chờ duyệt'}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 0.5rem; border: 1px solid #ddd;">
+                                        ${reg.createdAt ? new Date(reg.createdAt).toLocaleDateString('vi-VN') : 'N/A'}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                setElementHTML('registrations-list', html);
+            } else {
+                setElementHTML('registrations-list', '<p>Bạn chưa có đăng ký nào.</p>');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadMyRegistrations);
+    </script>
+</body>
+</html>
+
