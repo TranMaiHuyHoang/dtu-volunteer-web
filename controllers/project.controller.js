@@ -17,7 +17,7 @@ const createProjectHandler = async (req, res, next) => {
   }
 };
 
-exports.listProjects = async (req, res) => {
+const listProjectsHandler = async (req, res) => {
   try {
     const { status, q, page = 1, limit = 20 } = req.query;
     const filter = {};
@@ -83,5 +83,6 @@ exports.deleteProject = async (req, res) => {
 };
 
 module.exports = {
-  createProjectHandler
+  createProjectHandler,
+  listProjectsHandler
 };

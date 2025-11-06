@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { hashPassword } = require('../utils/hash');
 
 const userSchema = new mongoose.Schema({
-  googleId: {type: String, unique: true, sparse : true },
+  googleId: {type: String },
   username: { type: String, trim: true },
   email: {
     type: String, required: true, unique: true,
@@ -17,6 +17,9 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+// Index hóa googleId làm trường phụ (unique secondary index)
+// sparse: true cho phép null/undefined (chỉ user local không có googleId)
+userSchema.index({ googleId: 1 }, { unique: true, sparse: true });
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <main>
+        <h1>Dashboard</h1>
+        
+        <div id="logout-message" class="message-container"></div>
+        
+        <h2>User Profile:</h2>
+        <div id="profile"></div>
+        
+        <h2>Notifications:</h2>
+        <div id="notifications"></div>
+        
+        <div>
+            <button onclick="loadData()">Load Data</button>
+            <a href="/update-registration-status.html"><button>Cập nhật trạng thái đăng ký</button></a>
+        </div>
+    </main>
+
+    <script src="/js/utils/fetchApi.js"></script>
+    <script src="/js/utils/promiseHelper.js"></script>
+    <script src="/js/utils/fetchHelper.js"></script>
+    <script src="/js/utils/fetchAndUpdate.js"></script>
+    <script src="/js/layout.js"></script>
+    <script>
+        async function loadData() {
+            // Sử dụng fetchAndUpdate để fetch API và tự động update UI
+            await fetchAndUpdate('/profile', 'profile');
+            await fetchAndUpdate('/notifications/me', 'notifications');
+        }
+    </script>
+</body>
+</html>
+

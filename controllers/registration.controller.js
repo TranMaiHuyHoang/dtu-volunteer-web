@@ -42,7 +42,7 @@ const listRegistrationsForProject = async (req, res) => {
 
 const listMyRegistrations = async (req, res) => {
   try {
-    const regs = await Registration.find({ userId: req.user._id }).populate('projectId', 'title location startDate');
+    const regs = await Registration.find({ userId: req.user.sub }).populate('projectId', 'title location startDate');
     res.json(regs);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -64,7 +64,7 @@ const updateRegistrationStatus = async (req, res) => {
     const project = await Project.findById(reg.projectId);
     if (!project) return res.status(404).json({ message: 'Dự án không tồn tại' });
 
-    const isOwner = String(project.createdBy) === String(req.user._id);
+    const isOwner = String(project.createdBy) === String(req.user.sub);
     if (!isOwner && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Bạn không có quyền thay đổi trạng thái' });
     }

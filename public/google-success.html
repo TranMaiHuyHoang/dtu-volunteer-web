@@ -2,16 +2,18 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Success</title>
-    <link rel="stylesheet" href="/css/message.css">
 </head>
 <body>
-    <h1>Đang xử lý đăng nhập...</h1>
-    <div id="status"></div>
     
-    <script src="/js/message.js"></script>
-    <script src="/js/authUI.js"></script>
-    <script src="/js/fetchApi.js"></script>
+    <main>
+        <h1>Đang xử lý đăng nhập...</h1>
+        <div id="status"></div>
+    </main>
+    
+    <script src="/js/utils/authUI.js"></script>
+    <script src="/js/utils/fetchApi.js"></script>
     <script src="/js/layout.js"></script>
 
     <script>
@@ -29,7 +31,7 @@
                 redirectAfterLogin();
             } else {
                 // Fallback nếu authUI.js chưa load
-                window.location.href = '/home.html';
+                window.location.href = '/';
             }
         }
         

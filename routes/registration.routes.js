@@ -7,6 +7,12 @@ const {
   updateRegistrationStatus 
 } = require('../controllers/registration.controller.js');
 const { verifyToken } = require('../middlewares/jwt-auth.middleware.js');
+const { registerForProjectValidator } = require('../middlewares/registrationValidator.middleware');
+const handleValidationErrors = require('../middlewares/validationHandler.middleware');
+
+const {serveStaticPage} = require('../utils/serveStaticPage');
+
+router.get('/', serveStaticPage('register-project.html'));
 
 /**
  * @swagger
@@ -29,19 +35,19 @@ const { verifyToken } = require('../middlewares/jwt-auth.middleware.js');
  *                 type: string
  *                 description: ID của dự án muốn đăng ký
  */
-router.post('/', verifyToken, registerForProjectHandler);
+router.post('/', verifyToken, registerForProjectValidator, handleValidationErrors, registerForProjectHandler);
 
 /**
  * @swagger
  * /registrations/my-registrations:
  *   get:
- *     summary: Xem danh sách đăng ký của bản thân
+ *     summary: Lấy danh sách đăng ký của người dùng hiện tại
  *     tags: [Registrations]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Danh sách các đăng ký của người dùng
+ *         description: Danh sách đăng ký của người dùng hiện tại
  *         content:
  *           application/json:
  *             schema:

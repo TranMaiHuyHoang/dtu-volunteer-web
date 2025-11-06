@@ -1,4 +1,4 @@
-/* Layout CSS
+/* Layout CSS */
 header {
     background-color: #f8f9fa;
     padding: 1rem 0;
@@ -29,7 +29,8 @@ header nav a:hover {
 
 main {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0;
+    margin-left: 2rem;
     padding: 2rem 1rem;
     min-height: calc(100vh - 200px);
 }
@@ -52,5 +53,5 @@ body {
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
-} */
+}
 

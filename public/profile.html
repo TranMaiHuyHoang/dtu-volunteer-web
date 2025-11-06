@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        /* Tùy chọn: Thêm một số CSS để dễ nhìn hơn */
+        table { border-collapse: collapse; width: 100%; max-width: 400px; }
+        td { padding: 8px; }
+    </style>
+</head>
+<body>
+    <main x-data="profileHandler()" x-init="initLoad()">
+        <h1>Hồ sơ của tôi</h1>
+        
+        <div x-show="error" x-text="'Lỗi: ' + error" style="color: red;"></div>
+        <div x-show="loading">Đang tải hồ sơ...</div>
+        
+        <div x-show="user && !loading">
+            <table border="1">
+                
+                <tr x-show="shouldShowUsername()">
+                    <td><strong>Username:</strong></td>
+                    <td x-text="user && (user.username || user.name)"></td>
+                </tr>
+                
+                <tr>
+                    <td><strong>Email:</strong></td>
+                    <td x-text="user && user.email || 'N/A'"></td>
+                </tr>
+                
+                <tr>
+                    <td><strong>Vai trò:</strong></td>
+                    <td x-text="user && user.role || 'N/A'"></td>
+                </tr>
+            </table>
+        </div>
+    </main>
+    
+    <script>
+        function profileHandler() {
+            return {
+                user: null,
+                loading: true,
+                error: null,
+                
+                // HÀM TIỆN ÍCH MỚI: Kiểm tra an toàn trước khi hiển thị Username
+                shouldShowUsername() {
+                    // 1. Nếu user chưa load hoặc null, không hiện
+                    if (!this.user || this.user === null) return false;
+                    
+                    // 2. Kiểm tra username có tồn tại không (có thể là username hoặc name trong JWT)
+                    const username = this.user.username || this.user.name;
+
+                    // 3. Nếu username không tồn tại (null/undefined/rỗng), không hiện
+                    if (username === null || username === undefined || username === '') return false;
+
+                    // 4. Nếu username là 'N/A' (không phân biệt chữ hoa/thường), không hiện
+                    if (String(username).toUpperCase() === 'N/A') return false;
+
+                    // 5. Các trường hợp còn lại (có dữ liệu hợp lệ), hiển thị
+                    return true;
+                },
+                
+                async loadProfile() {
+                    try {
+                        const res = await fetchApi('/profile', 'GET', null, '', { useSession: true });
+                        this.user = res.user || res; 
+                        this.loading = false;
+                    } catch (err) {
+                        this.error = err.message || 'Lỗi không xác định khi tải hồ sơ.';
+                        this.loading = false;
+                    }
+                },
+
+                initLoad() {
+                    if (typeof fetchApi !== 'undefined') {
+                        this.loadProfile();
+                    } else {
+                        setTimeout(() => {
+                            if (typeof fetchApi !== 'undefined') {
+                                this.loadProfile();
+                            } else {
+                                this.error = 'Lỗi: Thư viện fetchApi không được tải.';
+                            }
+                        }, 100);
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="/js/utils/fetchApi.js"></script>
+    <script src="/js/layout.js"></script>
+</body>
+</html>

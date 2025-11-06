@@ -3,5 +3,3 @@ notes/
 node_modules
 .venv/
 logs/
-eslint.config.mjs
-
