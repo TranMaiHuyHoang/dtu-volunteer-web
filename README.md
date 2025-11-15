@@ -55,7 +55,7 @@ Chúng ta sử dụng file **`.env`** để lưu trữ các thông tin bí mật
 Sử dụng lệnh sau để khởi động server phát triển cục bộ:
 
 ```bash
-npm run start
+npm run dev hoặc npm run start
 Server sẽ chạy tại địa chỉ: http://localhost:<PORT> (Ví dụ: http://localhost:3000)
 
 Nếu ứng dụng chạy thành công, bạn sẽ thấy thông báo Server is running at port [PORT] trong terminal.

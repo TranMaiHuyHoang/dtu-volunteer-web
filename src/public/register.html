@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký - DTU Volunteer Platform</title>
+    <style>
+        /* Font: Sử dụng Google Fonts cho sans-serif hiện đại (Roboto) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #08204E 0%, #204B9B 100%);
+            /* Gradient xanh đậm như banner */
+            color: #FFFFFF;
+            line-height: 1.6;
+        }
+
+        /* Main Content (Form Đăng Ký) */
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            padding: 40px 20px;
+        }
+
+        .signup-form {
+            background: #FFFFFF;
+            /* Nền trắng như card */
+            border-radius: 8px;
+            /* Bo góc nhẹ */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            /* Shadow nhẹ như card */
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #08204E;
+            /* Xanh đậm */
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: #333333;
+            /* Màu đen/xám đậm */
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            /* Bo góc vừa phải */
+            font-size: 1rem;
+            color: #333333;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #4A89F5;
+            /* Xanh dương sáng như CTA */
+        }
+
+        .btn-signup {
+            width: 100%;
+            padding: 12px;
+            background: #000000;
+            /* Nền đen như nút CTA chính */
+            color: #FFFFFF;
+            border: none;
+            border-radius: 4px;
+            /* Bo góc vừa phải */
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-signup:hover {
+            background: #204B9B;
+            /* Xanh đậm khi hover */
+        }
+
+        .links {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666666;
+        }
+
+        .links a {
+            color: #4A89F5;
+            /* Xanh dương sáng */
+            text-decoration: none;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                /* Ẩn menu trên mobile */
+            }
+
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cta-buttons {
+                margin-top: 10px;
+            }
+
+            .signup-form {
+                padding: 20px;
+            }
+        }
+
+        .message-container {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .message-container.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-container.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Content: Form Đăng Ký -->
+    <main class="main-content">
+        <div class="signup-form">
+            <div class="form-title">Đăng Ký Tài Khoản</div>
+            <form id="signupForm">
+                <!-- Loại bỏ trường Tên đầy đủ -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="button" class="btn-signup" id="btnRegister">Đăng Ký</button>
+            </form>
+            <div class="links">
+                <a href="/login">Đã có tài khoản? Đăng nhập</a>
+            </div>
+            <div id="response" class="message-container"></div>
+        </div>
+    </main>
+    <script type="module" src="/js/utils/fetchApi.js"></script>
+    <script type="module" src="/js/utils/promiseHelper.js"></script>
+    <script type="module" src="/js/layout.js"></script>
+
+    <script type="module">
+        import { executeApiCall } from '/js/utils/api-helpers.js';
+        async function register() {
+            // 1. Lấy dữ liệu
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // 2. Client-side Validation cơ bản
+            if (!username || !email || !password || !confirmPassword) {
+                showMessage('Vui lòng nhập đầy đủ thông tin', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage('Mật khẩu và mật khẩu xác nhận không khớp.', 'error');
+                return;
+            }
+
+            // 3. Gọi API sử dụng hàm chung đã trừu tượng hóa (Ngắn gọn và dễ đọc hơn!)
+            const registrationPromise = fetchApi('/register', 'POST', { username, email, password });
+
+            const successAction = () => {
+                // Hành động chuyển trang sau 2 giây
+                setTimeout(() => window.location.href = '/login.html', 2000);
+            };
+
+            const result = await executeApiCall(
+                registrationPromise,
+                'Đăng ký thành công! Chuyển đến trang đăng nhập...',
+                successAction
+            );
+
+            // Ở đây, bạn có thể thực hiện các hành động tiếp theo nếu đăng ký thành công
+            if (result) {
+                console.log('Đăng ký thành công, nhận được dữ liệu:', result);
+            }
+        }
+        document.getElementById('btnRegister').addEventListener('click', register);
+
+        // async function register() {
+        //     const username = document.getElementById('username').value;
+        //     const email = document.getElementById('email').value;
+        //     const password = document.getElementById('password').value;
+        //     const confirmPassword = document.getElementById('confirmPassword').value;
+
+        //     // Validation cơ bản
+        //     if (!username || !email || !password || !confirmPassword) {
+        //         showMessage('Vui lòng nhập đầy đủ thông tin', 'error');
+        //         // XÓA DÒNG NÀY: triggerInputEvent(document.getElementById('password'));
+        //         return;
+        //     }
+
+        //     if (password !== confirmPassword) {
+        //         showMessage('Mật khẩu và mật khẩu xác nhận không khớp.', 'error');
+        //         // XÓA DÒNG NÀY: triggerInputEvent(document.getElementById('password'));
+        //         return;
+        //     }
+
+        //     // Sử dụng to() từ promiseHelper thay vì try-catch
+        //     const [error, data] = await to(
+        //         fetchApi('/register', 'POST', { username, email, password })
+        //     );
+
+        //     if (error) {
+        //         showMessage('Có lỗi xảy ra: ' + error.message, 'error');
+        //         return;
+        //     }
+
+        //     if (data.status === 'success') {
+        //         showMessage('Đăng ký thành công! Chuyển đến trang đăng nhập...', 'success');
+        //         setTimeout(() => window.location.href = '/login.html', 2000);
+        //     } else {
+        //         const errorMessage = data.message || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.';
+        //         showMessage(errorMessage, 'error');
+        //     }
+        // }
+    </script>
+</body>
+
+</html>
