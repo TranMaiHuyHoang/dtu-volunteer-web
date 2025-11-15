@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Hoạt Động - DTU Volunteer Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #F5F7FA;
+            color: #2D3748;
+            line-height: 1.6;
+        }
+
+
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* Activity Detail Card */
+        .activity-detail {
+            background: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .activity-banner {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, #08204E 0%, #4A89F5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .activity-content {
+            padding: 30px;
+        }
+
+        .activity-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #08204E;
+            margin-bottom: 15px;
+        }
+
+        .activity-organizer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #4A5568;
+        }
+
+        .organizer-badge {
+            background: #E6F0FF;
+            color: #2563EB;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .activity-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #F0F4F8;
+            color: #4A5568;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #08204E;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #4A89F5;
+        }
+
+        .description-text {
+            color: #4A5568;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .requirements-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .requirements-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #4A5568;
+        }
+
+        .requirements-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4A89F5;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #08204E;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: #E6F0FF;
+            color: #2563EB;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2D3748;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 10px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #4A5568;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4A89F5 0%, #2563EB 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Register Button */
+        .btn-register {
+            width: 100%;
+            background: #000000;
+            color: #FFFFFF;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-register:hover {
+            background: #204B9B;
+        }
+
+        .btn-register i {
+            font-size: 1.2rem;
+        }
+
+        /* Organizer Info */
+        .organizer-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #F7FAFC;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .organizer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #4A89F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .organizer-details {
+            flex: 1;
+        }
+
+        .organizer-name {
+            font-weight: 600;
+            color: #2D3748;
+            margin-bottom: 3px;
+        }
+
+        .organizer-role {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-banner {
+                height: 250px;
+                font-size: 2rem;
+            }
+
+            .activity-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Activity Detail -->
+        <div class="activity-detail">
+            <div class="activity-banner">
+                <i class="fa-solid fa-hands-holding-child"></i>
+            </div>
+            <div class="activity-content">
+                <a href="activity-detail.html" style="text-decoration: none; color: inherit;">
+                    <div class="activity-title">Teaching English to Underprivileged Children</div>
+                </a>
+                <div class="activity-organizer">
+                    <i class="fa-solid fa-building"></i>
+                    <span class="organizer-badge">DTU Education Initiative</span>
+                </div>
+
+                <div class="activity-tags">
+                    <span class="tag"><i class="fa-solid fa-graduation-cap"></i> Education</span>
+                    <span class="tag"><i class="fa-solid fa-child"></i> Children</span>
+                    <span class="tag"><i class="fa-solid fa-language"></i> English</span>
+                </div>
+
+                <div class="section-title">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Giới thiệu hoạt động
+                </div>
+                <p class="description-text">
+                    Chương trình dạy tiếng Anh miễn phí cho trẻ em có hoàn cảnh khó khăn tại khu vực ngoại ô Đà Nẵng. 
+                    Đây là cơ hội tuyệt vời để các bạn sinh viên DTU đóng góp kiến thức, rèn luyện kỹ năng sư phạm và 
+                    truyền cảm hứng học tập cho các em nhỏ.
+                </p>
+                <p class="description-text">
+                    Các tình nguyện viên sẽ được đào tạo về phương pháp giảng dạy trước khi triển khai lớp học. 
+                    Chúng tôi cung cấp tài liệu giảng dạy đầy đủ và hỗ trợ từ các giáo viên có kinh nghiệm.
+                </p>
+
+                <div class="section-title">
+                    <i class="fa-solid fa-list-check"></i>
+                    Yêu cầu tham gia
+                </div>
+                <ul class="requirements-list">
+                    <li>Có khả năng giao tiếp tiếng Anh cơ bản (IELTS 5.5+ hoặc tương đương)</li>
+                    <li>Yêu thích trẻ em và có trách nhiệm trong công việc</li>
+                    <li>Có thể cam kết tham gia ít nhất 8 buổi học (2 tháng)</li>
+                    <li>Tham gia buổi đào tạo định hướng trước khi bắt đầu</li>
+                    <li>Có laptop hoặc thiết bị hỗ trợ giảng dạy</li>
+                </ul>
+
+                <div class="section-title">
+                    <i class="fa-solid fa-gift"></i>
+                    Quyền lợi
+                </div>
+                <ul class="requirements-list">
+                    <li>Nhận chứng nhận tham gia hoạt động tình nguyện</li>
+                    <li>Tích lũy giờ tình nguyện cho hồ sơ cá nhân</li>
+                    <li>Rèn luyện kỹ năng sư phạm và giao tiếp</li>
+                    <li>Kết nối với cộng đồng tình nguyện DTU</li>
+                    <li>Hỗ trợ chi phí đi lại và ăn uống</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Quick Info -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Thông tin nhanh</h3>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fa-solid fa-calendar"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Thời gian</div>
+                        <div class="info-value">15/11/2025 - 15/01/2026</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Lịch học</div>
+                        <div class="info-value">Thứ 7 & CN, 14:00 - 16:00</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Địa điểm</div>
+                        <div class="info-value">Nhà văn hóa xã Hòa Phước, Đà Nẵng</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Tình nguyện viên</div>
+                        <div class="info-value">15/30 người</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>50% đã đăng ký</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-register" id="registerBtn">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Đăng ký tham gia
+                </button>
+            </div>
+
+            <!-- Organizer Info -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Ban tổ chức</h3>
+                <div class="organizer-info">
+                    <div class="organizer-avatar">
+                        DEI
+                    </div>
+                    <div class="organizer-details">
+                        <div class="organizer-name">DTU Education Initiative</div>
+                        <div class="organizer-role">Verified Organizer</div>
+                    </div>
+                </div>
+                <div class="info-item" style="margin-top: 15px;">
+                    <div class="info-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Liên hệ</div>
+                        <div class="info-value">education@dtu.edu.vn</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+    <script type="module" src="/js/layout.js"></script>
+    <script>
+        // Xử lý nút đăng ký
+        document.getElementById('registerBtn').addEventListener('click', function() {
+            // Kiểm tra xem user đã đăng nhập chưa (giả định)
+            const isLoggedIn = false; // Thay bằng logic kiểm tra thực tế
+            
+            if (!isLoggedIn) {
+                alert('Vui lòng đăng nhập để đăng ký hoạt động!');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Hiển thị form đăng ký (có thể là modal hoặc chuyển trang)
+            if (confirm('Bạn có chắc chắn muốn đăng ký tham gia hoạt động này?')) {
+                // Gửi request đến backend
+                alert('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.');
+                
+                // Cập nhật UI
+                this.innerHTML = '<i class="fa-solid fa-check"></i> Đã đăng ký';
+                this.style.background = '#10B981';
+                this.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>
