@@ -12,12 +12,13 @@
         <div id="status"></div>
     </main>
     
-    <script type="module" src="/js/utils/authUI.js"></script>
+    <!-- <script type="module" src="/js/utils/authUI.js"></script> -->
     <script type="module" src="/js/utils/fetchApi.js"></script>
     <script type="module" src="/js/layout.js"></script>
 
 
     <script type="module">
+        import { showLoggedInUI, redirectAfterLogin } from '/js/utils/authUI.js';
         async function redirectAfterSuccess() {
             // Token đã được lưu vào cookie (httpOnly) khi googleCallback redirect
             // Không cần gọi API để lấy token nữa

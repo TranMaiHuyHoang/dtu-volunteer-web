@@ -1,3 +1,4 @@
+import { showMessage } from './message.js';
 /**
  * Auth UI - Quản lý header navigation và redirect sau login
  */
@@ -61,7 +62,7 @@ function createNavLink({ href = '#', text = '', className = '', onClick = null, 
 function renderHeader(isLoggedIn) {
     clientLog('info', `Rendering header. Logged in: ${isLoggedIn}`);
     const navContainer = document.querySelector('.nav-links[data-nav-container]');
-    if (!navContainer)  {
+    if (!navContainer) {
         clientLog('error', 'KHÔNG TÌM THẤY NAV CONTAINER. (Header inject chưa hoàn thành?)');
         return;
     }
@@ -110,14 +111,14 @@ function renderHeader(isLoggedIn) {
     // Gộp mảng link
     const allLinks = [...commonLinks, ...authLinks];
 
-try {
+    try {
         allLinks.forEach((item) => {
             const link = createNavLink(item);
             navContainer.appendChild(link);
         });
-        
+
         clientLog('info', `Header navigation rendered. Logged in: ${isLoggedIn}`); // Giờ log này sẽ chạy
-    
+
     } catch (error) {
         clientLog('error', 'LỖI RENDERING NAV LINKS: ' + error.message);
     }
@@ -141,11 +142,10 @@ function toggleAuthElements(isLoggedIn) {
 
 // Cập nhật UI dựa trên trạng thái đăng nhập
 async function refreshAuthUI() {
-    clientLog('info', 'Gọi refreshAuthUI() - Cập nhật UI dựa trên trạng thái đăng nhập.');
     const isLoggedIn = await checkAuthStatus();
     renderHeader(isLoggedIn);
     toggleAuthElements(isLoggedIn);
-    if (isLoggedIn === false) { 
+    if (isLoggedIn === false) {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('logout') === 'success') {
             showMessage('Bạn đã đăng xuất thành công.', 'success', 'response');
@@ -162,7 +162,7 @@ async function refreshAuthUI() {
     //     // PHẢI ĐẢM BẢO CHỈ GỌI MỘT LẦN VÀ CHỈ KHI CẦN.
     //     showMessage('Bạn đã đăng xuất thành công.', 'success', 'response');
     // }
-    
+
     clientLog('info', `Auth UI updated. Status: ${isLoggedIn ? 'LoggedIn' : 'LoggedOut'}`); // GIỮ LOG KẾT THÚC VỚI TRẠNG THÁI
     return isLoggedIn;
 }
@@ -191,35 +191,60 @@ function setRedirectURL(url) {
     }
 }
 
-// Redirect sau login - Lưu và khôi phục URL trang trước đó
+
+function isReferrerExcluded(referrer) {
+    // Định nghĩa các đường dẫn cần loại trừ (dễ bảo trì hơn)
+    const EXCLUDED_PATHS = ['/login', '/auth/google'];
+
+    // Kiểm tra xem referrer có chứa bất kỳ đường dẫn loại trừ nào không
+    return EXCLUDED_PATHS.some(path => referrer.includes(path));
+}
+
+/**
+ * Lưu một URL cụ thể vào sessionStorage để chuyển hướng sau khi đăng nhập.
+ * Nếu referrer là URL hợp lệ và cùng domain với trang hiện tại, và chưa có redirect được lưu,
+ * thì lưu lại referrer vào sessionStorage.
+ * @param {string} [url] - Đường dẫn tuyệt đối hoặc tương đối để lưu.
+ */
 function saveRedirectURL(url = null) {
     setRedirectURL(url);
 
     const referrer = document.referrer; // Trang mà người dùng đến từ
     const redirectKey = 'redirectAfterLogin'; // Tên khóa lưu trong sessionStorage
+    const currentRedirect = sessionStorage.getItem(redirectKey);
 
-    // Kiểm tra điều kiện hợp lệ cho referrer
-    const isReferrerValid = referrer &&
-        !referrer.includes('/login') &&
-        !referrer.includes('/auth/google');
+    // Thoát nếu đã có giá trị lưu
+    if (currentRedirect) {
+        console.log('[Redirect] Đã có redirect lưu, không ghi đè:', currentRedirect);
+        return;
+    }
 
-    if (isReferrerValid) {
-        try {
-            const referrerUrl = new URL(referrer);
+    // 1. Guard Clause: Thoát nếu KHÔNG CÓ referrer
+    if (!referrer) {
+        console.log('[Redirect] Không có referrer, không lưu.');
+        return;
+    }
 
-            const isSameDomain = referrerUrl.origin === window.location.origin;
-            const hasRedirectSaved = !!sessionStorage.getItem(redirectKey);
+    // 2. Guard Clause: Thoát nếu referrer BỊ LOẠI TRỪ (đã kiểm tra có referrer ở trên)
+    if (isReferrerExcluded(referrer)) {
+        console.log('[Redirect] Referrer bị loại trừ, không lưu:', referrer);
+        return;
+    }
 
-            // Nếu referrer cùng domain và chưa có redirect được lưu thì lưu lại
-            if (isSameDomain && !hasRedirectSaved) {
-                const redirectPath = referrerUrl.pathname + referrerUrl.search;
-                sessionStorage.setItem(redirectKey, redirectPath);
-            }
+    try {
+        const referrerUrl = new URL(referrer);
 
-        } catch (error) {
-            // Nếu referrer không phải là URL hợp lệ thì bỏ qua
-            console.warn('Invalid referrer URL, skipping redirect save.');
+        const isNotSameDomain = referrerUrl.origin !== window.location.origin;            
+        if (isNotSameDomain) {
+            console.log('[Redirect] Referrer khác domain, không lưu:', referrer);
+            return;
         }
+        const redirectPath = referrerUrl.pathname + referrerUrl.search;
+        sessionStorage.setItem(redirectKey, redirectPath);
+
+    } catch (error) {
+        // Nếu referrer không phải là URL hợp lệ thì bỏ qua
+        console.warn('Invalid referrer URL, skipping redirect save.');
     }
 }
 

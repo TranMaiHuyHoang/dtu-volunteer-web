@@ -3,56 +3,6 @@ import { clientLog } from './clientLogger.js';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 
-const notyf = new Notyf();
-
-notyf.success('Test notification');
-
-// // --- Load Notyf CSS nếu chưa load ---
-// (function loadNotyfCSS() {
-//     if (document.querySelector('link[data-notyf-css]')) return;
-
-//     const link = document.createElement('link');
-//     link.rel = 'stylesheet';
-//     link.href = "https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css";
-//     link.setAttribute('data-notyf-css', 'true');
-//     document.head.appendChild(link);
-// })();
-
-// // --- Load Notyf JS (UMD) nếu chưa load ---
-// (function loadNotyfJS() {
-//     if (window.Notyf) return; // đã load rồi
-
-//     const script = document.createElement('script');
-//     script.src = "https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js";
-//     script.onload = () => console.log("Notyf loaded");
-//     document.head.appendChild(script);
-// })();
-
-
-
-// // Load Notyf CSS
-// (function () {
-//     if (document.querySelector('link[data-notyf-css]')) return;
-
-//     const link = document.createElement('link');
-//     link.rel = 'stylesheet';
-//     link.href = "https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css";
-//     link.setAttribute('data-notyf-css', 'true');
-//     document.head.appendChild(link);
-// })();
-
-// // Load Notyf UMD bundle
-// (function () {
-//     if (window.Notyf) return; // Đã load rồi
-
-//     const script = document.createElement('script');
-//     script.src = "https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js";
-//     script.onload = () => console.log("Notyf loaded");
-//     document.head.appendChild(script);
-// })();
-
-
-
 let notifyInstance;
 
 function initNotify() {
@@ -61,6 +11,21 @@ function initNotify() {
         notifyInstance = new Notyf({
             duration: 5000,
             position: { x: 'right', y: 'top' },
+            dismissible: true,
+            // *** THÊM CẤU HÌNH CHO TYPE 'info' ***
+            types: [
+                // Loại Info (thường dùng màu xanh dương)
+                {
+                    type: 'info', 
+                    background: '#2196F3', // Màu xanh dương chuẩn
+                },
+                // Bạn cũng nên định nghĩa lại 'warning'
+                { 
+                    type: 'warning', 
+                    background: '#FFC107', // Màu vàng cảnh báo
+                    icon: false 
+                },
+            ]
         });
     }
 }

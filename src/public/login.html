@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng Nhập - DTU Volunteer</title>
-    
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -221,15 +221,13 @@
     </main>
 
     <!-- <script type="module" src="/js/utils/message.js"></script> -->
-    <script type="module" src="/js/utils/authUI.js"></script>
     <script type="module" src="/js/layout.js"></script>
 
     <script type="module">
         import { fetchApi } from '/js/utils/fetchApi.js';
-        import { to } from '/js/utils/promiseHelper.js';
         import { showMessage } from '/js/utils/message.js';
         import { saveRedirectURL, showLoggedInUI, } from '/js/utils/authUI.js';
-        
+        import { executeApiCall } from '/js/utils/apiExecutor.js';
         // Make fetchApi available globally if needed by other scripts
         window.fetchApi = fetchApi;
 
@@ -250,12 +248,30 @@
         // Xử lý click vào link Google OAuth
         function handleGoogleLogin(event) {
             event.preventDefault();
-            if (typeof saveRedirectURL === 'function') {
-                saveRedirectURL();
-            }
-            window.location.href = '/auth/google';
+            saveRedirectURL();
+            showMessage('Đang chuyển hướng đến trang xác thực Google...', 'info');
+
+            // Tùy chọn: Thêm một độ trễ nhỏ để người dùng kịp đọc thông báo
+            setTimeout(() => {
+                window.location.href = '/auth/google';
+            }, 500); // Đợi 0.5 giây 
         }
 
+        function handleSuccessfulLogin() {
+            // 1. Cập nhật UI (nếu hàm tồn tại)
+            if (typeof showLoggedInUI === 'function') {
+                showLoggedInUI();
+            }
+
+            // 2. Xử lý chuyển hướng sau 1 giây
+            setTimeout(() => {
+                if (typeof redirectAfterLogin === 'function') {
+                    redirectAfterLogin();
+                } else {
+                    window.location.href = '/';
+                }
+            }, 1000);
+        }
         async function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -265,39 +281,11 @@
                 return;
             }
 
-            // Sử dụng to() từ promiseHelper thay vì try-catch
-            const [error, data] = await to(
-                fetchApi('/login', 'POST', { email, password })
-            );
+            const promise = fetchApi('/login', 'POST', { email, password });
+            const successMessage = 'Đăng nhập thành công! Đang chuyển hướng...';
 
-            if (error) {
-                showMessage('Có lỗi xảy ra: ' + error.message, 'error');
-                return;
-            }
-            function handleSuccessfulLogin() {
-                // 1. Cập nhật UI (nếu hàm tồn tại)
-                if (typeof showLoggedInUI === 'function') {
-                    showLoggedInUI();
-                }
-
-                showMessage('Đăng nhập thành công! Đang chuyển hướng...', 'success');
-
-                // 3. Xử lý chuyển hướng sau 1 giây
-                setTimeout(() => {
-                    if (typeof redirectAfterLogin === 'function') {
-                        redirectAfterLogin();
-                    } else {
-                        window.location.href = '/';
-                    }
-                }, 1000);
-            }
-
-            if (data.status === 'success') {
-                handleSuccessfulLogin();
-            } else {
-                const errorMessage = data.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
-                showMessage(errorMessage, 'error');
-            }
+            // 💡 SỬ DỤNG HÀM MỚI
+            await executeApiCall(promise, successMessage, handleSuccessfulLogin);
         }
     </script>
 </body>
