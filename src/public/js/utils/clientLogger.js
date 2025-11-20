@@ -5,15 +5,22 @@ const MAX_BATCH = 10;
 const FLUSH_INTERVAL = 2000; // 2 giây
 
 export function clientLog(level = 'info', message = '') {
+
+  const originalLevel = level.toLowerCase();
+  let consoleMethod = originalLevel;
+  if (originalLevel === 'success' || !console[originalLevel]) {
+        consoleMethod = 'info'; 
+    }
   const logEntry = {
-    level: level.toLowerCase(),
+    level: originalLevel,
     message,
     url: window.location.href,
     timestamp: new Date().toISOString(),
   };
 
   // Hiển thị ngay console
-  console[logEntry.level]?.(`[CLIENT-${logEntry.level.toUpperCase()}] ${logEntry.message}`, logEntry);
+  // console[logEntry.level]?.(`[CLIENT-${logEntry.level.toUpperCase()}] ${logEntry.message}`, logEntry);
+  console[consoleMethod]?.(`[CLIENT-${originalLevel.toUpperCase()}] ${logEntry.message}`, logEntry);
 
   // Thêm vào queue gửi server
   logQueue.push(logEntry);

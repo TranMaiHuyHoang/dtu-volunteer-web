@@ -1,6 +1,5 @@
 import Record from '../models/record.model.js';
 import { BadRequestError, NotFoundError, ConflictError } from '../errors/customError.js';
-
 const buildSearchFilter = (q) => {
 	if (!q) return {};
 	const regex = { $regex: q, $options: 'i' };

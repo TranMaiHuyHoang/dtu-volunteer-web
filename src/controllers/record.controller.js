@@ -3,7 +3,7 @@ import recordService from '../services/record.service.js';
 const createRecord = async (req, res, next) => {
 	try {
 		const created = await recordService.createRecord(req.body);
-		res.status(201).json({ message: 'Tạo hồ sơ thành công', data: created });
+		res.status(201).json({ status: "success", message: 'Tạo hồ sơ thành công', data: created });
 	} catch (err) { next(err); }
 };
 
@@ -22,10 +22,11 @@ const getRecord = async (req, res, next) => {
 	} catch (err) { next(err); }
 };
 
+
 const updateRecord = async (req, res, next) => {
 	try {
 		const updated = await recordService.updateRecord(req.params.id, req.body);
-		res.json({ message: 'Cập nhật hồ sơ thành công', data: updated });
+		res.json({ status: "success", message: 'Cập nhật hồ sơ thành công..', data: updated });
 	} catch (err) { next(err); }
 };
 

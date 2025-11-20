@@ -10,7 +10,9 @@
     "dev:server": "nodemon src/index.js",
     "dev:client": "vite",
     "build": "vite build",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix"
   },
   "jest": {
     "testEnvironment": "jsdom"

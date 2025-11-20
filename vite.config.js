@@ -4,6 +4,7 @@ import { readdirSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { URL } from 'url';
 import path from 'path';
+import urlConfig  from './src/config/urlConfig.js';
 
 const currentDir = fileURLToPath(new URL('.', import.meta.url));
 console.log('📁 [CONFIG] Current directory:', currentDir);
@@ -82,7 +83,7 @@ export default defineConfig({
     middlewareMode: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: urlConfig.baseUrl,
         changeOrigin: true
       }
     }

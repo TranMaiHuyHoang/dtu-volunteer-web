@@ -14,7 +14,7 @@ const logout = function logout(redirectUrl = '/login.html') {
     
     clientLog('info', 'Đang logout, redirect về:', redirectUrl);
     handleLogout(redirectUrl, containerId);
-}
+};
 
 
 

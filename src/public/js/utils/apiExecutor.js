@@ -9,27 +9,26 @@ import { to } from './promiseHelper.js';
  * @param {function} successAction - Hành động thực hiện khi thành công (ví dụ: chuyển trang).
  * @returns {object|null} - Trả về data (khi thành công) hoặc null (khi thất bại).
  */
-async function executeApiCall(promise, successMessage, successAction) {
+async function executeApiCall(promise, successAction, successMessage = '') {
     // 1. Bắt lỗi mạng/hệ thống (error)
     const [error, data] = await to(promise);
-
     if (error) {
-        showMessage('Có lỗi xảy ra: ' + error.message, 'error');
+        // error lúc này có thể là:
+        // - Lỗi mạng (Network Error)
+        // - Lỗi HTTP 4xx/5xx (ví dụ: 'Lỗi HTTP 401: Token expired')
+        const errorMessage = error.message || 'Lỗi không xác định đã xảy ra.';
+        showMessage('Có lỗi xảy ra: ' + errorMessage, 'error');
         return null;
     }
 
     // 2. Xử lý thành công về mặt nghiệp vụ
-    if (data.status === 'success') {
-        showMessage(successMessage, 'success');
-        if (successAction) successAction(data);
-        return data;
-    } 
+    // Không cần kiểm tra data.status === 'success' vì nếu không có lỗi,
+    // thì HTTP Status phải là 2xx, tức là thành công theo tiêu chuẩn.
     
-    // 3. Xử lý thất bại về mặt nghiệp vụ
-    else {
-        const errorMessage = data.message || 'Thao tác thất bại. Vui lòng kiểm tra lại thông tin.';
-        showMessage(errorMessage, 'error');
-        return null;
-    }
+    // Sử dụng successMessage tùy chọn nếu có, hoặc dùng data.message từ server
+    const serverMessage = successMessage || data.message || 'Thao tác thành công.';
+    showMessage(serverMessage, 'success');
+    
+    if (successAction) successAction(data);
 }
 export { executeApiCall };

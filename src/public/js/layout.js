@@ -5,7 +5,6 @@ import { clientLog } from './utils/clientLogger.js';
 import { loadMissingStylesheets } from './layout/dom-utils.js';
 import { setupPageLayoutElements } from './layout/layout-creator.js';
 import { updatePartialsLayout } from './layout/layout-loader.js';
-clientLog('info', 'layout.js loaded');
 
 
 
@@ -21,7 +20,6 @@ async function loadLayout() {
 
 // Khởi tạo layout sau khi message.js load xong
 function initLayout() {
-    clientLog('info', 'Initializing layout...');
     loadMissingStylesheets();
 
     // Nếu DOM đã sẵn sàng, load ngay; nếu chưa, đợi DOMContentLoaded

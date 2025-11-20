@@ -266,5 +266,5 @@ export {
     showLoggedInUI,
     showLoggedOutUI,
     setRedirectURL,
-}
+};
 

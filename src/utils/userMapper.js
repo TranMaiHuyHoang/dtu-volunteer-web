@@ -7,7 +7,7 @@ const formatUserInfo = (user, provider = 'local') => {
        ...baseInfo,
        provider,
    };
-}
+};
 
 const getBaseInfo = (user) => {
   const userRole = user.role || 'volunteer';
@@ -16,11 +16,11 @@ const getBaseInfo = (user) => {
     email: user.email,
     role: userRole,
   };
-}
+};
 
 const getProviderId = (user, provider) => {
   return provider === 'google' ? user.googleId : user.id;
-}
+};
 
 const mapUserData = (user, provider = 'local') => {
   // Các trường chung

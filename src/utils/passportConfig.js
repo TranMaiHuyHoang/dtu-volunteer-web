@@ -7,21 +7,23 @@ import googleVerifyCallback from '../services/passportVerify.js';
 import logger from '../config/logger.js';
 const { info, debug } = logger;
 
-import 'dotenv/config'; 
+import 'dotenv/config';
+import urlConfig from '../config/urlConfig.js';
 
+const GOOGLE_CALLBACK_PATH = "/auth/google/callback";
 
 // SỬA LỖI: Gọi passport.use() thay vì use()
-passport.use(new GoogleStrategy({ 
+passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/callback",
+    callbackURL: `${urlConfig.baseUrl}${GOOGLE_CALLBACK_PATH}`,
 }, googleVerifyCallback)
 );
 
 // SỬA LỖI: Gọi passport.serializeUser()
 passport.serializeUser((user, done) => {
     info(`Serializing user with ID: ${user.id}`);
-    debug('User data being serialized: ' + JSON.stringify(user, null, 2));  
+    debug('User data being serialized: ' + JSON.stringify(user, null, 2));
     done(null, user.id);
 });
 

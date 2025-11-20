@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 import { getUserFinance, addTransaction } from '../controllers/finance.controller';
-import { verifyToken, permit } from '../middlewares/jwt-auth.middleware.js';
+import { verifyToken } from '../middlewares/jwt-auth.middleware.js';
 
 /**
  * @swagger

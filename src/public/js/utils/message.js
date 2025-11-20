@@ -36,15 +36,33 @@ export function getNotyf() {
     return notifyInstance;
 }
 
+/**
+ * Ánh xạ cấp độ log không chuẩn (như 'success') sang cấp độ chuẩn (như 'info') 
+ * trước khi gọi clientLog để tránh lỗi 'Unknown logger level' trên server.
+ * * @param {string} type - Cấp độ log ban đầu ('success', 'error', 'info', v.v.).
+ * @param {string} message - Nội dung thông báo.
+ */
+function safeClientLog(type, message) {
+    let messageType = type.toLowerCase();
+    
+    // Ánh xạ 'success' thành 'info' cho Server Log (Winston)
+    if (messageType === 'success') {
+        messageType = 'info';
+    }
+    
+    // Ghi Log
+    clientLog(messageType, message);
+}
 
-// Hàm chính để hiển thị thông báo
-function showMessage(message, type = 'error') {
+// Hàm chính để hiển thị thông báo //type = 'error'
+function showMessage(message, type = 'info') {
     try {
         const notify = getNotyf();
         
         // Ghi log
-        clientLog('info', `[${type.toUpperCase()}] ${message}`);
-        
+        //Test:        //--
+        safeClientLog(type, message);
+        clientLog('info', `Hiển thị thông báo [${type}]: ${message}`);
         // Hiển thị thông báo theo loại
         switch(type.toLowerCase()) {
             case 'success':

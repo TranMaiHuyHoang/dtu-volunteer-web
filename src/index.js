@@ -33,6 +33,9 @@ import httpLogger from './middlewares/httpLogger.middleware.js';
 import path from 'path';
 import ViteExpress from 'vite-express';
 
+//env config
+import urlConfig  from './config/urlConfig.js';
+//
 config();
 const app = express();
 // Định nghĩa lại __filename và __dirname cho ES Modules
@@ -151,7 +154,7 @@ const connectToMongoDB = async () => {
         // **Quan trọng:** Ném lỗi ra ngoài để hàm gọi (.catch) hoặc process (nếu không có .catch) biết và xử lý tiếp (ví dụ: thoát ứng dụng, thử lại,...)
         throw error; 
     }
-}
+};
 connectToMongoDB().catch((err) => {
     _error("Application cannot start without database connection.");
     // Có thể thêm: process.exit(1); nếu lỗi DB là lỗi nghiêm trọng cần dừng ứng dụng.
@@ -162,10 +165,9 @@ ViteExpress.config({
   printViteDevServerHost: true  // ✅ In ra thông tin Vite server
 });
 
-
 ViteExpress.listen( app,PORT, () => {
-    info(`Server running on http://localhost:${PORT}`);
-    info(`Docs có sẵn tại: http://localhost:${PORT}${swaggerEndpoint}`);
+    info(`Server running on ${urlConfig.baseUrl}`);
+    info(`Docs có sẵn tại: ${urlConfig.baseUrl}${swaggerEndpoint}`);
 });
 
 

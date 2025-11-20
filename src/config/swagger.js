@@ -5,6 +5,8 @@ const __filename = fileURLToPath(import.meta.url); // Lấy path của file hi�
 const __dirname = dirname(__filename);          // Lấy thư mục /config
 const srcRoot = dirname(__dirname);             // Lấy thư mục /src
 // Cấu hình cơ bản của OpenAPI (Swagger)
+
+import urlConfig  from './urlConfig.js';
 const options = {
     definition: {
         openapi: '3.0.0', // Phiên bản OpenAPI
@@ -15,7 +17,7 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:3000/', // URL cơ sở của API
+                url: urlConfig.baseUrl, // URL cơ sở của API
             },
         ],
     },

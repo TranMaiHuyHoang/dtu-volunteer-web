@@ -61,7 +61,7 @@
 	<script type="module">
 		import { showMessage } from '/js/utils/message.js';
 		import { fetchApi } from '/js/utils/fetchApi.js';
-
+		import { executeApiCall } from '/js/utils/apiExecutor.js';
 		let editingId = null;
 
 		const el = (id) => document.getElementById(id);
@@ -101,6 +101,7 @@
 					<td style=\"padding: 8px;\">${p.email || ''}</td>
 					<td style=\"padding: 8px;\">${p.phone || ''}</td>
 					<td style=\"padding: 8px;\">${p.address || ''}</td>
+					<td style=\"display: none;\">${p.notes || ''}</td>
 					<td style=\"padding: 8px;\">
 						<button data-edit=\"${p._id}\" class=\"btn\">Sửa</button>
 						<button data-delete=\"${p._id}\" class=\"btn btn-danger\">Xóa</button>
@@ -121,25 +122,56 @@
 		}
 
 		async function submitForm() {
-			try {
-				const payload = getFormData();
-				if (!payload.name || !payload.email) {
-					showMessage('Vui lòng nhập Họ tên và Email', 'error', 'response');
-					return;
-				}
-				if (editingId) {
-					await fetchApi(`/records/${editingId}`, 'PUT', payload, '', { useSession: true });
-					showMessage('Cập nhật thành công', 'success', 'response');
-				} else {
-					await fetchApi('/records', 'POST', payload, '', { useSession: true });
-					showMessage('Tạo hồ sơ thành công', 'success', 'response');
-				}
-				resetForm();
-				await loadRecords(el('searchInput').value.trim());
-			} catch (err) {
-				showMessage(err.message || 'Thao tác thất bại', 'error', 'response');
+			const payload = getFormData();
+
+			// 1. Kiểm tra đầu vào phía client (vẫn giữ lại)
+			if (!payload.name || !payload.email) {
+				showMessage('Vui lòng nhập Họ tên và Email', 'error', 'response');
+				return;
 			}
+
+			let apiPromise;
+
+			if (editingId) {
+				// Cập nhật (PUT)
+				apiPromise = fetchApi(`/records/${editingId}`, 'PUT', payload, '', { useSession: true });
+			} else {
+				// Tạo mới (POST)
+				apiPromise = fetchApi('/records', 'POST', payload, '', { useSession: true });
+			}
+
+			// 2. Sử dụng executeApiCall để xử lý toàn bộ logic gọi API và hiển thị thông báo
+			const result = await executeApiCall(
+				apiPromise,
+				async (data) => {
+							resetForm();
+							await loadRecords(el('searchInput').value.trim());
+				}
+			);
+
+			// Không cần try...catch lớn nữa
+			// Lỗi (error) và Thất bại (data.status != 'success') đã được xử lý bên trong executeApiCall
 		}
+		// async function submitForm() {
+		// 	try {
+		// 		const payload = getFormData();
+		// 		if (!payload.name || !payload.email) {
+		// 			showMessage('Vui lòng nhập Họ tên và Email', 'error', 'response');
+		// 			return;
+		// 		}
+		// 		if (editingId) {
+		// 			await fetchApi(`/records/${editingId}`, 'PUT', payload, '', { useSession: true });
+		// 			showMessage('Cập nhật thành công', 'success', 'response');
+		// 		} else {
+		// 			await fetchApi('/records', 'POST', payload, '', { useSession: true });
+		// 			showMessage('Tạo hồ sơ thành công', 'success', 'response');
+		// 		}
+		// 		resetForm();
+		// 		await loadRecords(el('searchInput').value.trim());
+		// 	} catch (err) {
+		// 		showMessage(err.message || 'Thao tác thất bại', 'error', 'response');
+		// 	}
+		// }
 
 		async function deleteItem(id) {
 			if (!confirm('Xóa hồ sơ này?')) return;
@@ -160,7 +192,7 @@
 			el('email').value = tds[1].innerText;
 			el('phone').value = tds[2].innerText;
 			el('address').value = tds[3].innerText;
-			el('notes').value = '';
+			el('notes').value = tds[4].innerText;
 			editingId = id;
 			el('formTitle').innerText = 'Sửa hồ sơ';
 			el('btnCancelEdit').style.display = 'inline-block';

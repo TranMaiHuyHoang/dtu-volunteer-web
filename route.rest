@@ -126,3 +126,14 @@ Authorization: Bearer {{userToken}}
     "date": "2024-12-15T09:00:00Z",
     "capacity": 50
 }
+
+###
+
+POST {{baseUrl}}/records
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "name": "123131@@@",
+    "email": "Tình nguyện viên sự kiện"
+}

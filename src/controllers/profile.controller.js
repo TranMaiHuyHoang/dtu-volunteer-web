@@ -31,7 +31,7 @@ const getProfile = async (req, res, next) => {
 const updateProfile = async (req, res, next) => {
 	try {
 		const updated = await profileService.updateProfile(req.params.id, req.body);
-		res.json({ message: 'Cập nhật hồ sơ thành công', data: updated });
+		res.json({ status: 'success', message: 'Cập nhật hồ sơ thành công', data: updated });
 	} catch (err) {
 		next(err);
 	}
