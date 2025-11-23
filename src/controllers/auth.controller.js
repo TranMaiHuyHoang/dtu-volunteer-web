@@ -30,11 +30,23 @@ const handleLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         info(`Yêu cầu đăng nhập từ email: ${email}`);
-        
-        const { user: userData, token } = await loginUser(email, password);
+        const result = await loginUser(email, password);
+
+        if (!result || !result.user) {
+            throw new Error('loginUser() trả về không có user.');
+        }
+
+        const { user: userData, token } = result;
         info(`Đăng nhập thành công: ${email}`);
-        req.session.userId = userData.id;
+        info(`RAW LOGIN RESULT: ${JSON.stringify(userData, null, 2)}`); // bắt buộc in rõ object
+
+        const userId = userData.id;
         
+        // req.session.userId = userData.id;
+        
+        req.session.userId = userId;
+
+
         // Lưu token vào cookie (httpOnly, secure)
         setAccessTokenCookie(res, token);
         
@@ -62,8 +74,10 @@ const googleCallback = async (req, res, next) => {
     // Lưu token vào cookie
     setAccessTokenCookie(res, token);
     
+    const userId = userData.id;
     // Tạo session với userId (để logout)
-    req.session.userId = userData.id;
+    // req.session.userId = userData.id;
+    req.session.userId = userId;
     debug(`Session được tạo: User ID: ${userData.id} | Session ID: ${req.session.id}`);
     
     // Redirect thẳng về trang chủ (không cần trang success trung gian)

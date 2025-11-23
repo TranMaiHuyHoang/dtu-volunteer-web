@@ -72,7 +72,7 @@
 
         async function getProfile() {
             const [error, data] = await to(
-                fetchApi('/profile', 'GET', null, '', { useSession: true })
+                fetchApi('/profile', 'GET', null, { useSession: true })
             );
             
             if (error) {

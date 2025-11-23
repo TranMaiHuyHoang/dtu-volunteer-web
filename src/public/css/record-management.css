@@ -1,0 +1,493 @@
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 25px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.06);
+    margin-bottom: 25px;
+    box-sizing: border-box;
+}
+
+.input{
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.btn {
+    padding: 0 20px;
+    border: none;   
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn-primary { 
+    background: linear-gradient(135deg, #4338ca, #2563eb);
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 18px;
+    /* Tăng kích thước padding cho nút chính */
+    font-size: 14px;
+    /* Tăng kích thước font cho nút chính */
+}
+
+.btn-primary:hover {
+    background: #7392e8; /* Màu nền sáng hơn khi hover */
+    
+}
+.btn-secondary{
+    background: #2563eb;
+    color: #fff;
+    font-weight: 500;
+    padding: 10px 18px;
+}
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+.btn-danger { 
+    background: #dc2626;
+    color: #fff;
+}
+
+.btn-edit i,
+.btn-delete i {
+    margin-right: 6px;
+    /* Thêm khoảng cách giữa biểu tượng và văn bản */
+    font-size: 14px;
+    /* Kích thước font cho biểu tượng */
+}
+
+.btn-edit {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    background: #2563eb;
+    color: white;
+}
+
+.btn-delete {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    background: #dc2626;
+    color: white;
+}
+
+
+.btn-edit i,
+.btn-delete i {
+    margin-right: 6px; /* Thêm khoảng cách giữa biểu tượng và văn bản */
+    font-size: 14px; /* Kích thước font cho biểu tượng */
+
+}
+.btn-delete:hover { /* Hiệu ứng hover cho nút xóa */
+    background: #b91c1c;
+}
+
+.search-input{
+    padding: 12px 22px;        
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+
+table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    font-size: 14px;
+}
+
+.center-table {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.table-container {
+    background: #fff;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    width: 100%;
+    overflow-x: auto;
+    box-sizing: border-box;
+}
+.table-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+
+
+/* Header bảng */
+th {
+    background: #f1f5f9;
+    font-weight: 600;
+}
+
+td,
+th {
+    padding: 12px;
+    font-size: 14px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background 0.25s ease;
+    background: #eef2ff;
+}
+
+tr:hover {
+    background: #f9fafb;
+}
+
+/* Căn giữa cột thao tác */
+td:last-child {
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Bo góc cho header bảng */
+thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.search-row {
+    display: flex;
+    gap: 10px; 
+    margin-bottom: 20px; 
+    align-items: center;
+    padding: 0 5px; 
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto 20px auto !important;
+}
+.search-row input {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+    width: 260px; 
+    flex: 1;
+}
+
+.title-page {
+    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    -webkit-background-clip: text; /* Chỉ áp dụng gradient cho văn bản */
+    -webkit-text-fill-color: transparent;
+    font-size: 26px;
+    font-weight: bold;
+    color: transparent;
+    margin-bottom: 20px;
+}
+
+/* Chỉnh cho icon năm bên trong input */
+.input-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px !important;
+    
+
+}
+.input-group.textarea-group { 
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    box-sizing: border-box;
+}
+
+.input-group i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 20px;
+    line-height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 3 rem !important;
+    
+}
+
+.input-group .input {
+    width: 100%;
+    height: 32px;
+    padding: 6px 12px 6px 40px; 
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.textarea-group i {
+    top: 18px !important; 
+    transform: none !important; 
+}
+
+.textarea-group textarea {
+    height: 90px;
+    min-height: 90px; /* giữ cố định */
+    padding: 10px 12px 10px 40px;
+}
+
+.section {
+    width: 100%;
+}
+.container {
+    width: 100%;
+    max-width: 1000px;  
+    margin: 20px auto;
+    padding: 20px 25px;
+    box-sizing: border-box;
+}
+.pagination-wrapper {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rows-per-page select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination button {
+    padding: 6px 12px;
+    border: none;
+    background: #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.pagination button.active {
+    background: #2563eb;
+    color: white;
+}
+
+.pagination button:hover {
+    background: #d1d5db;
+}
+
+/* Đảm bảo chiều cao dòng đồng nhất và tự co giãn */
+table td, table th {
+    padding: 12px 14px;
+    vertical-align: middle;
+    white-space: nowrap;   
+}
+
+tbody tr {
+    background: #eef2ff;
+}
+
+tbody tr:hover {
+    background: #e0e7ff;
+}
+
+td:last-child {
+    white-space: nowrap;
+}
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding: 0 4px;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.section, .card, .table-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;   
+}
+
+
+.section.card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+    max-width: 1000px;
+    margin: 0 auto 32px auto !important;
+    margin-bottom: 24px !important;
+    padding: 24px 28px !important;
+}
+
+.section.card .input-group .input,
+.section.card textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card {
+    margin-bottom: 40px !important;
+}
+
+#app {
+    width: 100%;
+    max-width: none !important;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.section.card, .table-container {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.table-container, .table-container table {
+    max-width: 1000px !important;
+    width: 100% !important;
+}
+
+/* chỉnh kích thước quản lý hồ sơ */
+.title-page{
+    font-size: 32px;   
+    font-weight: 700;    
+    color: #1e1e1e;  
+    text-align: center;  
+    margin-bottom: 20px;
+}
+
+/* Form chính */
+.main-card {
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.section-block {
+    margin-bottom: 32px;
+}
+
+.search-row {
+    display: flex;
+    gap: 10px;
+    width: 100% !important;
+    max-width: 1000px !important;
+    margin: 0 auto 20px auto !important;
+    padding: 0 4px;
+}
+
+.search-row input {
+    flex: 1;
+    width: 100% !important; 
+}
+
+.title-page {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    color: #2d3e50;
+    margin-bottom: 20px;
+    margin-top: 0 !important;
+    padding: 0 0 10px 0;
+}
+.big-card {
+    background: white;
+    padding: 24px 32px;
+    border-radius: 18px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+}
+
+/* Dòng kẻ chia */
+.divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 24px 0;
+}
+
+/* Fix search row full width */
+.search-row {
+    display: flex;
+    gap: 10px;
+}
+
+.search-row .search-input {
+    flex: 1;
+}
+
+/* Table full width inside card */
+.big-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.section.card, .table-container, .big-card {
+    width: 100%;
+    max-width: 1000px; 
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+.section.card .input-group, .section.card .input-group .input, .section.card textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+body {
+    background: linear-gradient(to bottom, #eff6ff, #f8fafc);
+}
+.input-group .input:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    transition: 0.15s;
+}

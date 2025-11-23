@@ -87,5 +87,19 @@ export default defineConfig({
         changeOrigin: true
       }
     }
-  }
+  },
+  // Cấu hình Vitest
+  test: {
+    environment: 'node', // Cần thiết để test Node.js API (Express, Mongoose)
+    globals: true, // Cho phép sử dụng describe, it, expect mà không cần import
+    setupFiles: ['./test/setup.js'], // Tùy chọn: Dùng để kết nối DB trước khi test
+    root: './',
+    dir: 'test', 
+    // Tùy chọn: Đảm bảo các mẫu file test là chính xác
+    include: ['**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+    coverage: {
+      provider: 'v8', // Tùy chọn: Công cụ tính toán coverage
+    }
+  },
+
 });

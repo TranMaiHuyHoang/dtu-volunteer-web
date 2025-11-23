@@ -22,11 +22,11 @@ function httpLogger(req, res, next) {
         const duration = Date.now() - start;
         
         // Ghi log Response (thông tin phản hồi)
-        http(`[RES] ${res.statusCode} ${req.method} ${req.originalUrl}`, {
-            durationMs: duration, // Thời gian xử lý
-            status: res.statusCode, // Trạng thái HTTP (rất quan trọng!)
-            // Bạn có thể ghi thêm res.statusMessage nếu cần
-        });
+        // http(`[RES] ${res.statusCode} ${req.method} ${req.originalUrl}`, {
+        //     durationMs: duration, // Thời gian xử lý
+        //     status: res.statusCode, // Trạng thái HTTP (rất quan trọng!)
+        //     // Bạn có thể ghi thêm res.statusMessage nếu cần
+        // });
     });
 
     next();

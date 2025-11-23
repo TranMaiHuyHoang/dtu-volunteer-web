@@ -12,7 +12,7 @@ import { dirname } from 'path';
 // =========================
 
 import cors from 'cors';
-import mainRouter from './routes/index.js';
+import mainRouter from './routes/index.routes.js';
 // Set up Global configuration access
 import { config } from 'dotenv';
 import flash from 'connect-flash';

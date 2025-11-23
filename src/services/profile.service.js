@@ -1,4 +1,5 @@
-import Profile from '../models/profile.model.js';
+// import Profile from '../models/profile.model.js';
+import Profile from '../models/studentProfile.model.js';
 import { BadRequestError, NotFoundError, ConflictError } from '../errors/customError.js';
 
 const buildSearchFilter = (q) => {

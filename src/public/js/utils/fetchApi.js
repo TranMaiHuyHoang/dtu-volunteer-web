@@ -1,4 +1,5 @@
 import { ApiError } from '../../../errors/ApiError.js';
+import { clientLog } from './clientLogger.js';
 
 
 /**
@@ -30,8 +31,12 @@ function handleTokenExpiration(res, errorData) {
 }
 
 
-async function fetchApi(endpoint, method, data = null, bearerToken = '', options = {}) {
-    // THAY ĐỔI DUY NHẤT: Đơn giản hóa URL
+async function fetchApi(endpoint, method, data = null, // Tường minh hóa options bằng Destructuring và giá trị mặc định
+    { 
+        useSession = false, // Mặc định KHÔNG sử dụng Session Cookie
+        bearerToken = ''    // Mặc định KHÔNG có Bearer Token
+    } = {}, 
+) {
     // Vite tự động handle relative URLs
     const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     
@@ -47,7 +52,7 @@ async function fetchApi(endpoint, method, data = null, bearerToken = '', options
         body: data ? JSON.stringify(data) : undefined
     };
 
-    if (options.useSession) {
+    if (useSession) {
         config.credentials = 'include';
     }
     
@@ -67,13 +72,13 @@ async function fetchApi(endpoint, method, data = null, bearerToken = '', options
         throw new Error('Token expired or unauthorized action handled.'); // Ném một lỗi để to() bắt được
         return; 
     }
-    
+        clientLog('error', `API ERROR: ${res.status} - ${errorData.message || res.statusText}`);
+
     throw new ApiError( 
         res.status, 
         errorData.message || res.statusText || `Lỗi HTTP: ${res.status}`,
         errorData 
     );
-    // throw new Error(errorData.message || res.statusText || `Lỗi HTTP: ${res.status}`);
 }
 
 // Hỗ trợ cả classic script và ES module

@@ -13,7 +13,7 @@ import { updatePartialsLayout } from './layout/layout-loader.js';
  * Đơn giản: chỉ load nội dung và inject vào tags có sẵn trong HTML
  */
 async function loadLayout() {
-    clientLog('info', 'Loading layout partials...');
+    //clientLog('info', 'Loading layout partials...');
     setupPageLayoutElements();
     await updatePartialsLayout();
 }

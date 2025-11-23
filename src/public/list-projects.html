@@ -24,7 +24,7 @@
             setElementHTML('projects-list', 'Đang tải...');
             
             const [error, res] = await to(
-                fetchApi('/projects', 'GET', null, '', { useSession: true })
+                fetchApi('/projects', 'GET', null, { useSession: true })
             );
             
             if (error) {
