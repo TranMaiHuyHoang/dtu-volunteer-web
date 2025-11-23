@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - DTU Volunteer Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #F5F7FA;
+            color: #2D3748;
+            line-height: 1.6;
+        }
+
+
+
+        /* Profile Banner */
+        .profile-banner {
+            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+            padding: 40px 30px;
+            margin-bottom: 30px;
+        }
+
+        .profile-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            color: white;
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .profile-id {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 3px;
+        }
+
+        .profile-major {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 40px;
+            color: white;
+        }
+
+        .stat-box {
+            text-align: right;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Stats Cards */
+        .stats-section {
+            max-width: 1400px;
+            margin: -50px auto 30px;
+            padding: 0 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.blue {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .stat-icon.green {
+            background: #D1FAE5;
+            color: #10B981;
+        }
+
+        .stat-icon.yellow {
+            background: #FEF3C7;
+            color: #F59E0B;
+        }
+
+        .stat-icon.purple {
+            background: #E9D5FF;
+            color: #9333EA;
+        }
+
+        .stat-content h3 {
+            font-size: 0.85rem;
+            color: #6B7280;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .stat-content p {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1F2937;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px 50px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 18px 20px;
+            background: #F9FAFB;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #6B7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #2563EB;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #2563EB;
+        }
+
+        .tabs-content {
+            padding: 25px;
+        }
+
+        /* Activity Items */
+        .activity-item {
+            background: #F9FAFB;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .activity-item.approved {
+            border-left-color: #10B981;
+        }
+
+        .activity-item.completed {
+            border-left-color: #2563EB;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .activity-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 5px;
+        }
+
+        .activity-org {
+            font-size: 0.85rem;
+            color: #6B7280;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge.approved {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .status-badge.completed {
+            background: #DBEAFE;
+            color: #1D4ED8;
+        }
+
+        .activity-details {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #6B7280;
+        }
+
+        .detail-item i {
+            color: #9CA3AF;
+        }
+
+        .activity-message {
+            background: #ECFDF5;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #047857;
+            display: flex;
+            align-items: start;
+            gap: 8px;
+        }
+
+        .activity-message.info {
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 20px;
+        }
+
+        /* Achievements */
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .achievement-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .achievement-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #9333EA, #C084FC);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .achievement-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 3px;
+        }
+
+        .achievement-status {
+            font-size: 0.8rem;
+            color: #9333EA;
+            font-weight: 600;
+        }
+
+        /* Milestones */
+        .milestone-item {
+            margin-bottom: 25px;
+        }
+
+        .milestone-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .milestone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .milestone-label {
+            font-size: 0.9rem;
+            color: #4B5563;
+            font-weight: 500;
+        }
+
+        .milestone-value {
+            font-size: 0.85rem;
+            color: #6B7280;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1F2937, #4B5563);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 25px;
+            }
+
+            .profile-left {
+                flex-direction: column;
+            }
+
+            .profile-stats {
+                gap: 30px;
+            }
+
+            .stat-box {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+    <!-- Profile Banner -->
+    <section class="profile-banner">
+        <div class="profile-container">
+            <div class="profile-left">
+                <div class="profile-avatar">
+                    <img src="https://i.pravatar.cc/150?img=33" alt="Profile">
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">Nguyen Van An</div>
+                    <div class="profile-id">Student ID: 123456789</div>
+                    <div class="profile-major">Computer Science - Year 3</div>
+                    <div class="profile-email">an.nguyen@duytan.edu.vn</div>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-box">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Total Hours</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Activities</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Stats Cards-->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Total Hours</h3>
+                    <p>45h</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fa-solid fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Completed</h3>
+                    <p>8</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon yellow">
+                    <i class="fa-solid fa-calendar"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Upcoming</h3>
+                    <p>2</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Badges</h3>
+                    <p>3</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Main Content -->
+
+    <section class="main-content">
+        <!-- Left Column: Tabs -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="registrations">My Registrations</button>
+                <button class="tab-button" data-tab="history">History</button>
+            </div>
+            <div class="tabs-content">
+                <!-- My Registrations Tab -->
+                <div class="tab-content active" id="registrations">
+                    <div class="activity-item approved">
+                        <div class="activity-header">
+                            <div>
+                                <div class="activity-title">Teaching English to Underprivileged Children</div>
+                                <div class="activity-org">DTU Education Initiative</div>
+                            </div>
+                            <div class="status-badge approved">
+                                <i class="fa-solid fa-check-circle"></i>
+                                approved
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="detail-item">
+                                <i class="fa-solid fa-calendar"></i>
+                                15/11/2025
+                            </div>
+                            <div class="detail-item">
+                                <i class="fa-solid fa-clock"></i>
+                                Registered on 01/11/2025
+                            </div>
+                        </div>
+                        <div class="activity-message">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Your registration has been approved. Please check your email for further details.</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item approved">
+                        <div class="activity-header">
+                            <div>
+                                <div class="activity-title">Beach Cleanup Campaign</div>
+                                <div class="activity-org">DTU Green Earth Club</div>
+                            </div>
+                            <div class="status-badge approved">
+                                <i class="fa-solid fa-check-circle"></i>
+                                approved
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="detail-item">
+                                <i class="fa-solid fa-calendar"></i>
+                                20/11/2025
+                            </div>
+                            <div class="detail-item">
+                                <i class="fa-solid fa-clock"></i>
+                                Registered on 03/11/2025
+                            </div>
+                        </div>
+                        <div class="activity-message">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Your registration has been approved. Please check your email for further details.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div class="tab-content" id="history" style="display: none;">
+                    <div class="activity-item completed">
+                        <div class="activity-header">
+                            <div>
+                                <div class="activity-title">Mid-Autumn Festival for Children</div>
+                                <div class="activity-org">DTU Community Outreach</div>
+                            </div>
+                            <div class="status-badge completed">
+                                <i class="fa-solid fa-check-circle"></i>
+                                completed
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="detail-item">
+                                <i class="fa-solid fa-calendar"></i>
+                                20/09/2025
+                            </div>
+                            <div class="detail-item">
+                                <i class="fa-solid fa-clock"></i>
+                                5 hours completed
+                            </div>
+                        </div>
+                        <div class="activity-message info">
+                            <i class="fa-solid fa-certificate"></i>
+                            <span>Certificate available for download</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item completed">
+                        <div class="activity-header">
+                            <div>
+                                <div class="activity-title">Beach Cleanup Drive</div>
+                                <div class="activity-org">Green DTU Initiative</div>
+                            </div>
+                            <div class="status-badge completed">
+                                <i class="fa-solid fa-check-circle"></i>
+                                completed
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="detail-item">
+                                <i class="fa-solid fa-calendar"></i>
+                                15/08/2025
+                            </div>
+                            <div class="detail-item">
+                                <i class="fa-solid fa-clock"></i>
+                                3 hours completed
+                            </div>
+                        </div>
+                        <div class="activity-message info">
+                            <i class="fa-solid fa-certificate"></i>
+                            <span>Certificate available for download</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item completed">
+                        <div class="activity-header">
+                            <div>
+                                <div class="activity-title">Community Food Drive</div>
+                                <div class="activity-org">DTU Welfare Club</div>
+                            </div>
+                            <div class="status-badge completed">
+                                <i class="fa-solid fa-check-circle"></i>
+                                completed
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="detail-item">
+                                <i class="fa-solid fa-calendar"></i>
+                                05/07/2025
+                            </div>
+                            <div class="detail-item">
+                                <i class="fa-solid fa-clock"></i>
+                                6 hours completed
+                            </div>
+                        </div>
+                        <div class="activity-message info">
+                            <i class="fa-solid fa-certificate"></i>
+                            <span>Certificate available for download</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Sidebar -->
+        <aside class="sidebar">
+            <!-- Achievements -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Achievements</h3>
+                <div class="achievement-item">
+                    <div class="achievement-icon">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>Early Adopter</h4>
+                        <div class="achievement-status">Earned</div>
+                    </div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-icon">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>Environmental Champion</h4>
+                        <div class="achievement-status">Earned</div>
+                    </div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-icon">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>Teaching Star</h4>
+                        <div class="achievement-status">Earned</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Milestone -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Next Milestone</h3>
+                <div class="milestone-item">
+                    <div class="milestone-header">
+                        <span class="milestone-label">Progress to 50 hours</span>
+                        <span class="milestone-value">45/50h</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 90%"></div>
+                    </div>
+                </div>
+                <div class="milestone-item">
+                    <div class="milestone-header">
+                        <span class="milestone-label">Activities to "Community Hero"</span>
+                        <span class="milestone-value">8/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </section>
+    </main>
+    <script type="module" src="/js/layout.js"></script>
+ </body>
+    <script>
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.getAttribute('data-tab');
+                
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.style.display = 'none');
+                
+                button.classList.add('active');
+                document.getElementById(targetTab).style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>

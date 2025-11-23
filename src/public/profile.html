@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh Sửa Thông Tin - DTU Volunteer Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #F5F7FA;
+            color: #2D3748;
+            line-height: 1.6;
+        }
+
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-back {
+            background: #E2E8F0;
+            color: #2D3748;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: #CBD5E0;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #08204E;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        /* Avatar Section */
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #E2E8F0;
+            margin-bottom: 30px;
+        }
+
+        .avatar-container {
+            position: relative;
+        }
+
+        .avatar-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #E2E8F0;
+            object-fit: cover;
+            background: linear-gradient(135deg, #4A89F5 0%, #2563EB 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: #2563EB;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            border: 3px solid white;
+            transition: background 0.3s ease;
+        }
+
+        .avatar-upload:hover {
+            background: #1E40AF;
+        }
+
+        .avatar-upload input[type="file"] {
+            display: none;
+        }
+
+        .avatar-info {
+            flex: 1;
+        }
+
+        .avatar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2D3748;
+            margin-bottom: 8px;
+        }
+
+        .avatar-desc {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .btn-remove-avatar {
+            background: transparent;
+            color: #E53E3E;
+            border: 1px solid #E53E3E;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-remove-avatar:hover {
+            background: #E53E3E;
+            color: white;
+        }
+
+        /* Form Section */
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #08204E;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #4A89F5;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2D3748;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #E53E3E;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #2D3748;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4A89F5;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #2D3748;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #4A89F5;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #2D3748;
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Roboto', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4A89F5;
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Skills Section */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-tag {
+            background: #E6F0FF;
+            color: #2563EB;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skill-tag i {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .skill-tag i:hover {
+            color: #E53E3E;
+        }
+
+        .btn-add-skill {
+            background: #F7FAFC;
+            color: #4A5568;
+            padding: 8px 15px;
+            border: 2px dashed #CBD5E0;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-skill:hover {
+            background: #E6F0FF;
+            border-color: #4A89F5;
+            color: #2563EB;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            padding-top: 30px;
+            border-top: 2px solid #E2E8F0;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: #4A5568;
+            padding: 12px 30px;
+            border: 2px solid #CBD5E0;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: #F7FAFC;
+            border-color: #A0AEC0;
+        }
+
+        .btn-save {
+            background: #000000;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            background: #204B9B;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #D1FAE5;
+            color: #065F46;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .avatar-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .action-buttons {
+                flex-direction: column-reverse;
+            }
+
+            .btn-cancel,
+            .btn-save {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .profile-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="header-right">
+                <a href="activity-history" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Quay lại Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="page-header">
+            <h1 class="page-title">Chỉnh Sửa Thông Tin Cá Nhân</h1>
+            <p class="page-subtitle">Cập nhật thông tin để ban tổ chức có thể liên hệ với bạn dễ dàng hơn</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Cập nhật thông tin thành công!</span>
+        </div>
+
+        <div class="profile-card">
+            <div class="avatar-section">
+                <div class="avatar-container">
+                    <div class="avatar-image" id="avatarPreview">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <label class="avatar-upload">
+                        <input type="file" id="avatarInput" accept="image/*">
+                        <i class="fa-solid fa-camera"></i>
+                    </label>
+                </div>
+                <div class="avatar-info">
+                    <div class="avatar-title">Ảnh đại diện</div>
+                    <div class="avatar-desc">Chọn ảnh có kích thước tối đa 5MB. Định dạng: JPG, PNG</div>
+                    <button class="btn-remove-avatar" id="removeAvatarBtn">
+                        <i class="fa-solid fa-trash"></i> Xóa ảnh
+                    </button>
+                </div>
+            </div>
+
+            <form id="profileForm">
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-user-circle"></i>
+                        Thông tin cá nhân
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Họ và tên <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                Mã sinh viên <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="studentId" name="studentId" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Email <span class="required">*</span>
+                            </label>
+                            <input type="email" class="form-input" id="email" name="email" required>
+                            <div class="form-hint">Email này sẽ được dùng để nhận thông báo</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                Số điện thoại <span class="required">*</span>
+                            </label>
+                            <input type="tel" class="form-input" id="phone" name="phone" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Ngày sinh
+                            </label>
+                            <input type="date" class="form-input" id="birthDate">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                Giới tính
+                            </label>
+                            <select class="form-select" id="gender">
+                                <option value="male">Nam</option>
+                                <option value="female">Nữ</option>
+                                <option value="other">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        Thông tin học tập
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Khoa <span class="required">*</span>
+                            </label>
+                            <select class="form-select" id="faculty" required>
+                                <option value="">Chọn khoa</option>
+                                <option value="cntt">Công nghệ thông tin</option>
+                                <option value="kttt">Kinh tế - Thương mại</option>
+                                <option value="xddd">Xây dựng - Điện điện tử</option>
+                                <option value="nn">Ngoại ngữ</option>
+                                <option value="qt">Quan hệ quốc tế</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                Ngành học <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="major" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Năm học
+                            </label>
+                            <select class="form-select" id="year">
+                                <option value="1">Năm 1</option>
+                                <option value="2">Năm 2</option>
+                                <option value="3">Năm 3</option>
+                                <option value="4">Năm 4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                Lớp
+                            </label>
+                            <input type="text" class="form-input" id="class">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-star"></i>
+                        Kỹ năng & Sở thích
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Kỹ năng</label>
+                        <div class="skills-container" id="skillsContainer">
+                            <button type="button" class="btn-add-skill" id="btnAddSkill">
+                                <i class="fa-solid fa-plus"></i> Thêm kỹ năng
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Giới thiệu bản thân</label>
+                        <textarea class="form-textarea" id="bio"
+                            placeholder="Viết vài dòng về bản thân, sở thích và lý do tham gia hoạt động tình nguyện..."></textarea>
+                        <div class="form-hint">Tối đa 500 ký tự</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="btn-cancel" id="cancelBtn">
+                        <i class="fa-solid fa-xmark"></i> Hủy
+                    </button>
+                    <button type="submit" class="btn-save">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script type="module" src="/js/layout.js"></script>
+
+    <script type="module">
+        // const mydata = await fetchApi('/profile', 'GET', null, { useSession: true });
+        // // SỬA LẠI: Chuyển mydata.data thành chuỗi JSON trước khi nối
+        // const MOCK_PROFILE_DATA = JSON.stringify(mydata.data, null, 2);
+        // console.log("Profile Data: " + MOCK_PROFILE_DATA);
+
+        // const MOCK_PROFILE_DATA = {
+        //     id: 'user_12345', // Giả định ID để kiểm tra logic backend sau này
+        //     fullName: 'Trần Mai Huy Hoàng',
+        //     studentId: '28210206131',
+        //     email: 'tranmhuyhoang@dtu.edu.vn',
+        //     phone: '0935417964',
+        //     birthDate: '2003-05-15',
+        //     gender: 'male',
+        //     faculty: 'cntt',
+        //     major: 'Software Engineering',
+        //     year: '4',
+        //     class: 'C1SE.78',
+        //     bio: 'Mình là sinh viên năm 4 ngành Software Engineering tại DTU. Mình yêu thích các hoạt động tình nguyện, đặc biệt là giảng dạy và hỗ trợ cộng đồng. Mục tiêu của mình là góp phần tạo ra những thay đổi tích cực cho xã hội.',
+        //     skills: ['English', 'Programming', 'Teaching', 'Node.js'],
+        //     avatarUrl: null // Giả định không có ảnh đại diện
+        // };
+        import { clientLog } from '/js/utils/clientLogger.js';
+        import { fetchApi } from '/js/utils/fetchApi.js';
+        import { executeApiCall } from '/js/utils/apiExecutor.js';
+        clientLog('info', 'User accessed profile edit page');
+        // Avatar Upload
+        document.getElementById('avatarInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Kiểm tra kích thước file (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Kích thước ảnh không được vượt quá 5MB!');
+                    return;
+                }
+
+                // Preview ảnh
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    document.getElementById('avatarPreview').innerHTML =
+                        `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Remove Avatar
+        document.getElementById('removeAvatarBtn').addEventListener('click', function () {
+            if (confirm('Bạn có chắc chắn muốn xóa ảnh đại diện?')) {
+                document.getElementById('avatarPreview').innerHTML = '<i class="fa-solid fa-user"></i>';
+                document.getElementById('avatarInput').value = '';
+            }
+        });
+        // Hàm Phụ: Tải Kỹ năng vào Skills Container
+        function loadSkills(skillsArray) {
+            const skillsContainer = document.getElementById('skillsContainer');
+            // Xóa các skill mặc định trong HTML (English, Programming, Teaching)
+            // Giữ lại nút "Thêm kỹ năng" (button cuối cùng)
+            const addButton = skillsContainer.querySelector('.btn-add-skill');
+            skillsContainer.innerHTML = '';
+
+            skillsArray.forEach(skill => {
+                const skillTagHtml = `
+            <span class="skill-tag">
+                ${skill}
+                <i class="fa-solid fa-xmark" onclick="removeSkill(this)"></i>
+            </span>
+        `;
+                skillsContainer.insertAdjacentHTML('beforeend', skillTagHtml);
+            });
+
+            // Thêm lại nút "Thêm kỹ năng" vào cuối
+            skillsContainer.appendChild(addButton);
+        }
+        // Add Skill
+        function addSkill() {
+            const skillName = prompt('Nhập tên kỹ năng:');
+            if (skillName && skillName.trim()) {
+                const skillsContainer = document.getElementById('skillsContainer');
+                const addButton = skillsContainer.querySelector('.btn-add-skill');
+
+                const newSkill = document.createElement('span');
+                newSkill.className = 'skill-tag';
+                newSkill.innerHTML = `
+                    ${skillName.trim()}
+                    <i class="fa-solid fa-xmark" onclick="removeSkill(this)"></i>
+                `;
+
+                skillsContainer.insertBefore(newSkill, addButton);
+            }
+        }
+
+        // Remove Skill
+        function removeSkill(element) {
+            element.parentElement.remove();
+        }
+
+        // Cancel Edit
+        document.getElementById("cancelBtn").addEventListener("click", () => {
+            cancelEdit();
+        });
+        function cancelEdit() {
+            if (confirm('Bạn có chắc chắn muốn hủy? Các thay đổi sẽ không được lưu.')) {
+                window.location.href = '/activity-history.html';
+            }
+        }
+        function fillFormData(data) {
+            // 1. Thông tin cá nhân
+            document.getElementById('fullName').value = data.fullName;
+            document.getElementById('studentId').value = data.studentId;
+            document.getElementById('email').value = data.email;
+            document.getElementById('phone').value = data.phone;
+            document.getElementById('birthDate').value = data.birthDate;
+            document.getElementById('gender').value = data.gender; // Dùng .value cho select
+
+            // 2. Thông tin học tập
+            document.getElementById('faculty').value = data.faculty;
+            document.getElementById('major').value = data.major;
+            document.getElementById('year').value = data.year;
+            document.getElementById('class').value = data.class;
+
+            // 3. Kỹ năng & Giới thiệu
+            document.getElementById('bio').value = data.bio;
+
+            // Xử lý Kỹ năng (skills)
+            loadSkills(data.skills);
+            console.log("xong thực hiện fill form")
+        }
+        ///format tạm thời, xử lý validation thường là của backend
+        function getFormErrors(formData) {
+            const errors = [];
+
+            // Kiểm tra và thêm lỗi cụ thể vào mảng
+            if (!formData.fullName || formData.fullName.trim() === '') {
+                errors.push('Họ và tên không được để trống.');
+            }
+
+            if (!formData.email || formData.email.trim() === '') {
+                errors.push('Email không được để trống.');
+            }
+
+            if (!formData.phone || formData.phone.trim() === '') {
+                errors.push('Số điện thoại không được để trống.');
+            }
+
+            return errors;
+        }
+
+        // Form Submit
+        document.getElementById('profileForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            clientLog('info', 'Profile form submission initiated');
+            const formElement = e.target;
+            const data = new FormData(formElement);
+            // 1. Chuyển FormData thành đối tượng JSON cơ bản
+            const formData = Object.fromEntries(data.entries());
+            console.log("form data##", formData)
+
+            // 2. Xử lý trường 'skills' riêng biệt (vì FormData không thu thập các thẻ span)
+            formData.skills = Array.from(document.querySelectorAll('.skill-tag')).map(tag =>
+                tag.textContent.trim()
+            );
+
+            clientLog('debug', `Collected formData: ${JSON.stringify(formData)}`);
+            const errors = getFormErrors(formData);
+
+            // 2. XỬ LÝ KẾT QUẢ
+            if (errors.length > 0) {
+                // Hiển thị thông báo chi tiết
+                const errorMessage = 'Vui lòng kiểm tra lại thông tin:\n' + errors.join('\n');
+                alert(errorMessage);
+
+                return; // Dừng
+            }
+            // // Validation cơ bản
+            // if (!formData.fullName || !formData.email || !formData.phone) {
+            //     alert('Vui lòng điền đầy đủ các trường bắt buộc!');
+            //     return;
+            // }
+
+            // Giả lập gửi request đến backend
+            console.log('Dữ liệu gửi đi:', formData);
+
+            let apiPromise = fetchApi(`/profile`, 'PUT', formData, { useSession: true });
+            const result = await executeApiCall(
+                    apiPromise,
+                    // successAction: Hành động thực hiện khi API thành công
+                    async (data) => {
+                        // Logic sau khi cập nhật thành công
+                        
+                        // 1. Cuộn lên đầu trang
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        
+                        // KHÔNG CÒN CHUYỂN HƯỚNG NỮA. Người dùng sẽ ở lại trang profile.
+
+                        // MẸO: Bạn có thể thêm logic để tải lại dữ liệu profile mới 
+                        // vào form tại đây, nếu cần (ví dụ: initProfilePage();)
+                        console.log("Profile updated successfully, staying on page.");
+                    },
+                    // successMessage (Tùy chọn): Thông báo thành công tùy chỉnh
+                    'Cập nhật thông tin profile thành công!'
+                );
+            // 2. Sử dụng executeApiCall để xử lý toàn bộ logic gọi API và hiển thị thông báo
+            // const result = await executeApiCall(
+            //     apiPromise,
+            //     async (data) => {
+            //         resetForm();
+            //         await loadRecords(el('searchInput').value.trim());
+            //     }
+            // );
+
+            // // Hiển thị thông báo thành công
+            // const successMessage = document.getElementById('successMessage');
+            // successMessage.classList.add('show');
+            // clientLog('info', 'Success message displayed');
+            // // Scroll lên đầu trang
+            // window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Ẩn thông báo sau 3 giây và chuyển về dashboard
+            // setTimeout(() => {
+            //     successMessage.classList.remove('show');
+            //     clientLog('info', 'Redirecting after successful simulation');
+            //     window.location.href = '/activity-history.html';
+            // }, 3000);
+
+        });
+
+        // Auto-hide success message on scroll
+        window.addEventListener('scroll', function () {
+            const successMessage = document.getElementById('successMessage');
+            if (successMessage.classList.contains('show')) {
+                successMessage.classList.remove('show');
+            }
+        });
+        // function initProfilePage() {
+        //     console.log("đang tạo trang")
+        //     // Tạm thời gọi hàm fillFormData với dữ liệu mẫu
+        //     fillFormData(MOCK_PROFILE_DATA);
+        // }
+        async function initProfilePage() { // PHẢI LÀ ASYNC để dùng await
+            console.log("đang tạo trang và tải dữ liệu...");
+
+            try {
+                // 1. Tải dữ liệu thực tế từ API
+                const mydata = await fetchApi('/profile', 'GET', null, { useSession: true });
+
+                // 2. Lấy đối tượng profile (mydata.data là Object)
+                const profileData = mydata.data;
+
+                // 3. Truyền dữ liệu profile (Object) vào hàm điền form
+                fillFormData(profileData);
+
+
+                console.log("Đã load và điền dữ liệu thành công!");
+                const btnAddSkill = document.getElementById('btnAddSkill'); // Sử dụng ID thay vì class
+
+                if (btnAddSkill) {
+                    // Gán hàm addSkill cho sự kiện 'click'. Không dùng ngoặc đơn ()
+                    btnAddSkill.addEventListener('click', addSkill);
+                    console.log("Đã gán sự kiện click cho nút Thêm kỹ năng.");
+                }
+
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu profile:", error);
+                // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
+            }
+        }
+
+        // Khởi tạo trang khi load
+        if (document.readyState === 'loading') {
+            // DOM chưa sẵn sàng, lắng nghe sự kiện
+            window.addEventListener('DOMContentLoaded', initProfilePage);
+        } else {
+            // DOM đã sẵn sàng (interactive hoặc complete), chạy hàm ngay lập tức
+            initProfilePage();
+        }
+        // window.addEventListener('DOMContentLoaded', initProfilePage);
+    </script>
+</body>
+
+</html>

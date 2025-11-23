@@ -1,0 +1,139 @@
+@baseUrl = http://localhost:3000
+
+
+GET {{baseUrl}}
+
+###
+
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "dangtunaminh@gmail.com",
+    "password": "password"
+}
+
+
+###
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "email": "tuanminh6@gmail.com",
+    "password": "Password123",
+    "username": "tuanminh6"
+}
+###
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "email": "tuanminh4@gmail.com",
+    "password": "Password123",
+    "username": "tuanminh4"
+}
+
+
+###
+
+# @name loginRequest
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "tuanminh4@gmail.com",
+    "password": "Password123"
+}
+
+### nếu là Admin
+# @name loginRequest
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "thisisadmin@gmail.com",
+    "password": "Password123"
+}
+
+
+###
+# Gán biến @userToken bằng thuộc tính token từ phản hồi đăng nhập
+@userToken = {{loginRequest.response.body.token}}
+
+# @name profileRequest
+GET {{baseUrl}}/profile
+Authorization: Bearer {{userToken}}
+
+
+
+###
+# @name logoutRequest
+GET {{baseUrl}}/logout
+##dán cookie từ trình duyệt vào đây để test google login
+##Cookie: connect.sid=
+ 
+
+###
+
+### Create Notification
+POST {{baseUrl}}/notifications
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "userId": "68fcbf65522d0ac03ce02bff", 
+  "message": "Bạn có một thông báo mới từ hệ thống"
+}
+
+# Example Request:
+# {
+#   "userId": "60d0fe4f5311236168a109ca",
+#   "message": "Bạn có một thông báo mới từ hệ thống"
+# }
+
+### Example Response
+# {
+#   "message": "Đã gửi thông báo",
+#   "note": {
+#     "_id": "60d0fe4f5311236168a109cb",
+#     "userId": "60d0fe4f5311236168a109ca",
+#     "message": "Bạn có một thông báo mới từ hệ thống",
+#     "isRead": false,
+#     "createdAt": "2025-10-27T13:55:33.000Z",
+#     "__v": 0
+#   }
+# }
+
+POST {{baseUrl}}/registrations
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "projectId": "69048a5fc142b32af2157b72" 
+    // Thay ID dự án thực tế vào đây
+}
+
+###
+
+POST {{baseUrl}}/projects
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "title": "Dự án Môi Trường Xanh",
+    "description": "Tham gia vào chiến dịch làm sạch môi trường tại địa phương.",
+    "location": "Hà Nội",
+    "date": "2024-12-15T09:00:00Z",
+    "capacity": 50
+}
+
+###
+
+POST {{baseUrl}}/records
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "name": "123131@@@",
+    "email": "Tình nguyện viên sự kiện"
+}
