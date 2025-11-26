@@ -27,18 +27,3 @@ export const registerForActivity = async (req, res) => {
     res.status(500).json({ status: "error", message: err.message });
   }
 };
-
-export const listActivityRegistrations = async (req, res) => {
-  try {
-    const { activityId } = req.params;
-
-    res.json({
-      status: "success",
-      message: `Danh sách đăng ký của hoạt động ${activityId} (sample).`,
-      data: []
-    });
-
-  } catch (err) {
-    res.status(500).json({ status: "error", message: err.message });
-  }
-};
