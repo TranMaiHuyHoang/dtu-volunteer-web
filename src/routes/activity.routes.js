@@ -1,14 +1,7 @@
 import { Router } from 'express';
-const router = Router({ mergeParams: true }); // Để truy cập :activityId từ route cha
+import { getAllActivities, registerForActivity, listActivityRegistrations } from "../controllers/activities.controller.js";  
+const router = Router({ mergeParams: true }); // Để truy cập :activityId từ route cha   
 //const {listMyRegistrations, listRegistrationsForProject, registerForProject, updateRegistrationStatus}= require('../controllers/registration.controller');
-
-const registerForActivity = (req, res) => {
-    res.send("Register for activity");
-};
-
-const listActivityRegistrations = (req, res) => {
-    res.send("List activity registrations");
-};
 
 /**
  * @swagger
@@ -134,6 +127,7 @@ router.post('/:activityId/registrations', registerForActivity);
  *         description: Lỗi máy chủ
  */
 router.get('/:activityId/registrations', listActivityRegistrations);
+
 
 
 

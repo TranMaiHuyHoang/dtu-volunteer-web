@@ -19,7 +19,7 @@ import uiRoutes from './ui.routes.js';
 
 router.get('/demo', serveStaticPage('demo.html'));
 
-router.use('/activities', verifyToken, activityRouter);
+router.use('/activities', activityRouter);
 router.use('/registrations', verifyToken, registrationRouter);
 router.use('/', auth);
 router.use('/profile', verifyToken, profile );
