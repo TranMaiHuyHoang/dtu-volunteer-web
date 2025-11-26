@@ -1,0 +1,36 @@
+/* Gộp tất cả các trạng thái của thẻ <a> (khi có class .block-link) để đảm bảo không có gạch dưới */
+.block-link,
+.block-link:link,
+.block-link:visited,
+.block-link:hover,
+.block-link:active {
+    
+    /* QUAN TRỌNG NHẤT: Làm cho thẻ <a> "biến mất" khỏi luồng bố cục. */
+    /* Điều này cho phép div.feature-card bên trong trở thành Flex/Grid item */
+    display: contents; 
+    
+    /* Các thuộc tính để ẩn gạch dưới và giữ màu */
+    text-decoration: none; 
+    color: inherit; 
+    
+    /* Đảm bảo không có lề/khoảng đệm ngoài */
+    margin: 0;
+    padding: 0;
+}
+
+.block-link > * {
+    transition: all 0.2s ease-in-out; 
+}
+
+/* Áp dụng hiệu ứng hover lên phần tử con trực tiếp của .block-link */
+.block-link:hover > * {
+    /* Ví dụ: làm nổi bật khối khi di chuột */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+/* Tùy chọn: Thêm hiệu ứng hover vào chính khối nội dung
+.block-link:hover .feature-card {
+    /* Ví dụ: làm nổi bật khối khi di chuột */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    /* transform: translateY(-2px); */
+/* } */

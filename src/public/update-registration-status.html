@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cập nhật trạng thái đăng ký</title>
+</head>
+<body>
+    <main>
+        <h1>Cập nhật trạng thái đăng ký</h1>
+        
+        <div>
+            <label>ID Dự án:</label>
+            <input type="text" id="projectId" placeholder="Nhập ID dự án">
+            <button onclick="loadRegistrations()">Tải danh sách đăng ký</button>
+        </div>
+        
+        <div id="message"></div>
+        
+        <div id="registrations-list"></div>
+    </main>
+
+    <script type="module" src="/js/utils/fetchApi.js"></script>
+    <script type="module" src="/js/utils/promiseHelper.js"></script>
+    <script type="module" src="/js/utils/fetchHelper.js"></script>
+    <script type="module" src="/js/layout.js"></script>
+
+    <script>
+        async function loadRegistrations() {
+            const projectId = document.getElementById('projectId').value.trim();
+            
+            if (!projectId) {
+                setElementContent('message', 'Vui lòng nhập ID dự án');
+                return;
+            }
+            
+            setElementContent('message', 'Đang tải...');
+            setElementHTML('registrations-list', '');
+            
+            const [error, registrations] = await to(
+                fetchApi(`/registrations/project/${projectId}`, 'GET', null, { useSession: true })
+            );
+            
+            if (error) {
+                setElementContent('message', 'Lỗi: ' + error.message);
+                return;
+            }
+            
+            if (!Array.isArray(registrations) || registrations.length === 0) {
+                setElementHTML('registrations-list', '<p>Không có đăng ký nào cho dự án này.</p>');
+                setElementContent('message', '');
+                return;
+            }
+            
+            const html = `
+                <table border="1" style="width: 100%; margin-top: 1rem; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th>ID Đăng ký</th>
+                            <th>Người đăng ký</th>
+                            <th>Email</th>
+                            <th>Trạng thái hiện tại</th>
+                            <th>Cập nhật trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${registrations.map(reg => `
+                            <tr>
+                                <td>${reg._id}</td>
+                                <td>${reg.userId?.name || 'N/A'}</td>
+                                <td>${reg.userId?.email || 'N/A'}</td>
+                                <td>${reg.status || 'pending'}</td>
+                                <td>
+                                    <select id="status-${reg._id}">
+                                        <option value="pending" ${reg.status === 'pending' ? 'selected' : ''}>Chờ duyệt</option>
+                                        <option value="approved" ${reg.status === 'approved' ? 'selected' : ''}>Đã duyệt</option>
+                                        <option value="rejected" ${reg.status === 'rejected' ? 'selected' : ''}>Từ chối</option>
+                                    </select>
+                                    <button onclick="updateStatus('${reg._id}')">Cập nhật</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            setElementHTML('registrations-list', html);
+            setElementContent('message', '');
+        }
+        
+        async function updateStatus(registrationId) {
+            const statusSelect = document.getElementById(`status-${registrationId}`);
+            const newStatus = statusSelect.value;
+            
+            if (!newStatus) {
+                setElementContent('message', 'Vui lòng chọn trạng thái');
+                return;
+            }
+            
+            setElementContent('message', 'Đang cập nhật...');
+            
+            const [error, result] = await to(
+                fetchApi(`/registrations/${registrationId}`, 'PATCH', { status: newStatus }, { useSession: true })
+            );
+            
+            if (error) {
+                setElementContent('message', 'Lỗi: ' + error.message);
+                return;
+            }
+            
+            setElementContent('message', result.message || 'Cập nhật thành công!');
+            
+            // Reload danh sách sau 1 giây
+            setTimeout(() => {
+                loadRegistrations();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+
