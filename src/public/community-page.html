@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết Nối Cộng Đồng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #3b82f6; 
+            --secondary-color: #10b981; 
+            --border-color: #e5e7eb;
+            --background-color: #f3f4f6;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: #1f2937;
+            font-size: 2em;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .community-layout {
+            display: grid;
+            grid-template-columns: 1fr 3fr; 
+            gap: 30px;
+        }
+
+        .sidebar-panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-panel h3 {
+            font-size: 1.1em;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+        
+        .group-list li {
+            list-style: none;
+            padding: 8px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .group-list li:hover {
+            background-color: #eff6ff; 
+            color: var(--primary-color);
+        }
+
+        .member-count {
+            background-color: #e5e7eb;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+        }
+
+        .nav-quick li {
+            list-style: none;
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-quick li:hover {
+            background-color: #ecfdf5; 
+            color: var(--secondary-color);
+        }
+        
+        /*Khu vực Đăng bài mới */
+        .post-form {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        .post-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .post-form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .btn-post {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .btn-post:hover {
+            background-color: #2563eb;
+        }
+
+        .post-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #bfdbfe; 
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .post-user-info p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        .post-user-info .user-name {
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .post-user-info .post-time {
+            color: #6b7280;
+            font-size: 0.8em;
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .post-tag {
+            display: inline-block;
+            background-color: #ccfbf1; 
+            color: #0d9488;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            margin-right: 5px;
+        }
+
+        .post-actions {
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            display: flex;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+
+        .post-actions button {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .post-actions button:hover {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 900px) {
+            .community-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* --- CSS cho Ô Bình Luận (Comment Box) --- */
+        .comment-section {
+            margin-top: 15px;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 10px;
+        }
+
+        .comment-input-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .comment-input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 20px; 
+            font-size: 0.9em;
+        }
+
+        .btn-send {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 8px;
+}
+    </style>
+</head>
+<body>
+	<script type="module" src="/js/layout.js"></script>
+    <div class="container">
+        <h1> KẾT NỐI CỘNG ĐỒNG</h1>
+
+        <div class="community-layout">
+            
+            <div class="sidebar">
+                
+                <div class="sidebar-panel">
+                    <h3 style="color: var(--primary-color);"><i class="fa-solid fa-people-group"></i> Nhóm & Dự án Của Tôi</h3>
+                    <ul class="group-list" id="groupList">
+                        </ul>
+                    <button class="btn-post" style="width: 100%; margin-top: 15px; background-color: var(--secondary-color);">
+                        Xem tất cả Nhóm
+                    </button>
+                </div>
+
+                <div class="sidebar-panel">
+                    <h3 style="color: var(--secondary-color);"><i class="fa-solid fa-bolt"></i> Điều hướng nhanh</h3>
+                    <ul class="nav-quick">
+                        <li><i class="fa-solid fa-plus-circle"></i> Tạo Bài viết mới</li>
+                        <li><i class="fa-solid fa-book"></i> Xem Hướng dẫn</li>
+                        <li><i class="fa-solid fa-bell"></i> Thông báo từ Admin</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="main-content-feed">
+                
+                <div class="post-form">
+                    <h3 style="color: #374151; font-size: 1.25em;"><i class="fa-solid fa-pencil"></i> Đăng Bài Mới</h3>
+                    <textarea id="newPostContent" class="post-textarea" 
+                              placeholder="Bạn đang nghĩ gì? Chia sẻ kinh nghiệm hoặc tìm kiếm sự trợ giúp..."></textarea>
+                    
+                    <div class="post-form-footer">
+                        <span style="font-size: 0.9em; color: #6b7280;">Đăng lên: Cộng đồng chung</span>
+                        <button id="btnPostSubmit" class="btn-post">
+                            Đăng Bài
+                        </button>
+                    </div>
+                </div>
+
+                <h2 style="font-size: 1.5em; color: #1f2937; margin-bottom: 20px;"><i class="fa-solid fa-message"></i> Dòng Thảo Luận Mới Nhất</h2>
+                
+                <div id="postsFeed" class="posts-feed">
+                    </div>
+                
+                <div id="loadingMessage" style="text-align:center; padding: 20px; color: #6b7280; display: none;">Đang tải bài viết...</div>
+                <div id="emptyMessage" style="text-align:center; padding: 20px; color: #6b7280; display: none;">Chưa có bài viết nào.</div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Dữ liệu mẫu
+    const mockGroups = [
+        { id: 1, name: 'Nhóm Môi Trường Xanh', members: 1200 },
+        { id: 2, name: 'CLB Dạy Kèm Miễn Phí', members: 850 },
+        { id: 3, name: 'Designer Tình Nguyện', members: 420 },
+    ];
+
+    const mockPosts = [
+        { id: 101, user: 'Hoàng Mai', content: 'Tìm thành viên cho dự án dọn dẹp bãi biển Đà Nẵng vào cuối tuần này! Ai tham gia inbox nhé!', tags: ['Môi trường', 'Đà Nẵng'], likes: 55, comments: 12 },
+        { id: 102, user: 'Minh Thư', content: 'Có ai có kinh nghiệm tổ chức sự kiện gây quỹ không ạ? Em cần lời khuyên về khâu truyền thông.', tags: ['Sự kiện', 'Hỏi đáp'], likes: 30, comments: 5 },
+        { id: 103, user: 'Admin DTU', content: '🔥 Sự kiện tình nguyện lớn nhất tháng 12 sắp diễn ra! Đăng ký ngay!', tags: ['Thông báo', 'Hot'], likes: 98, comments: 25 },
+    ];
+
+    // Hàm render
+
+    function renderGroupSidebar(groups) {
+        const list = document.getElementById('groupList');
+        list.innerHTML = '';
+        groups.forEach(group => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span><i class="fa-solid fa-users mr-2"></i> ${group.name}</span>
+                <span class="member-count">${group.members} TV</span>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function renderPosts(posts) {
+        const feed = document.getElementById('postsFeed');
+        const emptyMessage = document.getElementById('emptyMessage');
+        feed.innerHTML = '';
+        
+        if (posts.length === 0) {
+            emptyMessage.style.display = 'block';
+            return;
+        }
+        emptyMessage.style.display = 'none';
+
+        posts.forEach(post => {
+            const postCard = document.createElement('div');
+            postCard.className = 'post-card';
+            
+            const tagsHTML = post.tags.map(tag => 
+                `<span class="post-tag">#${tag}</span>`
+            ).join('');
+
+            postCard.innerHTML = `
+                <div class="post-header">
+                    <div class="avatar">${post.user.charAt(0)}</div>
+                    <div class="post-user-info">
+                        <p class="user-name">${post.user}</p>
+                        <p class="post-time">Đã đăng 2 giờ trước</p>
+                    </div>
+                </div>
+                
+                <p class="post-content">${post.content}</p>
+                
+                <div style="margin-bottom: 10px;">${tagsHTML}</div>
+
+                <div class="post-actions">
+                    <button onclick="handleLike(${post.id})">
+                        <i class="fa-solid fa-heart"></i> ${post.likes} Thích
+                    </button>
+                    <button onclick="toggleCommentSection(${post.id})">
+                        <i class="fa-solid fa-comment"></i> ${post.comments} Bình luận
+                    </button>
+                    <button onclick="handleShare(${post.id})">
+                        <i class="fa-solid fa-share"></i> Chia sẻ
+                    </button>
+                </div>
+
+                <div id="commentSection-${post.id}" class="comment-section" style="display: none;">
+                    <div class="comment-input-area">
+                        <div class="avatar" style="width: 30px; height: 30px; font-size: 0.8em;">B</div> 
+                        
+                        <input type="text" id="commentInput-${post.id}" class="comment-input" 
+                               placeholder="Viết bình luận của bạn..." 
+                               onkeypress="checkEnterKey(event, ${post.id})">
+                               
+                        <button class="btn-send" onclick="submitComment(${post.id})">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="comment-list" style="padding-left: 40px; margin-top: 10px; font-size: 0.9em; color: #6b7280;">
+                        <p style="margin-bottom: 5px;"><b>Nguyễn A:</b> Ý tưởng hay quá!</p>
+                    </div>
+                </div>
+                `;
+            feed.appendChild(postCard);
+        });
+    }
+
+    // --- Hàm xử lý sự kiện --- 
+
+    function handlePostSubmit() {
+        const content = document.getElementById('newPostContent').value.trim();
+        if (!content) {
+            alert('Vui lòng nhập nội dung bài viết!');
+            return;
+        }
+
+        // Giao diện (FE) giả lập:
+        const newPost = {
+            id: Date.now(),
+            user: 'Bạn', 
+            content: content,
+            tags: ['Mới đăng'],
+            likes: 0,
+            comments: 0
+        };
+
+        // Thêm bài viết vào đầu danh sách và render lại
+        mockPosts.unshift(newPost);
+        renderPosts(mockPosts);
+        document.getElementById('newPostContent').value = ''; 
+        
+        alert('Bài viết đã được đăng lên (local)!');
+        
+        // TODO: thay bằng việc gọi API POST /api/posts
+    }
+
+    function handleLike(postId) {
+        alert(`Bạn đã thích bài viết ${postId}!`);
+        // TODO: gọi API PUT /api/posts/${postId}/like
+    }
+
+    function handleShare(postId) {
+        alert(`Đã sao chép liên kết bài viết ${postId}.`);
+    }
+
+    // --- HÀM XỬ LÝ BÌNH LUẬN MỚI ---
+    
+    // 1. Hàm chuyển đổi hiển thị
+    function toggleCommentSection(postId) {
+        const commentSection = document.getElementById(`commentSection-${postId}`);
+        
+        // Chuyển đổi trạng thái hiển thị
+        if (commentSection.style.display === 'none') {
+            commentSection.style.display = 'block';
+            // Focus vào ô input ngay sau khi hiện
+            document.getElementById(`commentInput-${postId}`).focus();
+        } else {
+            commentSection.style.display = 'none';
+        }
+    }
+
+    // 2. Hàm gửi bình luận
+    function submitComment(postId) {
+        const inputElement = document.getElementById(`commentInput-${postId}`);
+        const commentContent = inputElement.value.trim();
+
+        if (!commentContent) {
+            alert('Bình luận không được để trống.');
+            return;
+        }
+
+        // Xử lý gửi (FE giả lập)
+        alert(`Gửi bình luận "${commentContent}" tới bài viết ${postId}`);
+        inputElement.value = ''; // Xóa nội dung input
+
+        // TODO: Ở đây bạn sẽ gọi API POST /api/posts/${postId}/comment
+    }
+
+    // 3. Hàm xử lý phím Enter
+    function checkEnterKey(event, postId) {
+        // Kiểm tra xem phím Enter có được nhấn (keyCode 13) không
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Ngăn trình duyệt xuống dòng
+            submitComment(postId);
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Render giao diện lần đầu
+        renderGroupSidebar(mockGroups);
+        renderPosts(mockPosts);
+
+        // Gán sự kiện cho nút Đăng bài
+        document.getElementById('btnPostSubmit').addEventListener('click', handlePostSubmit);
+    });
+
+</script>
+</body>
+</html>
