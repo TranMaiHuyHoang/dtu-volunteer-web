@@ -549,6 +549,7 @@
                                 Năm học
                             </label>
                             <select class="form-select" id="academicYear" name="academicYear">
+
                                 <option value="1">Năm 1</option>
                                 <option value="2">Năm 2</option>
                                 <option value="3">Năm 3</option>
@@ -558,8 +559,9 @@
                         <div class="form-group">
                             <label class="form-label">
                                 Lớp
-                            </label>
+                            </labe
                             <input type="text" class="form-input" id="class" name="class">
+
                         </div>
                     </div>
                 </div>
@@ -582,6 +584,7 @@
                     <div class="form-group">
                         <label class="form-label">Giới thiệu bản thân</label>
                         <textarea class="form-textarea" id="bio" name="bio"
+
                             placeholder="Viết vài dòng về bản thân, sở thích và lý do tham gia hoạt động tình nguyện..."></textarea>
                         <div class="form-hint">Tối đa 500 ký tự</div>
                     </div>
@@ -625,76 +628,28 @@
         import { clientLog } from '/js/utils/clientLogger.js';
         import { fetchApi } from '/js/utils/fetchApi.js';
         import { executeApiCall } from '/js/utils/apiExecutor.js';
-        import { formatDateForInput } from '/js/utils/formatDate.js';
+
+
         clientLog('info', 'User accessed profile edit page');
         // Avatar Upload
-        document.getElementById('avatarInput').addEventListener('change', async function (e) {
-    const file = e.target.files[0];
-    // **LOG 1: Kiểm tra File đã được chọn**
-    console.log('LOG 1: File đã được chọn:', file);
-    if (!file) {
-        console.error('LOG 1.1: Lỗi: Người dùng đã hủy hoặc không chọn file.');
-        return;
-    }
-    
-    // 1. LẤY THÔNG TIN NGƯỜI DÙNG ĐỘNG
-    // PHẢI THAY THẾ bằng logic lấy ID người dùng hiện tại từ phiên làm việc/session
-    const userId = '68fcbf65522d0ac03ce02bff'; 
+        document.getElementById('avatarInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Kiểm tra kích thước file (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Kích thước ảnh không được vượt quá 5MB!');
+                    return;
+                }
 
-    if (!userId) {
-        alert('Lỗi: Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
-        e.target.value = null; 
-        return;
-    }
-
-    if (file) {
-        // 2. KIỂM TRA VÀ PREVIEW (Giữ nguyên)
-        if (file.size > 5 * 1024 * 1024) {
-            alert('Kích thước ảnh không được vượt quá 5MB!');
-            e.target.value = null;
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            document.getElementById('avatarPreview').innerHTML =
-                `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-        };
-        reader.readAsDataURL(file);
-        
-        // 3. CHUẨN BỊ VÀ GỬI FORM DATA
-        const formData = new FormData();
-        // Tên key 'avatar' phải khớp với Multer (ví dụ: upload.single('avatar'))
-        formData.append('avatar', file); 
-        console.log('LOG 2: FormData đã thêm key:', formData.has('avatar'));
-        const endpoint = `/profile/${userId}/avatar`;
-
-        // Gọi fetchApi với:
-        // - data là formData (để kích hoạt logic upload file trong fetchApi)
-        // - useSession: true (để fetch gửi Session Cookie)
-        const [error, data] = await to(
-            fetchApi(
-                endpoint, 
-                'POST', 
-                formData, // Dữ liệu là FormData
-                { 
-                    useSession: true // Dùng Session Cookie để xác thực
-                } 
-            )
-        );
-
-        // 4. XỬ LÝ KẾT QUẢ
-        if (error) {
-            console.error('Lỗi khi gửi request:', error);
-            alert(`Cập nhật avatar thất bại: ${error.message || 'Lỗi mạng hoặc server'}`);
-            e.target.value = null; 
-            return;
-        }
-
-        console.log('✅ Tải ảnh thành công. URL mới:', data.avatarUrl);
-        alert('Cập nhật avatar thành công!');
-    }
-});
+                // Preview ảnh
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    document.getElementById('avatarPreview').innerHTML =
+                        `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
         // Remove Avatar
         document.getElementById('removeAvatarBtn').addEventListener('click', function () {
@@ -703,7 +658,6 @@
                 document.getElementById('avatarInput').value = '';
             }
         });
-
 
         function removeSkill(event) {
             // Ngăn chặn sự kiện lan truyền để tránh các hành vi không mong muốn
@@ -735,6 +689,7 @@
         // Hàm Phụ: Tải Kỹ năng vào Skills Container
         function loadSkills(skillsArray) {
             const skillsContainer = document.getElementById('skillsContainer');
+
             const addButton = skillsContainer.querySelector('.btn-add-skill');
             skillsContainer.innerHTML = '';
 
@@ -744,6 +699,7 @@
                 ${skill}
                 <i class="fa-solid fa-xmark"></i> 
                 </span>
+
         `;
                 skillsContainer.insertAdjacentHTML('beforeend', skillTagHtml);
             });
@@ -752,6 +708,7 @@
         }
 
         // Add Skill (Đã loại bỏ việc gán listener)
+
         function addSkill() {
             const skillName = prompt('Nhập tên kỹ năng:');
             if (skillName && skillName.trim()) {
@@ -811,7 +768,6 @@
             if (!formData.fullName || formData.fullName.trim() === '') {
                 errors.push('Họ và tên không được để trống.');
             }
-
             if (!formData.contactEmail || formData.contactEmail.trim() === '') {
                 errors.push('Email không được để trống.');
             }
@@ -832,6 +788,7 @@
             // 1. Chuyển FormData thành đối tượng JSON cơ bản
             const formData = Object.fromEntries(data.entries());
 
+
             // 2. Xử lý trường 'skills' riêng biệt (vì FormData không thu thập các thẻ span)
             formData.skills = Array.from(document.querySelectorAll('.skill-tag')).map(tag =>
                 tag.textContent.trim()
@@ -847,6 +804,7 @@
 
                 return; // Dừng
             }
+
             // Giả lập gửi request đến backend
             console.log('Dữ liệu gửi đi:', formData);
 
@@ -874,6 +832,7 @@
                 successMessage.classList.remove('show');
             }
         });
+
 
         async function initProfilePage() { // PHẢI LÀ ASYNC để dùng await
             console.log("đang tạo trang và tải dữ liệu...");

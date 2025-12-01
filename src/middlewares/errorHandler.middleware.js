@@ -1,6 +1,5 @@
 const errorHandler = (err, req, res, next) => {
     console.error('💥 Error:', err);
-
     let statusCode = err.statusCode || 500;
     let message = err.message || 'Lỗi máy chủ nội bộ.';
     let errors = undefined; // Thêm trường errors để trả về chi tiết nếu cần
