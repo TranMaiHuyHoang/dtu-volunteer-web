@@ -59,7 +59,7 @@ async function updatePartialsLayout() {
             headerElement.innerHTML = headerContent;
             bindDashboardAndLogoEvents(headerElement);
             // Giữ lại log info để xác nhận inject thành công
-            clientLog('info', `Đã inject header thành công. Chiều dài: ${headerContent.length}`);
+            // clientLog('info', `Đã inject header thành công. Chiều dài: ${headerContent.length}`);
         } else {
             clientLog('error', 'Nội dung header rỗng, không inject.');
         }

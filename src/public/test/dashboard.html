@@ -3,39 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Minimal UI Routes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 25px;
+            padding: 5px 10px;
+            background-color: #e0f7fa; /* Light blue for visual grouping */
+            border-left: 5px solid #00bcd4;
+            font-size: 1.2em;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+            padding: 8px 12px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            display: block; /* Make the link fill the list item */
+            transition: background-color 0.3s, color 0.3s;
+        }
+        a:hover {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd; /* Light yellow for warning/note */
+            border: 1px solid #ffeeba;
+            border-left: 5px solid #ffc107;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #856404;
+        }
+    </style>
 </head>
 <body>
-    <main>
-        <h1>Dashboard</h1>
-        
-        <div id="logout-message" class="message-container"></div>
-        
-        <h2>User Profile:</h2>
-        <div id="profile"></div>
-        
-        <h2>Notifications:</h2>
-        <div id="notifications"></div>
-        
-        <div>
-            <button onclick="loadData()">Load Data</button>
-            <a href="/update-registration-status.html"><button>Cập nhật trạng thái đăng ký</button></a>
+    <div class="container">
+        <h1>Danh sách UI Routes</h1>
+
+        <h2>🔒 Routes Yêu cầu Đăng nhập</h2>
+        <ul>
+            <li><a href="/list-history" target="_blank">/list-history</a></li>
+            <li><a href="/activity-history" target="_blank">/activity-history</a></li>
+            <li><a href="/profile/page" target="_blank">/profile/page</a></li>
+        </ul>
+
+        <div class="note">
+            **Lưu ý quan trọng:** Các liên kết này yêu cầu `verifyToken` (Đăng nhập). Nếu không có token hợp lệ, bạn sẽ gặp lỗi hoặc bị chuyển hướng.
         </div>
-    </main>
 
-    <script type="module" src="/js/utils/fetchApi.js"></script>
-    <script type="module" src="/js/utils/promiseHelper.js"></script>
-    <script type="module" src="/js/utils/fetchHelper.js"></script>
-    <script type="module" src="/js/utils/fetchAndUpdate.js"></script>
-    <script type="module" src="/js/layout.js"></script>
+        ---
 
-    <script>
-        async function loadData() {
-            // Sử dụng fetchAndUpdate để fetch API và tự động update UI
-            await fetchAndUpdate('/profile', 'profile');
-            await fetchAndUpdate('/notifications/me', 'notifications');
-        }
-    </script>
+        <h2>🌍 Routes Công khai</h2>
+        <ul>
+            <li><a href="/about" target="_blank">/about</a></li>
+            <li><a href="/impact" target="_blank">/impact</a></li>
+            <li><a href="/activities/page" target="_blank">/activities/page</a></li>
+            <li><a href="/activitity-management" target="_blank">/activitity-management</a></li>
+        </ul>
+        
+    </div>
 </body>
 </html>
-

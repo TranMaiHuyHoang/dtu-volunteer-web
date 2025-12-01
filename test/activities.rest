@@ -1,0 +1,62 @@
+@baseUrl = http://localhost:3000
+
+### Get all activities
+GET {{baseUrl}}/activities
+
+### Get activities with pagination
+GET {{baseUrl}}/activities?page=1&limit=5
+
+### Filter activities by category
+GET {{baseUrl}}/activities?category=environmental
+
+### Filter activities by status
+GET {{baseUrl}}/activities?status=Active
+
+### Combined filters
+GET {{baseUrl}}/activities?category=environmental&status=Upcoming&page=1&limit=5
+
+### Get activity by ID
+# Replace :id with an actual activity ID
+GET {{baseUrl}}/activities/:id
+
+### Register for an activity (requires auth)
+# Replace :id with an actual activity ID
+# Replace YOUR_TOKEN with a valid JWT token
+POST {{baseUrl}}/activities/:id/register
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "volunteerId": "VOLUNTEER_ID_HERE"
+}
+
+### Unregister from an activity (requires auth)
+# Replace :id with an actual activity ID
+# Replace YOUR_TOKEN with a valid JWT token
+POST {{baseUrl}}/activities/:id/unregister
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "volunteerId": "VOLUNTEER_ID_HERE"
+}
+
+### Create a new activity (admin only)
+# Replace YOUR_ADMIN_TOKEN with a valid admin JWT token
+POST {{baseUrl}}/activities
+Content-Type: application/json
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+{
+  "title": "New Volunteer Activity",
+  "description": "This is a new volunteer activity",
+  "date": "2025-12-31T00:00:00.000Z",
+  "location": "Test Location",
+  "organizer": "Test Organizer",
+  "categories": ["education"],
+  "maxSpots": 10,
+  "availableSpots": 10,
+  "status": "Upcoming",
+  "imageUrl": "https://example.com/image.jpg"
+}
+

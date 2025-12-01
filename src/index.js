@@ -32,6 +32,13 @@ import { postLogoutLog } from './middlewares/logout.middleware.js';
 import httpLogger from './middlewares/httpLogger.middleware.js';
 import path from 'path';
 import ViteExpress from 'vite-express';
+import mongoose from 'mongoose';
+mongoose.set('debug', true);
+
+
+
+
+
 
 //env config
 import urlConfig  from './config/urlConfig.js';
@@ -43,6 +50,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 // Kết nối MySQL (tự động kết nối khi require)
 //require('./config/mysql');
+
+
+
 
 // CORS middleware
 app.use(cors());

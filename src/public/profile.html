@@ -484,7 +484,7 @@
                             <label class="form-label">
                                 Email <span class="required">*</span>
                             </label>
-                            <input type="email" class="form-input" id="email" name="email" required>
+                            <input type="email" class="form-input" id="contactEmail" name="contactEmail" required>
                             <div class="form-hint">Email này sẽ được dùng để nhận thông báo</div>
                         </div>
                         <div class="form-group">
@@ -500,13 +500,13 @@
                             <label class="form-label">
                                 Ngày sinh
                             </label>
-                            <input type="date" class="form-input" id="birthDate">
+                            <input type="date" class="form-input" id="dateOfBirth" placeholder="dd/mm/yyyy">
                         </div>
                         <div class="form-group">
                             <label class="form-label">
                                 Giới tính
                             </label>
-                            <select class="form-select" id="gender">
+                            <select class="form-select" id="gender" name="gender">
                                 <option value="male">Nam</option>
                                 <option value="female">Nữ</option>
                                 <option value="other">Khác</option>
@@ -526,7 +526,7 @@
                             <label class="form-label">
                                 Khoa <span class="required">*</span>
                             </label>
-                            <select class="form-select" id="faculty" required>
+                            <select class="form-select" id="faculty" name="faculty" required>
                                 <option value="">Chọn khoa</option>
                                 <option value="cntt">Công nghệ thông tin</option>
                                 <option value="kttt">Kinh tế - Thương mại</option>
@@ -539,7 +539,7 @@
                             <label class="form-label">
                                 Ngành học <span class="required">*</span>
                             </label>
-                            <input type="text" class="form-input" id="major" required>
+                            <input type="text" class="form-input" id="major" name="major" required>
                         </div>
                     </div>
 
@@ -548,7 +548,7 @@
                             <label class="form-label">
                                 Năm học
                             </label>
-                            <select class="form-select" id="year">
+                            <select class="form-select" id="academicYear" name="academicYear">
                                 <option value="1">Năm 1</option>
                                 <option value="2">Năm 2</option>
                                 <option value="3">Năm 3</option>
@@ -559,7 +559,7 @@
                             <label class="form-label">
                                 Lớp
                             </label>
-                            <input type="text" class="form-input" id="class">
+                            <input type="text" class="form-input" id="class" name="class">
                         </div>
                     </div>
                 </div>
@@ -581,7 +581,7 @@
 
                     <div class="form-group">
                         <label class="form-label">Giới thiệu bản thân</label>
-                        <textarea class="form-textarea" id="bio"
+                        <textarea class="form-textarea" id="bio" name="bio"
                             placeholder="Viết vài dòng về bản thân, sở thích và lý do tham gia hoạt động tình nguyện..."></textarea>
                         <div class="form-hint">Tối đa 500 ký tự</div>
                     </div>
@@ -610,13 +610,13 @@
         //     id: 'user_12345', // Giả định ID để kiểm tra logic backend sau này
         //     fullName: 'Trần Mai Huy Hoàng',
         //     studentId: '28210206131',
-        //     email: 'tranmhuyhoang@dtu.edu.vn',
+        //     contactEmail: 'tranmhuyhoang@dtu.edu.vn',
         //     phone: '0935417964',
-        //     birthDate: '2003-05-15',
+        //     dateOfBirth: '2003-05-15',
         //     gender: 'male',
         //     faculty: 'cntt',
         //     major: 'Software Engineering',
-        //     year: '4',
+        //     academicYear: '4',
         //     class: 'C1SE.78',
         //     bio: 'Mình là sinh viên năm 4 ngành Software Engineering tại DTU. Mình yêu thích các hoạt động tình nguyện, đặc biệt là giảng dạy và hỗ trợ cộng đồng. Mục tiêu của mình là góp phần tạo ra những thay đổi tích cực cho xã hội.',
         //     skills: ['English', 'Programming', 'Teaching', 'Node.js'],
@@ -625,26 +625,76 @@
         import { clientLog } from '/js/utils/clientLogger.js';
         import { fetchApi } from '/js/utils/fetchApi.js';
         import { executeApiCall } from '/js/utils/apiExecutor.js';
+        import { formatDateForInput } from '/js/utils/formatDate.js';
         clientLog('info', 'User accessed profile edit page');
         // Avatar Upload
-        document.getElementById('avatarInput').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Kiểm tra kích thước file (5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Kích thước ảnh không được vượt quá 5MB!');
-                    return;
-                }
+        document.getElementById('avatarInput').addEventListener('change', async function (e) {
+    const file = e.target.files[0];
+    // **LOG 1: Kiểm tra File đã được chọn**
+    console.log('LOG 1: File đã được chọn:', file);
+    if (!file) {
+        console.error('LOG 1.1: Lỗi: Người dùng đã hủy hoặc không chọn file.');
+        return;
+    }
+    
+    // 1. LẤY THÔNG TIN NGƯỜI DÙNG ĐỘNG
+    // PHẢI THAY THẾ bằng logic lấy ID người dùng hiện tại từ phiên làm việc/session
+    const userId = '68fcbf65522d0ac03ce02bff'; 
 
-                // Preview ảnh
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    document.getElementById('avatarPreview').innerHTML =
-                        `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    if (!userId) {
+        alert('Lỗi: Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
+        e.target.value = null; 
+        return;
+    }
+
+    if (file) {
+        // 2. KIỂM TRA VÀ PREVIEW (Giữ nguyên)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Kích thước ảnh không được vượt quá 5MB!');
+            e.target.value = null;
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            document.getElementById('avatarPreview').innerHTML =
+                `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+        };
+        reader.readAsDataURL(file);
+        
+        // 3. CHUẨN BỊ VÀ GỬI FORM DATA
+        const formData = new FormData();
+        // Tên key 'avatar' phải khớp với Multer (ví dụ: upload.single('avatar'))
+        formData.append('avatar', file); 
+        console.log('LOG 2: FormData đã thêm key:', formData.has('avatar'));
+        const endpoint = `/profile/${userId}/avatar`;
+
+        // Gọi fetchApi với:
+        // - data là formData (để kích hoạt logic upload file trong fetchApi)
+        // - useSession: true (để fetch gửi Session Cookie)
+        const [error, data] = await to(
+            fetchApi(
+                endpoint, 
+                'POST', 
+                formData, // Dữ liệu là FormData
+                { 
+                    useSession: true // Dùng Session Cookie để xác thực
+                } 
+            )
+        );
+
+        // 4. XỬ LÝ KẾT QUẢ
+        if (error) {
+            console.error('Lỗi khi gửi request:', error);
+            alert(`Cập nhật avatar thất bại: ${error.message || 'Lỗi mạng hoặc server'}`);
+            e.target.value = null; 
+            return;
+        }
+
+        console.log('✅ Tải ảnh thành công. URL mới:', data.avatarUrl);
+        alert('Cập nhật avatar thành công!');
+    }
+});
 
         // Remove Avatar
         document.getElementById('removeAvatarBtn').addEventListener('click', function () {
@@ -653,11 +703,38 @@
                 document.getElementById('avatarInput').value = '';
             }
         });
+
+
+        function removeSkill(event) {
+            // Ngăn chặn sự kiện lan truyền để tránh các hành vi không mong muốn
+            event.stopPropagation();
+
+            // event.target là phần tử được click (icon <i>).
+            // Dùng parentElement để lấy thẻ <span>.skill-tag bao bọc
+            event.target.parentElement.remove();
+        }
+
+        // Hàm khởi tạo (Chỉ chạy 1 lần khi trang tải)
+        function initSkillDeletion() {
+            const skillsContainer = document.getElementById('skillsContainer');
+
+            // ⭐ GÁN EVENT LISTENER DUY NHẤT VÀO CONTAINER
+            skillsContainer.addEventListener('click', function (event) {
+                const target = event.target;
+
+                // Kiểm tra xem phần tử được click có phải là icon xóa (.fa-xmark) không
+                if (target.classList.contains('fa-xmark')) {
+                    // Nếu đúng, gọi hàm removeSkill
+                    removeSkill(event);
+                }
+            });
+        }
+
+        // ---------------------------------------------------------------------
+
         // Hàm Phụ: Tải Kỹ năng vào Skills Container
         function loadSkills(skillsArray) {
             const skillsContainer = document.getElementById('skillsContainer');
-            // Xóa các skill mặc định trong HTML (English, Programming, Teaching)
-            // Giữ lại nút "Thêm kỹ năng" (button cuối cùng)
             const addButton = skillsContainer.querySelector('.btn-add-skill');
             skillsContainer.innerHTML = '';
 
@@ -665,16 +742,16 @@
                 const skillTagHtml = `
             <span class="skill-tag">
                 ${skill}
-                <i class="fa-solid fa-xmark" onclick="removeSkill(this)"></i>
-            </span>
+                <i class="fa-solid fa-xmark"></i> 
+                </span>
         `;
                 skillsContainer.insertAdjacentHTML('beforeend', skillTagHtml);
             });
 
-            // Thêm lại nút "Thêm kỹ năng" vào cuối
             skillsContainer.appendChild(addButton);
         }
-        // Add Skill
+
+        // Add Skill (Đã loại bỏ việc gán listener)
         function addSkill() {
             const skillName = prompt('Nhập tên kỹ năng:');
             if (skillName && skillName.trim()) {
@@ -684,19 +761,17 @@
                 const newSkill = document.createElement('span');
                 newSkill.className = 'skill-tag';
                 newSkill.innerHTML = `
-                    ${skillName.trim()}
-                    <i class="fa-solid fa-xmark" onclick="removeSkill(this)"></i>
-                `;
+            ${skillName.trim()}
+            <i class="fa-solid fa-xmark"></i> 
+            `;
 
                 skillsContainer.insertBefore(newSkill, addButton);
+
+                // ⭐ BỎ HOÀN TOÀN: newSkill.querySelector() và addEventListener
             }
         }
 
-        // Remove Skill
-        function removeSkill(element) {
-            element.parentElement.remove();
-        }
-
+        // window.removeSkill = removeSkill;
         // Cancel Edit
         document.getElementById("cancelBtn").addEventListener("click", () => {
             cancelEdit();
@@ -710,15 +785,15 @@
             // 1. Thông tin cá nhân
             document.getElementById('fullName').value = data.fullName;
             document.getElementById('studentId').value = data.studentId;
-            document.getElementById('email').value = data.email;
+            document.getElementById('contactEmail').value = data.contactEmail;
             document.getElementById('phone').value = data.phone;
-            document.getElementById('birthDate').value = data.birthDate;
+            document.getElementById('dateOfBirth').value = formatDateForInput(data.dateOfBirth);
             document.getElementById('gender').value = data.gender; // Dùng .value cho select
 
             // 2. Thông tin học tập
             document.getElementById('faculty').value = data.faculty;
             document.getElementById('major').value = data.major;
-            document.getElementById('year').value = data.year;
+            document.getElementById('academicYear').value = data.academicYear;
             document.getElementById('class').value = data.class;
 
             // 3. Kỹ năng & Giới thiệu
@@ -737,7 +812,7 @@
                 errors.push('Họ và tên không được để trống.');
             }
 
-            if (!formData.email || formData.email.trim() === '') {
+            if (!formData.contactEmail || formData.contactEmail.trim() === '') {
                 errors.push('Email không được để trống.');
             }
 
@@ -756,14 +831,12 @@
             const data = new FormData(formElement);
             // 1. Chuyển FormData thành đối tượng JSON cơ bản
             const formData = Object.fromEntries(data.entries());
-            console.log("form data##", formData)
 
             // 2. Xử lý trường 'skills' riêng biệt (vì FormData không thu thập các thẻ span)
             formData.skills = Array.from(document.querySelectorAll('.skill-tag')).map(tag =>
                 tag.textContent.trim()
             );
 
-            clientLog('debug', `Collected formData: ${JSON.stringify(formData)}`);
             const errors = getFormErrors(formData);
 
             // 2. XỬ LÝ KẾT QUẢ
@@ -774,56 +847,23 @@
 
                 return; // Dừng
             }
-            // // Validation cơ bản
-            // if (!formData.fullName || !formData.email || !formData.phone) {
-            //     alert('Vui lòng điền đầy đủ các trường bắt buộc!');
-            //     return;
-            // }
-
             // Giả lập gửi request đến backend
             console.log('Dữ liệu gửi đi:', formData);
 
             let apiPromise = fetchApi(`/profile`, 'PUT', formData, { useSession: true });
             const result = await executeApiCall(
-                    apiPromise,
-                    // successAction: Hành động thực hiện khi API thành công
-                    async (data) => {
-                        // Logic sau khi cập nhật thành công
-                        
-                        // 1. Cuộn lên đầu trang
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        
-                        // KHÔNG CÒN CHUYỂN HƯỚNG NỮA. Người dùng sẽ ở lại trang profile.
+                apiPromise,
+                async (data) => {
+                    // 1. Cuộn lên đầu trang
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                        // MẸO: Bạn có thể thêm logic để tải lại dữ liệu profile mới 
-                        // vào form tại đây, nếu cần (ví dụ: initProfilePage();)
-                        console.log("Profile updated successfully, staying on page.");
-                    },
-                    // successMessage (Tùy chọn): Thông báo thành công tùy chỉnh
-                    'Cập nhật thông tin profile thành công!'
-                );
-            // 2. Sử dụng executeApiCall để xử lý toàn bộ logic gọi API và hiển thị thông báo
-            // const result = await executeApiCall(
-            //     apiPromise,
-            //     async (data) => {
-            //         resetForm();
-            //         await loadRecords(el('searchInput').value.trim());
-            //     }
-            // );
+                    // KHÔNG CÒN CHUYỂN HƯỚNG NỮA. Người dùng sẽ ở lại trang profile.
 
-            // // Hiển thị thông báo thành công
-            // const successMessage = document.getElementById('successMessage');
-            // successMessage.classList.add('show');
-            // clientLog('info', 'Success message displayed');
-            // // Scroll lên đầu trang
-            // window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Ẩn thông báo sau 3 giây và chuyển về dashboard
-            // setTimeout(() => {
-            //     successMessage.classList.remove('show');
-            //     clientLog('info', 'Redirecting after successful simulation');
-            //     window.location.href = '/activity-history.html';
-            // }, 3000);
+                    // MẸO: Bạn có thể thêm logic để tải lại dữ liệu profile mới 
+                    // vào form tại đây, nếu cần (ví dụ: initProfilePage();)
+                    console.log("Profile updated successfully, staying on page.");
+                },
+            );
 
         });
 
@@ -834,11 +874,7 @@
                 successMessage.classList.remove('show');
             }
         });
-        // function initProfilePage() {
-        //     console.log("đang tạo trang")
-        //     // Tạm thời gọi hàm fillFormData với dữ liệu mẫu
-        //     fillFormData(MOCK_PROFILE_DATA);
-        // }
+
         async function initProfilePage() { // PHẢI LÀ ASYNC để dùng await
             console.log("đang tạo trang và tải dữ liệu...");
 
@@ -848,7 +884,6 @@
 
                 // 2. Lấy đối tượng profile (mydata.data là Object)
                 const profileData = mydata.data;
-
                 // 3. Truyền dữ liệu profile (Object) vào hàm điền form
                 fillFormData(profileData);
 
@@ -867,14 +902,17 @@
                 // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
             }
         }
-
+        function initializePage() {
+        initProfilePage();
+        initSkillDeletion();
+        }
         // Khởi tạo trang khi load
         if (document.readyState === 'loading') {
             // DOM chưa sẵn sàng, lắng nghe sự kiện
-            window.addEventListener('DOMContentLoaded', initProfilePage);
+            window.addEventListener('DOMContentLoaded', initializePage);
         } else {
             // DOM đã sẵn sàng (interactive hoặc complete), chạy hàm ngay lập tức
-            initProfilePage();
+            initializePage();
         }
         // window.addEventListener('DOMContentLoaded', initProfilePage);
     </script>

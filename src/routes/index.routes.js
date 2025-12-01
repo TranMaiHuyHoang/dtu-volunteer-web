@@ -5,8 +5,8 @@ import { verifyToken } from '../middlewares/jwt-auth.middleware.js';
 import serveStaticPage  from '../utils/serveStaticPage.js';
 
 import auth from './auth.routes.js';
-import profile from './studentProfile.routes.js';
 import activityRouter from './activity.routes.js';
+import profile from './studentProfile.routes.js';
 import registrationRouter from './registration.routes.js';
 import notificationRouter from './notification.routes.js';
 import projectRouter from './project.routes.js';
@@ -16,16 +16,19 @@ import recordRouter from './record.routes.js';
 //const regCtrl = require('../controllers/registration.controller');
 import clientLogRoute from './clientLog.routes.js';
 import uiRoutes from './ui.routes.js';
-
+import organizerProfileRouter from './organizerProfile.routes.js';
 router.get('/demo', serveStaticPage('demo.html'));
+// Mount UI routes
+router.use(uiRoutes);
 
 router.use('/activities', verifyToken, activityRouter);
 router.use('/registrations', verifyToken, registrationRouter);
 router.use('/', auth);
-router.use('/profile', verifyToken, profile );
+router.use('/profile',verifyToken, profile ); //verifyToken
 router.use('/notifications', notificationRouter);
 router.use('/projects', projectRouter);
 router.use('/records', verifyToken, recordRouter);
+router.use('/organizer-profiles', organizerProfileRouter )
 // Tạm thời comment finance routes
 // router.use('/finance', financeRouter);
 
@@ -38,8 +41,6 @@ router.get('/auth/status', verifyToken, (req, res) => {
     });
 });
 
-// Mount UI routes
-router.use(uiRoutes);
 
 // API routes
 router.use('/api', clientLogRoute);

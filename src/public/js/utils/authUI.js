@@ -90,7 +90,7 @@ function renderHeader(isLoggedIn) {
     // Link tùy theo trạng thái đăng nhập
     const authLinks = isLoggedIn
         ? [
-            { href: '/activities', text: 'Activities' },
+            { href: '/activities/page', text: 'Activities' },
             { href: '/list-history', text: 'List History' },
             { href: '/activity-history', text: 'Activity History' },
             { href: '/profile/page', text: 'Profile' },

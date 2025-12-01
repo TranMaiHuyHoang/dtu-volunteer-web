@@ -1,0 +1,110 @@
+<!-- activity-management.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Activity Management</title>
+    <style>
+        /* styles.css */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            margin: 20px;
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        tbody {
+            cursor: pointer;
+        }
+    </style>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+</head>
+<body>
+    <header>
+        <h1>Admin Activity Management</h1>
+    </header>
+    <main>
+        <section id="activity-list">
+            <h2>List of Activities</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Organizer</th>
+                        <th>Location</th>
+                        <th>Registered</th>
+                        <th>Capacity</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="activity-table-body">
+                    <!-- Activities will be dynamically populated here -->
+                </tbody>
+            </table>
+        </section>
+        <section id="activity-form-container">
+            <h2>Add New Activity</h2>
+            <form id="activity-form">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title">
+
+                <label for="organizer">organizer:</label>
+                <input type="text" id="organizer" name="organizer">
+
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location">
+
+                <label for="registered">Registered:</label>
+                <input type="number" id="registered" name="registered">
+
+                <label for="capacity">Capacity:</label>
+                <input type="number" id="capacity" name="capacity">
+
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="upcoming">Upcoming</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="completed">Completed</option>
+                </select>
+
+                <button type="submit">Add Activity</button>
+            </form>
+        </section>
+    </main>
+    <script type="module" src="js/activities-management.js"></script>
+    <script type="module" src="js/layout.js"></script>
+</body>
+</html>

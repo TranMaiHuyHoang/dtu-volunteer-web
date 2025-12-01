@@ -70,7 +70,6 @@ async function fetchApi(endpoint, method, data = null, // Tường minh hóa opt
     // Token hết hạn → redirect về login
     if (handleTokenExpiration(res, errorData)) {
         throw new Error('Token expired or unauthorized action handled.'); // Ném một lỗi để to() bắt được
-        return; 
     }
         clientLog('error', `API ERROR: ${res.status} - ${errorData.message || res.statusText}`);
 
