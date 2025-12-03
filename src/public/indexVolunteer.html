@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DTU Volunteer – Hoạt động</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html,
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial;
+    }
+
+    .chip {
+      @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold leading-4 shadow-sm;
+    }
+  </style>
+</head>
+
+<body class="bg-neutral-50 text-neutral-900">
+  <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    
+    <!-- Hero -->
+    <section class="relative mt-6 overflow-hidden rounded-2xl bg-blue-700 text-white">
+      <div class="relative z-10 grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.1fr,0.9fr] lg:gap-8 lg:p-10">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.25em] text-white/80">
+            Tạo Sự Khác Biệt Tại Đại Học Duy Tân
+          </p>
+
+          <h1 class="mt-2 text-2xl font-bold sm:text-3xl">
+            Kết nối với các cơ hội tình nguyện ý nghĩa, theo dõi đóng góp của bạn, và cùng xây dựng một cộng đồng tốt đẹp hơn.
+          </h1>
+
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a href="#"
+              class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow hover:bg-neutral-100">
+              Khám phá hoạt động
+            </a>
+
+            <a href="#"
+              class="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20">
+              Tìm hiểu thêm
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 rounded-xl bg-white/10 p-4 sm:gap-4">
+          <div class="rounded-lg bg-white/10 p-4 text-center">
+            <div class="text-2xl font-bold">1,234</div>
+            <div class="mt-1 text-xs text-white/80">Tình nguyện viên đang hoạt động</div>
+          </div>
+          <div class="rounded-lg bg-white/10 p-4 text-center">
+            <div class="text-2xl font-bold">12,450</div>
+            <div class="mt-1 text-xs text-white/80">Tổng số giờ</div>
+          </div>
+          <div class="rounded-lg bg-white/10 p-4 text-center">
+            <div class="text-2xl font-bold">5,678</div>
+            <div class="mt-1 text-xs text-white/80">Cuộc sống được tác động</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl"></div>
+      <div class="pointer-events-none absolute -bottom-16 -left-16 h-72 w-72 rounded-full bg-white/10 blur-2xl"></div>
+    </section>
+
+    <!-- Filters -->
+    <section class="mt-5 flex flex-wrap items-center gap-3">
+      <div class="relative flex-1 min-w-[240px]">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </span>
+
+        <input type="text" id="activity-search-input" placeholder="Tìm kiếm hoạt động..."
+          class="w-full rounded-lg border border-neutral-200 bg-white pl-9 pr-3 py-2 text-sm placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+      </div>
+
+      <select id="category-filter"
+        class="min-w-[160px] rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+        <option>Tất cả danh mục</option>
+        <option>Giáo dục</option>
+        <option>Môi trường</option>
+        <option>Sức khỏe</option>
+        <option>Cộng đồng</option>
+      </select>
+
+      <select id="status-filter"
+        class="min-w-[140px] rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+        <option>Tất cả trạng thái</option>
+        <option>Sắp diễn ra</option>
+        <option>Đã hoàn thành</option>
+        <option>Đang diễn ra</option>
+      </select>
+    </section>
+
+    <!-- Results header -->
+    <div class="mt-6 text-sm text-neutral-600">Các hoạt động hiện có</div>
+    <div id="activity-count" class="mt-1 text-xs text-neutral-500">Đang tải...</div>
+
+    <!-- Cards -->
+    <section id="activity-list" class="mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3"></section>
+
+  </main>
+
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/activities.js"></script>
+
+</body>
+</html>
