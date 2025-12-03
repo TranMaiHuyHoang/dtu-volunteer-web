@@ -15,4 +15,5 @@ router.get('/impact', serveStaticPage('our_Impact.html'));
 router.get('/activities/page', serveStaticPage('indexVolunteer.html'));
 router.get('/activitity-management', serveStaticPage('activity-management.html'));
 router.get('/dashboard', verifyToken, permit('admin'), serveStaticPage('/test/dashboard.html'));
+
 export default router;
