@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTU Volunteer - Trang chủ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/links.css">  
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #F5F7FA;
+            color: #2D3748;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #FFFFFF;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #2563EB;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2D3748;
+        }
+
+
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 35px;
+        }
+
+        nav ul li a {
+            color: #4A5568;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #2563EB;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-primary {
+            background: #2563EB;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease, transform 0.1s;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background: #1D4ED8;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #FFFFFF;
+            color: #2563EB;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid #2563EB;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #EFF6FF;
+        }
+
+        /* Message Container */
+        .message-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .message-container.success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #10B981;
+            display: block;
+        }
+
+        .message-container.error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #EF4444;
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            font-weight: 300;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Management Section */
+        .management-section {
+            padding: 60px 0;
+            background: white;
+            margin-bottom: 40px;
+        }
+
+        .management-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .management-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .management-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            border: 2px solid #E5E7EB;
+        }
+
+        .management-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: #2563EB;
+        }
+
+        .management-card i {
+            font-size: 2.5rem;
+            color: #2563EB;
+            margin-bottom: 15px;
+        }
+
+        .management-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1F2937;
+        }
+
+        .management-card .btn-primary {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Auth Required/Hidden */
+        [data-auth-required] {
+            display: none;
+        }
+
+        [data-auth-hidden] {
+            display: block;
+        }
+
+        body.authenticated [data-auth-required] {
+            display: block;
+        }
+
+        body.authenticated [data-auth-hidden] {
+            display: none;
+        }
+
+        .auth-message {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .auth-message i {
+            font-size: 3rem;
+            color: #2563EB;
+            margin-bottom: 20px;
+        }
+
+        .auth-message p {
+            font-size: 1.1rem;
+            color: #4A5568;
+            margin-bottom: 20px;
+        }
+
+        /* Impact Section */
+        .impact-section {
+            padding: 60px 0;
+            background: white;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+
+        .impact-grid {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .impact-item {
+            padding: 20px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .impact-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #10B981;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .impact-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #4A5568;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1F2937;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #6B7280;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #2563EB;
+            margin-bottom: 15px;
+            width: 60px;
+            height: 60px;
+            background: #EFF6FF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1F2937;
+        }
+
+        .feature-card p {
+            color: #6B7280;
+            font-size: 1rem;
+        }
+
+footer {
+    background: #1F2937;
+    color: white;
+    padding: 60px 0 30px;
+    text-align: center;
+}
+/* footer p {
+    margin: 0;
+} */
+
+/* footer*/
+
+
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .footer-content p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+/**/
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .header-container {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hero-section {
+                padding: 60px 0;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .impact-grid {
+                flex-direction: column;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .management-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body data-layout-mode="static-footer">
+    <main>
+        <div id="logout-message" class="message-container"></div>
+
+        <section class="hero-section">
+            <div class="container hero-content">
+                <h1 class="hero-title">
+                    Sức Mạnh Của Tình Nguyện: Kết Nối và Thay Đổi Cộng Đồng
+                </h1>
+                <p class="hero-subtitle">
+                    Nền tảng số dành cho sinh viên DTU, giúp bạn dễ dàng tìm kiếm, đăng ký và quản lý hoạt động tình
+                    nguyện, xây dựng cộng đồng phát triển tinh thần đoàn kết dân tộc.
+                </p>
+                <div class="hero-actions">
+                    <a href="/register" class="btn-primary">
+                        <i class="fa-solid fa-heart"></i>
+                        Tham Gia Ngay
+                    </a>
+                    <a href="/list-history" class="btn-secondary"
+                        style="background: rgba(255,255,255,0.2); border-color: white; color: white;">
+                        <i class="fa-solid fa-list-check"></i>
+                        Xem Hoạt Động
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Management Section (Auth Required) -->
+        <section class="management-section" data-auth-required>
+            <div class="container management-content">
+                <h2 class="management-title">
+                    <i class="fa-solid fa-gear"></i> Quản lý dự án
+                </h2>
+                <div class="management-grid">
+                    <div class="management-card">
+                        <i class="fa-solid fa-list"></i>
+                        <h3>Danh sách dự án</h3>
+                        <a href="/projects/list" class="btn-primary">
+                            <i class="fa-solid fa-arrow-right"></i>
+                            Xem danh sách
+                        </a>
+                    </div>
+                    <div class="management-card">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <h3>Tạo dự án mới</h3>
+                        <a href="/projects/create" class="btn-primary">
+                            <i class="fa-solid fa-arrow-right"></i>
+                            Tạo dự án
+                        </a>
+                    </div>
+                    <div class="management-card">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <h3>Cập nhật trạng thái</h3>
+                        <a href="/projects/update" class="btn-primary">
+                            <i class="fa-solid fa-arrow-right"></i>
+                            Cập nhật
+                        </a>
+                    </div>
+                    <div class="management-card">
+                        <i class="fa-solid fa-desktop"></i>
+                        <h3>Demo giao diện</h3>
+                        <a href="/demo" class="btn-primary">
+                            <i class="fa-solid fa-arrow-right"></i>
+                            Xem demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Auth Message (Hidden when authenticated) -->
+        <div data-auth-hidden>
+            <div class="container">
+                <div class="auth-message">
+                    <i class="fa-solid fa-lock"></i>
+                    <p>Vui lòng đăng nhập để quản lý dự án và truy cập đầy đủ tính năng.</p>
+                    <a href="/login" class="btn-primary">
+                        <i class="fa-solid fa-sign-in-alt"></i>
+                        Đăng nhập ngay
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <section class="impact-section">
+            <div class="container">
+                <div class="impact-grid">
+                    <div class="impact-item">
+                        <div class="impact-value">1,200+</div>
+                        <div class="impact-label">TÌNH NGUYỆN VIÊN</div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-value">150</div>
+                        <div class="impact-label">CÁC HOẠT ĐỘNG ĐÃ ĐẠT ĐƯỢC</div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-value">30+</div>
+                        <div class="impact-label">CÁC NƠI ĐÃ ĐẾN</div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-value">12</div>
+                        <div class="impact-label">Đối tác Cộng đồng</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="container">
+                <h2 class="section-title">TÍNH NĂNG NỔI BẬT</h2>
+                <p class="section-subtitle">Khám phá những tính năng giúp bạn tham gia tình nguyện hiệu quả hơn</p>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+                        <h3>TÌM KIẾM THÔNG MINH</h3>
+                        <p>Dễ dàng lọc và tìm kiếm các hoạt động hoặc các nhóm tình nguyện phù hợp với sở thích, kỹ năng
+                            và thời gian biểu của bạn.</p>
+                    </div>
+                    <a href="/records/manage" class="block-link">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <h3>QUẢN LÝ HỒ SƠ</h3>
+                        <p>Theo dõi lịch sử hoạt động, số nơi đã đến, ghi nhận các thành tích trong các hoạt động</p>
+                    </div>
+                </a>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fa-solid fa-users"></i></div>
+                        <h3>KẾT NỐI CỘNG ĐỒNG</h3>
+                        <p>Tham gia đội nhóm, thảo luận về các dự án và chia sẻ kinh nghiệm với những người cùng đam mê.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fa-solid fa-trophy"></i></div>
+                        <h3>THÀNH TÍCH NỔI BẬT</h3>
+                        <p>Trao huy hiệu và xếp hạng khi đạt các mốc quan trọng, lan tỏa năng lượng đến cộng đồng.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- kêu gọi hành động -->
+    <footer>
+        <div class="container footer-content">
+            <h2>Cùng chung tay, đoàn kết vượt qua thiên tai</h2>
+             <p>Hàng ngàn đồng bào đang cần sự giúp đỡ khẩn cấp sau thiên tai. Hãy đăng ký tài khoản ngay để tham gia đội tình nguyện viên cứu trợ cùng nhau thắp sáng hi vọng !</p>
+            <a href="register.html" class="btn-primary" style="background: #10B981; margin-bottom: 20px;">
+                <i class="fa-solid fa-rocket"></i>
+                Bắt Đầu Ngay
+            </a>
+            <p style="font-size: 0.85rem; opacity: 0.6;">© 2025 DTU Volunteer Platform. All rights reserved.</p>
+        </div>
+    </footer>
+    <script type="module" src="/js/layout.js"></script>
+
+</body>
+
+</html>

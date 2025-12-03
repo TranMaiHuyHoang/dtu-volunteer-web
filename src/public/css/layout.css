@@ -1,0 +1,217 @@
+/* Layout CSS */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap');
+
+        /* Header */
+        header {
+            background: #FFFFFF;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            font-family: 'Roboto', sans-serif; /* Đảm bảo typography header đồng nhất mọi trang */
+            color: #2D3748; /* Màu chữ mặc định cho header */
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #2563EB;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+
+        .logo-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2D3748;
+        }
+
+        .logo-subtitle {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+/* Style cho container chứa links */
+nav .nav-links {
+     display: flex;
+    align-items: center;
+    gap: 26px;                 /* Spacing tương đương ảnh 2 */
+    white-space: nowrap;       /* Không xuống dòng */
+}
+
+/* Style cho TẤT CẢ các thẻ <a> bên trong .nav-links */
+nav .nav-links a { 
+    color: #4A5568;
+    text-decoration: none;
+    font-size: 14px; /* Tối ưu cho tiếng Việt */
+    font-weight: 500;
+    padding: 0 6px;/* Thu padding giúp menu ngắn gọn */
+    margin: 0; /* Bỏ margin để tránh dãn thừa */
+    transition: color 0.25s ease;
+    white-space: nowrap;/* Không cho xuống dòng */
+}
+
+/* Style khi hover và active */
+nav .nav-links a:hover,
+nav .nav-links a.active {
+    color: #2563EB;
+}
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* .search-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #4A5568;
+            transition: color 0.3s ease;
+        }
+
+        .search-icon:hover {
+            color: #2563EB;
+        } */
+
+        .btn-dashboard {
+            background: #1A202C;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+            white-space: nowrap;
+            font-size: 14px;
+            margin-left: 20px;
+
+        }
+
+        .btn-dashboard:hover {
+            background: #2D3748;
+        }
+
+/* header {
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+header nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+header nav a {
+    text-decoration: none;
+    color: #495057;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+header nav a:hover {
+    background-color: #e9ecef;
+    color: #212529;
+} */
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 200px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+footer.default-layout { 
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    border-top: 1px solid #dee2e6;
+    text-align: center;
+    color: #6c757d;
+    margin-top: auto;
+}
+
+/* Style này CHỈ áp dụng cho các thẻ <p> bên trong footer mặc định */
+footer.default-layout p {
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.nav-links[data-nav-container] {
+    margin-left: 32px; /* thay vì 60–80px như trước */
+}
+
+/* Giảm spacing để tiếng Việt không bị xuống dòng */
+.nav-links {
+    gap: 28px ;  /* spacing tương đương bản tiếng Anh */
+    white-space: nowrap;   /* đảm bảo không xuống hàng */
+    display:flex;
+}
+
+/* Thu nhỏ chữ 1 chút để vừa tiếng Việt */
+.nav-links a {
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Logo cách menu 1 khoảng đẹp như bản cũ */
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+    margin-right: 28px !important; /* Giảm từ 40 → 28 để giống ảnh 2 */
+}
+

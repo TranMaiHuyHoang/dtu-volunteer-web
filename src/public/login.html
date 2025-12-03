@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - DTU Volunteer</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #08204E 0%, #204B9B 100%);
+            color: #FFFFFF;
+            line-height: 1.6;
+        }
+
+        main.main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            padding: 40px 20px;
+        }
+
+        .login-form {
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0px 18px 45px rgba(8, 32, 78, 0.25);
+            padding: 42px 48px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            color: #1F2937;
+            margin: 0 auto;
+        }
+
+        .form-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #08204E;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.92rem;
+            color: #4A5568;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #1F2937;
+            background: #F8FAFC;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            box-sizing: border-box;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #111827;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .btn-login:hover {
+            background: #1F2937;
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 26px 0;
+            color: #94A3B8;
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E2E8F0;
+        }
+
+        .divider::before {
+            margin-right: 12px;
+        }
+
+        .divider::after {
+            margin-left: 12px;
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            background: #FFFFFF;
+            color: #1F2937;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-google:hover {
+            background: #F8FAFC;
+            border-color: #CBD5E1;
+        }
+
+        .btn-google svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .links {
+            margin-top: 22px;
+            font-size: 0.9rem;
+            color: #64748B;
+        }
+
+        .links a {
+            color: #60A5FA;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .message-container {
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            main.main-content {
+                padding: 24px 16px;
+            }
+
+            .login-form {
+                padding: 32px 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="main-content">
+        <div class="login-form">
+            <div class="form-title">Đăng nhập tài khoản</div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email hoặc tên đăng nhập</label>
+                    <input type="email" id="loginEmail" name="email" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-login">Đăng nhập</button>
+            </form>
+
+            <div class="divider">hoặc</div>
+
+            <button type="button" class="btn-google" id="googleLogin">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Đăng nhập bằng Google
+            </button>
+
+            <div class="links">
+                <a href="#">Quên mật khẩu?</a> · <a href="/register">Đăng ký tài khoản</a>
+            </div>
+
+            <div id="response" class="message-container"></div>
+        </div>
+    </main>
+
+    <!-- <script type="module" src="/js/utils/message.js"></script> -->
+    <script type="module" src="/js/layout.js"></script>
+
+    <script type="module">
+        import { fetchApi } from '/js/utils/fetchApi.js';
+        import { showMessage } from '/js/utils/message.js';
+        import { saveRedirectURL, showLoggedInUI, } from '/js/utils/authUI.js';
+        import { executeApiCall } from '/js/utils/apiExecutor.js';
+        // Make fetchApi available globally if needed by other scripts
+        window.fetchApi = fetchApi;
+
+        // Lưu URL trang trước đó để redirect về sau khi đăng nhập
+        if (typeof saveRedirectURL === 'function') {
+            saveRedirectURL();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            login();
+        });
+
+        document.getElementById('googleLogin').addEventListener('click', function (event) {
+            handleGoogleLogin(event);
+        });
+
+        // Xử lý click vào link Google OAuth
+        function handleGoogleLogin(event) {
+            event.preventDefault();
+            saveRedirectURL();
+            showMessage('Đang chuyển hướng đến trang xác thực Google...', 'info');
+
+            // Tùy chọn: Thêm một độ trễ nhỏ để người dùng kịp đọc thông báo
+            setTimeout(() => {
+                window.location.href = '/auth/google';
+            }, 500); // Đợi 0.5 giây 
+        }
+
+        function handleSuccessfulLogin() {
+            // 1. Cập nhật UI (nếu hàm tồn tại)
+            if (typeof showLoggedInUI === 'function') {
+                showLoggedInUI();
+            }
+
+            // 2. Xử lý chuyển hướng sau 1 giây
+            setTimeout(() => {
+                if (typeof redirectAfterLogin === 'function') {
+                    redirectAfterLogin();
+                } else {
+                    window.location.href = '/';
+                }
+            }, 1000);
+        }
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showMessage('Vui lòng nhập đầy đủ email và mật khẩu', 'error');
+                return;
+            }
+
+            const promise = fetchApi('/login', 'POST', { email, password });
+            const successMessage = 'Đăng nhập thành công! Đang chuyển hướng...';
+
+            // 💡 SỬ DỤNG HÀM MỚI
+            await executeApiCall(promise, handleSuccessfulLogin, successMessage);
+        }
+    </script>
+</body>
+
+</html>

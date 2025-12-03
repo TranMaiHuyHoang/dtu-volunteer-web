@@ -1,0 +1,114 @@
+@baseUrl = http://localhost:3000
+
+
+GET {{baseUrl}}
+
+
+
+###
+
+# @name loginRequest
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "abcxyz1@gmail.com",
+    "password": "Passabcxyz123"
+}
+
+### nếu là Admin
+# @name loginRequest
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "thisisadmin@gmail.com",
+    "password": "Password123"
+}
+
+
+###
+# Gán biến @userToken bằng thuộc tính token từ phản hồi đăng nhập
+@userToken = {{loginRequest.response.body.token}}
+
+# @name profileRequest
+GET {{baseUrl}}/profile
+Authorization: Bearer {{userToken}}
+
+
+
+###
+# @name logoutRequest
+GET {{baseUrl}}/logout
+##dán cookie từ trình duyệt vào đây để test google login
+##Cookie: connect.sid=
+ 
+
+###
+
+### Create Notification
+POST {{baseUrl}}/notifications
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "userId": "68fcbf65522d0ac03ce02bff", 
+  "message": "Bạn có một thông báo mới từ hệ thống"
+}
+
+POST {{baseUrl}}/registrations
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "projectId": "69048a5fc142b32af2157b72" 
+    // Thay ID dự án thực tế vào đây
+}
+###
+
+POST {{baseUrl}}/records
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "name": "123131@@@",
+    "email": "Tình nguyện viên sự kiện"
+}
+
+###
+
+POST http://localhost:3000/activities/69247af0cb6be523620f7f03/register
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "studentProfileId": "69169bd151394f9503962c09"
+}
+
+
+### Test Cập nhật Avatar cho Student Profile
+
+# Thay thế <STUDENT_PROFILE_ID> bằng ID hợp lệ từ MongoDB của bạn
+# Ví dụ: 60f8c3c1b3f7e50015b67e7c
+
+# Thay đổi tên file 'test-image.jpg' thành đường dẫn file ảnh thật của bạn
+
+# Thay đổi tên file 'test-image.jpg' thành đường dẫn file ảnh thật của bạn
+@avatar_file = E:\code\dtu-volunteer-web\src\public\uploads\test-image.jpg
+
+POST http://localhost:3000/profile/68fcbf65522d0ac03ce02bff/avatar
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer {{userToken}}
+# Lưu ý: PHẢI CÓ một dòng trống ở đây
+# -----------------------------
+
+--WebAppBoundary
+Content-Disposition: form-data; name="avatar"; filename="test-image.jpg"
+Content-Type: image/jpeg 
+# Lưu ý: PHẢI CÓ một dòng trống ở đây
+
+< @avatar_file
+# Lưu ý: PHẢI CÓ một dòng trống ở đây
+
+--WebAppBoundary--
+# Lưu ý: PHẢI CÓ một dòng trống ở đây
