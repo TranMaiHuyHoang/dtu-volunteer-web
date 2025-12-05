@@ -22,7 +22,7 @@ function buildActivityQuery(filters = {}) {
         query.status = { $regex: status, $options: 'i' };
     }
 
-    // 3. Tìm kiếm theo Tên/Tiêu đề (Search by Title)
+  // 3. Tìm kiếm theo Tên/Tiêu đề (Search by Title)
     if (search && search.trim() !== '') {
         const safeSearch = escapeRegex(search.trim());
         console.log(" test: ", safeSearch);

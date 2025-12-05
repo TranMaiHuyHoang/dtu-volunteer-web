@@ -5,12 +5,14 @@ import upload from '../config/multerConfig.js';
 import urlConfig from '../config/urlConfig.js';
 import path from 'path';
 import User from '../models/user.model.js';
-const router = express.Router();
+import {studentProfileValidator} from '../middlewares/studentProfileValidator.middleware.js';
+// import handleValidationErrors from '../middlewares/validationHandler.middleware.js';
 
+const router = express.Router();
 router.route('/')
     .get(getProfile)
-    .post(createProfile)
-    .put(updateProfile);
+    .post(studentProfileValidator.create, createProfile)
+    .put(studentProfileValidator.update, updateProfile);
 
 
 router.post(

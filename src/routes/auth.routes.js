@@ -15,7 +15,6 @@ import serveStaticPage from '../utils/serveStaticPage.js';
 router.get("/", serveStaticPage('index.html'));
 router.get("/login", serveStaticPage('login.html'));
 router.get("/register", serveStaticPage('register.html'));
-router.get("/logout-page", serveStaticPage('logout.html'));
 
 
 // SỬA LỖI: Gọi passport.authenticate

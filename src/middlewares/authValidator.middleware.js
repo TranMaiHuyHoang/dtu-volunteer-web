@@ -1,6 +1,6 @@
 
 // Thay thế require bằng import cho Named Exports
-import { usernameRules, emailRules, passwordRules } from './baseRulesValidate.js';
+import { usernameRules, emailRules, passwordRules } from './validationRules/baseRulesValidate.js';
 
 // 1. Validator Đăng ký
 // Register cần username, email, và password

@@ -9,12 +9,22 @@ const usernameRules = [
         .isAlphanumeric()
         .withMessage('Tên người dùng chỉ được chứa chữ và số'),
 ];
+
+
+
 // 2. Quy tắc Tái sử dụng cho EMAIL
 const emailRules = [
     body('email')
         .isEmail()
         .withMessage('Email không hợp lệ')
         .normalizeEmail(),
+];
+
+const contactEmailRules = [
+    body('contactEmail')
+        .isEmail()
+        .withMessage('Email liên lạc không hợp lệ')
+        .normalizeEmail()
 ];
 
 // 3. Quy tắc Tái sử dụng cho PASSWORD (Yêu cầu mật khẩu mạnh)
@@ -28,25 +38,10 @@ const passwordRules = [
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
         .withMessage('Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số')
 ];
+//--------------------------------//
 
 
 
-const validateIdParam = [
-    // 1. Kiểm tra tham số 'id' có tồn tại không
-    param('id')
-        .notEmpty().withMessage('ID hồ sơ không được để trống trong URL'),
-    
-    // 2. Kiểm tra định dạng ID có phải là MongoDB ObjectId hợp lệ không
-    param('id')
-        .custom((value) => {
-            // Sử dụng mongoose.Types.ObjectId.isValid() để kiểm tra định dạng
-            if (!mongoose.Types.ObjectId.isValid(value)) {
-                // Nếu không hợp lệ, ném ra lỗi. express-validator sẽ bắt lỗi này.
-                throw new Error('ID hồ sơ không hợp lệ. Vui lòng kiểm tra định dạng.');
-            }
-            return true; // Hợp lệ
-        })
-];
 
 const nameRules = [
     body('name')
@@ -76,11 +71,34 @@ const addressRules = [
         .trim()
         .isLength({ max: 255 }).withMessage('Địa chỉ không được quá 255 ký tự')
 ];
-const notesRules = [
-    body('notes')
-        .optional({ nullable: true, checkFalsy: true })
-        .trim()
-        .isLength({ max: 500 }).withMessage('Ghi chú không được quá 500 ký tự')
+
+
+export const createOptionalTextRule = (fieldName) => {
+    return [
+        body(fieldName) 
+            .optional({ nullable: true, checkFalsy: true }) // Cho phép null/undefined/chuỗi rỗng
+            .trim() // Xóa khoảng trắng thừa
+            .isLength({ max: 500 }).withMessage('Ghi chú không được quá 500 ký tự') // Giới hạn
+    ];
+};
+export const notesRules = createOptionalTextRule('notes'); //tạm thời tương thích
+
+
+const validateIdParam = [
+    // 1. Kiểm tra tham số 'id' có tồn tại không
+    param('id')
+        .notEmpty().withMessage('ID hồ sơ không được để trống trong URL'),
+    
+    // 2. Kiểm tra định dạng ID có phải là MongoDB ObjectId hợp lệ không
+    param('id')
+        .custom((value) => {
+            // Sử dụng mongoose.Types.ObjectId.isValid() để kiểm tra định dạng
+            if (!mongoose.Types.ObjectId.isValid(value)) {
+                // Nếu không hợp lệ, ném ra lỗi. express-validator sẽ bắt lỗi này.
+                throw new Error('ID hồ sơ không hợp lệ. Vui lòng kiểm tra định dạng.');
+            }
+            return true; // Hợp lệ
+        })
 ];
 
 
@@ -93,5 +111,5 @@ export {
     nameRules,
     phoneRules,
     addressRules,
-    notesRules
+    contactEmailRules
 };

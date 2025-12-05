@@ -89,10 +89,9 @@ function renderHeader(isLoggedIn) {
     const authLinks = isLoggedIn
         ? [
             { href: '/activities/page', text: 'Hoạt động' },
-            { href: '/list-history', text: 'Lịch sử đăng ký' },
+            // { href: '/list-history', text: 'Lịch sử đăng ký' },
             { href: '/activity-history', text: 'Lịch sử hoạt động' },
-            { href: '/profile/page', text: 'Hồ sơ cá nhân' },
-
+            // { href: '/profile/page', text: 'Hồ sơ cá nhân' },
             {
                 href: '#',
                 text: 'Đăng xuất',
@@ -102,7 +101,6 @@ function renderHeader(isLoggedIn) {
             },
         ]
         : [
-
             // =============================
             // 🔥 LINK KHI CHƯA ĐĂNG NHẬP
             // =============================
@@ -126,10 +124,25 @@ function renderHeader(isLoggedIn) {
     }
 }
 
+/**
+ * 🔗 Gắn sự kiện Đăng xuất cho TẤT CẢ các phần tử có data-auth-action="logout".
+ * 🔥 Yêu cầu HTML: Cần dùng data-auth-action="logout" thay cho class .logout-link
+ */
+function setupLogoutLinks() {
+    document.querySelectorAll('[data-auth-action="logout"]').forEach(logoutEl => {
+        // Kỹ thuật clone/replace để loại bỏ listener cũ và gắn listener mới (tránh trùng lặp)
+        const newEl = logoutEl.cloneNode(true);
+        logoutEl.parentNode.replaceChild(newEl, logoutEl);
 
+        newEl.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout(); // Gọi hàm đăng xuất chính
+        });
+    });
+}
 
-// Tự động ẩn/hiện phần tử theo trạng thái đăng nhập
-function toggleAuthElements(isLoggedIn) {
+function updateAuthElements(isLoggedIn) {
+    // A. Logic ẩn/hiện (Tự động ẩn/hiện phần tử theo trạng thái đăng nhập)
     document.querySelectorAll('[data-auth-required]').forEach(el => {
         el.style.display = isLoggedIn ? '' : 'none';
     });
@@ -137,44 +150,47 @@ function toggleAuthElements(isLoggedIn) {
     document.querySelectorAll('[data-auth-hidden]').forEach(el => {
         el.style.display = isLoggedIn ? 'none' : '';
     });
+    
+    // B. Logic gắn sự kiện (Chỉ chạy khi đã đăng nhập)
+    if (isLoggedIn) {
+        setupLogoutLinks(); // Gắn sự kiện Đăng xuất cho tất cả các nút/link liên quan
+    }
 }
-
 
 
 // Cập nhật UI sau khi đăng nhập / đăng xuất
 async function refreshAuthUI() {
     const isLoggedIn = await checkAuthStatus();
+    
+    // Đã XÓA: if (isLoggedIn) { setupLogoutDropdownLink(); }
 
     renderHeader(isLoggedIn);
-    toggleAuthElements(isLoggedIn);
+    updateAuthElements(isLoggedIn); // 🔥 Thay thế cho toggleDisplayAuth
 
     if (!isLoggedIn) {
         const urlParams = new URLSearchParams(window.location.search);
 
         if (urlParams.get('logout') === 'success') {
             showMessage('Bạn đã đăng xuất thành công.', 'success', 'response');
-
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     }
 
     clientLog('info', `Auth UI updated. Status: ${isLoggedIn ? 'LoggedIn' : 'LoggedOut'}`);
-
     return isLoggedIn;
 }
-
 
 // Các hàm hỗ trợ
 function showLoggedInUI() {
 	clientLog('info', 'Gọi showLoggedInUI() - Buộc hiển thị trạng thái đã đăng nhập.');
     renderHeader(true);
-    toggleAuthElements(true);
+    updateAuthElements(true);
 }
 
 function showLoggedOutUI() {
     clientLog('info', 'Gọi showLoggedOutUI() - Buộc hiển thị trạng thái đã đăng xuất.');
     renderHeader(false);
-    toggleAuthElements(false);
+    updateAuthElements(false);
 }
 /**
  * Lưu một URL cụ thể vào sessionStorage để chuyển hướng sau khi đăng nhập.
