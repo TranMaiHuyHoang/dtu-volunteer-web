@@ -127,8 +127,9 @@ function renderActivities(list) {
     container.innerHTML = ""; // clear trước khi render
 
     list.forEach(act => {
-      const imageUrl = act.imageUrl ? act.imageUrl : 'https://placehold.co/600x400?text=No+Image';
-      const organizerName = act.organizer?.organizationName ?? 'Organizer not available';
+        const imageUrl = act.imageUrl ? act.imageUrl : 'https://placehold.co/600x400?text=No+Image';
+        const organizerName = act.organizer?.organizationName ?? 'Organizer not available';
+
         const html = `
       <article class="rounded-xl overflow-hidden bg-white border border-neutral-200 shadow-sm">
 
@@ -147,10 +148,13 @@ function renderActivities(list) {
           <!-- Date -->
           <p class="text-xs mt-3 text-neutral-600 flex items-center gap-1">
             <i class="fa fa-calendar"></i> ${formatIsoToDDMMYYYY(act.startDate)}
+          </p>
+
           <!-- Hours -->
           <p class="text-xs mt-1 text-neutral-600 flex items-center gap-1">
             <i class="fa" style="font-size: 13px">&#xf017;</i> ${act.hours} giờ
           </p>
+
           <!-- Location -->
           <p class="text-xs mt-1 text-neutral-600 flex items-center gap-1">
             <i class="fa fa-map-marker"></i> ${act.location}
@@ -158,13 +162,26 @@ function renderActivities(list) {
 
           <!-- Slots -->
           <p class="text-xs mt-2 text-neutral-700">
-            <strong>${act.availableSpots}</strong> / ${act.maxSpots} spots available
+            <strong>${act.availableSpots}</strong> / ${act.maxSpots} chỗ đã đăng ký
           </p>
 
-          <!-- Button -->
-          <button class="mt-4 w-full rounded-lg bg-neutral-900 text-white py-2 text-sm font-medium hover:bg-neutral-800">
-            Register Now
-          </button>
+          <!-- Buttons -->
+          <div class="mt-4 grid grid-cols-2 gap-2">
+
+            <!-- Xem chi tiết -->
+            <a href="/activity-detail.html?id=${act._id}"
+               class="text-center py-2 rounded-lg border border-neutral-300 text-neutral-700 text-sm hover:bg-neutral-100">
+               Xem chi tiết
+            </a>
+
+            <!-- Đăng ký -->
+            <button 
+                data-id="${act._id}"
+                class="register-btn py-2 rounded-lg bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800">
+                Đăng ký
+            </button>
+
+          </div>
 
         </div>
       </article>
@@ -172,7 +189,10 @@ function renderActivities(list) {
 
         container.insertAdjacentHTML("beforeend", html);
     });
+
+    attachRegisterHandlers(); // Gắn sự kiện đăng ký
 }
+
 
 
 const setupSearchAndFilterListeners = () => {
@@ -349,3 +369,18 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeApp();
   
 });
+
+//Hàm xử lý khi bấm Đăng ký//
+function attachRegisterHandlers() {
+    document.querySelectorAll(".register-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+            const activityId = e.target.getAttribute("data-id");
+            console.log("Registering activity:", activityId);
+
+            // Gọi API đăng ký 
+            await executeApiCall(`/activities/${activityId}/register`, "POST", 'Đăng ký thành công!');
+
+            alert("Đăng ký thành công!");
+        });
+    });
+}

@@ -38,29 +38,21 @@
           </h1>
 
           <div class="mt-5 flex flex-wrap gap-3">
-            <a href="#"
-              class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow hover:bg-neutral-100">
-              Khám phá hoạt động
-            </a>
-
-            <a href="#"
-              class="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20">
-              Tìm hiểu thêm
-            </a>
+            
           </div>
         </div>
 
         <div class="grid grid-cols-3 gap-3 rounded-xl bg-white/10 p-4 sm:gap-4">
           <div class="rounded-lg bg-white/10 p-4 text-center">
-            <div class="text-2xl font-bold">1,234</div>
+            <div id="stat-volunteers" class="text-2xl font-bold">0</div>
             <div class="mt-1 text-xs text-white/80">Tình nguyện viên đang hoạt động</div>
           </div>
           <div class="rounded-lg bg-white/10 p-4 text-center">
-            <div class="text-2xl font-bold">12,450</div>
+            <div id="stat-hours" class="text-2xl font-bold">0</div>
             <div class="mt-1 text-xs text-white/80">Tổng số giờ</div>
           </div>
           <div class="rounded-lg bg-white/10 p-4 text-center">
-            <div class="text-2xl font-bold">5,678</div>
+            <div id="stat-impacts" class="text-2xl font-bold">0</div>
             <div class="mt-1 text-xs text-white/80">Cuộc sống được tác động</div>
           </div>
         </div>
@@ -113,12 +105,16 @@
 
     <!-- Cards -->
     <section id="activity-list" class="mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3"></section>
+    
+
 
   </main>
 
   <script type="module" src="/js/layout.js"></script>
   <script type="module" src="/js/activities.js"></script>
-
+<!--Them 2 file mock stats-->
+  <script type="module" src="/js/mock/stats-data.js"></script>
+  <script type="module" src="/js/mock/stats-render.js"></script>
 </body>
 
 </html>

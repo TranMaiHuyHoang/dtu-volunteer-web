@@ -26,6 +26,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            margin-right: 48px !important;
         }
 
         .logo-icon {
@@ -60,14 +61,15 @@
 /* Style cho container chứa links */
 nav .nav-links {
     display: flex; /* Đảm bảo các link nằm ngang */
-    gap: 35px;    /* Khoảng cách giữa các link */
+    gap: 28px;    /* Khoảng cách giữa các link */
+    white-space: nowrap; /* Ngăn không cho link xuống dòng */
 }
 
 /* Style cho TẤT CẢ các thẻ <a> bên trong .nav-links */
 nav .nav-links a { 
     color: #4A5568;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 14px;
     font-weight: 500;
     transition: color 0.3s ease;
 }
