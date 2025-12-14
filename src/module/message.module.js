@@ -13,3 +13,7 @@ function clearMessage() {
   // In a real application, you might reset the message variable or remove it from storage.
   console.log("Message cleared");
 }
+function getMessageLength() {
+  return getMessage().length;
+  console.log("Message length:", getMessage().length);
+}
