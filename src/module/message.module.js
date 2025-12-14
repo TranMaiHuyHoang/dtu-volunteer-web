@@ -15,4 +15,5 @@ function clearMessage() {
 }
 function getMessageLength() {
   return getMessage().length;
+  console.log("Message length:", getMessage().length);
 }
