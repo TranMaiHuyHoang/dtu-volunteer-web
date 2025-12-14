@@ -1,6 +1,7 @@
 import StudentProfileModel from "../models/studentProfile.model.js";
 import UserModel from "../models/user.model.js";
 import { NotFoundError } from "../errors/customError.js";
+import {processDateOfBirth} from "../utils/processDateOfBirthFromDB.utils.js";
 class StudentProfileService {
     async getProfileByUserId(userId) {
     // 🚧 Điểm Cần Cải Thiện 1: Validation
@@ -26,15 +27,12 @@ class StudentProfileService {
 
     console.log("[DEBUG] profileDocument: ", profileDocument);
 
-    // --- BƯỚC 3: Kết hợp Dữ liệu ---
     let studentProfileData;
 
     if (profileDocument) {
-        // Nếu TÌM THẤY Profile, chuyển nó thành POJO để dễ dàng kết hợp
         // LƯU Ý: Nếu dùng Mongoose, dùng .toObject() hoặc .lean() nếu query
         studentProfileData = profileDocument.toObject ? profileDocument.toObject() : profileDocument;
-        // 🚧 Điểm Cần Cải Thiện 2: Lọc trường
-        delete studentProfileData._id; // Xóa _id của profile
+        delete studentProfileData._id;
         delete studentProfileData.user; // Xóa tham chiếu user lặp lại
     } else {
         console.warn(`Profile cho User ID ${userId} không tồn tại. Trả về thông tin User cơ bản.`);
@@ -42,7 +40,6 @@ class StudentProfileService {
         studentProfileData = {
             bio: null, // Ví dụ
             gpa: null  // Ví dụ
-            // ... thêm các trường khác của StudentProfile với giá trị mặc định/rỗng
         };
     }
 
@@ -59,37 +56,29 @@ class StudentProfileService {
 }
   async updateProfileByUserId(userId, requestData) {
     if (!userId) {
-        // userId đã được truyền qua tham số, nên việc check này là cần thiết
         throw new NotFoundError('User ID is required');
     }
+    console.log('[DEBUG] request data: ' + JSON.stringify(requestData));
 
     // ✨ BƯỚC 1: Tách dữ liệu thành các DTO riêng biệt (SoC)
-    // Loại bỏ userId khỏi Destructuring để tránh ghi đè lên tham số userId
-    // ⚠️ Khi sử dụng kỹ thuật Rest Syntax (...studentProfileRestData), bạn phải cực kỳ cẩn thận để tránh cho phép người dùng cập nhật các trường nhạy cảm mà họ không được phép (ví dụ: isAdmin, isVerified, createdAt, v.v.)
     const {
         fullName,
-        contactEmail,
         phone,
-        // Lược bỏ tất cả các trường không mong muốn khác ở đây
-        // Ví dụ: isAdmin, createdAt, v.v.
-
-        // Phần còn lại sẽ là dữ liệu của StudentProfile
+        dateOfBirth, // <-- TRÍCH XUẤT DATEOFBIRTH RIÊNG
         ...studentProfileRestData
     } = requestData;
 
-    // 1.1. Chuẩn bị DTO cho User
-    const userDto = {
-        fullName,
-        contactEmail,
-        phone
-    };
 
-    // 1.2. Chuẩn bị DTO cho StudentProfile
-    // Lưu ý: Đảm bảo studentProfileRestData chỉ chứa các trường hợp lệ
+   // 1.1. Chuẩn bị DTO cho User
+    const userDto = { fullName, phone };
+    
+    // 1.2. Chuẩn bị DTO cho Profile
     const profileDto = studentProfileRestData;
+    profileDto.dateOfBirth = processDateOfBirth(dateOfBirth); // <-- CODE NGẮN GỌN HƠN
 
     // Thiết lập tùy chọn cập nhật chung
     const options = { new: true, runValidators: true, upsert: false };
+
 
     // --- BƯỚC 2: Cập nhật User ---
     try {
@@ -108,6 +97,7 @@ class StudentProfileService {
         throw error;
     }
 
+    // Thiết lập tùy chọn cập nhật chung
 
     // --- BƯỚC 3: Cập nhật StudentProfile (liên kết với User ID) ---
     // Sử dụng upsert: true nếu bạn muốn tạo Profile mới nếu chưa tồn tại

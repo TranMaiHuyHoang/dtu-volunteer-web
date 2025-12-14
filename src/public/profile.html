@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chỉnh Sửa Thông Tin - DTU Volunteer Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 
@@ -482,7 +483,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">
-                                Email <span class="required">*</span>
+                                Email liên lạc <span class="required">*</span>
                             </label>
                             <input type="email" class="form-input" id="contactEmail" name="contactEmail" required>
                             <div class="form-hint">Email này sẽ được dùng để nhận thông báo</div>
@@ -500,7 +501,8 @@
                             <label class="form-label">
                                 Ngày sinh
                             </label>
-                            <input type="date" class="form-input" id="dateOfBirth" placeholder="dd/mm/yyyy">
+                            <!-- <input type="date" class="form-input" id="dateOfBirth" name="dateOfBirth" placeholder="dd/mm/yyyy"> -->
+                            <input type="text" class="form-input" id="dateOfBirth" name="dateOfBirth" placeholder="dd/mm/yyyy">
                         </div>
                         <div class="form-group">
                             <label class="form-label">
@@ -559,8 +561,7 @@
                         <div class="form-group">
                             <label class="form-label">
                                 Lớp
-                            </labe
-                            <input type="text" class="form-input" id="class" name="class">
+                            </label><input type="text" class="form-input" id="class" name="class">
 
                         </div>
                     </div>
@@ -584,7 +585,6 @@
                     <div class="form-group">
                         <label class="form-label">Giới thiệu bản thân</label>
                         <textarea class="form-textarea" id="bio" name="bio"
-
                             placeholder="Viết vài dòng về bản thân, sở thích và lý do tham gia hoạt động tình nguyện..."></textarea>
                         <div class="form-hint">Tối đa 500 ký tự</div>
                     </div>
@@ -600,35 +600,20 @@
                 </div>
             </form>
         </div>
+        
     </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     <script type="module" src="/js/layout.js"></script>
 
     <script type="module">
-        // const mydata = await fetchApi('/profile', 'GET', null, { useSession: true });
-        // // SỬA LẠI: Chuyển mydata.data thành chuỗi JSON trước khi nối
-        // const MOCK_PROFILE_DATA = JSON.stringify(mydata.data, null, 2);
-        // console.log("Profile Data: " + MOCK_PROFILE_DATA);
-
-        // const MOCK_PROFILE_DATA = {
-        //     id: 'user_12345', // Giả định ID để kiểm tra logic backend sau này
-        //     fullName: 'Trần Mai Huy Hoàng',
-        //     studentId: '28210206131',
-        //     contactEmail: 'tranmhuyhoang@dtu.edu.vn',
-        //     phone: '0935417964',
-        //     dateOfBirth: '2003-05-15',
-        //     gender: 'male',
-        //     faculty: 'cntt',
-        //     major: 'Software Engineering',
-        //     academicYear: '4',
-        //     class: 'C1SE.78',
-        //     bio: 'Mình là sinh viên năm 4 ngành Software Engineering tại DTU. Mình yêu thích các hoạt động tình nguyện, đặc biệt là giảng dạy và hỗ trợ cộng đồng. Mục tiêu của mình là góp phần tạo ra những thay đổi tích cực cho xã hội.',
-        //     skills: ['English', 'Programming', 'Teaching', 'Node.js'],
-        //     avatarUrl: null // Giả định không có ảnh đại diện
-        // };
         import { clientLog } from '/js/utils/clientLogger.js';
         import { fetchApi } from '/js/utils/fetchApi.js';
         import { executeApiCall } from '/js/utils/apiExecutor.js';
-
+        import { formatDateForDisplay } from '/js/utils/formatDate.js';
+        // import { formatDateForDisplay } from '@utils/formatDate.js';
 
         clientLog('info', 'User accessed profile edit page');
         // Avatar Upload
@@ -710,23 +695,36 @@
         // Add Skill (Đã loại bỏ việc gán listener)
 
         function addSkill() {
-            const skillName = prompt('Nhập tên kỹ năng:');
-            if (skillName && skillName.trim()) {
-                const skillsContainer = document.getElementById('skillsContainer');
-                const addButton = skillsContainer.querySelector('.btn-add-skill');
+            const MAX_SKILL_LENGTH = 25;
+    // 1. Nhập tên kỹ năng
+    const skillName = prompt('Nhập tên kỹ năng (Tối đa ' + MAX_SKILL_LENGTH + ' ký tự):');
 
-                const newSkill = document.createElement('span');
-                newSkill.className = 'skill-tag';
-                newSkill.innerHTML = `
-            ${skillName.trim()}
-            <i class="fa-solid fa-xmark"></i> 
-            `;
-
-                skillsContainer.insertBefore(newSkill, addButton);
-
-                // ⭐ BỎ HOÀN TOÀN: newSkill.querySelector() và addEventListener
-            }
+    if (skillName && skillName.trim()) {
+        const trimmedSkillName = skillName.trim();
+        
+        // ⭐ BƯỚC MỚI: KIỂM TRA ĐỘ DÀI KÝ TỰ
+        if (trimmedSkillName.length > MAX_SKILL_LENGTH) {
+            // Thông báo lỗi nếu quá dài
+            alert('Tên kỹ năng quá dài. Vui lòng nhập tối đa ' + MAX_SKILL_LENGTH + ' ký tự.');
+            return; // Chặn việc thêm kỹ năng
         }
+        
+        // Nếu hợp lệ, tiếp tục thêm tag
+        const skillsContainer = document.getElementById('skillsContainer');
+        const addButton = skillsContainer.querySelector('.btn-add-skill');
+
+        const newSkill = document.createElement('span');
+        newSkill.className = 'skill-tag';
+        newSkill.innerHTML = `
+            ${trimmedSkillName}
+            <i class="fa-solid fa-xmark"></i> 
+        `;
+
+        skillsContainer.insertBefore(newSkill, addButton);
+
+        // Lưu ý: Vẫn giữ nguyên logic xóa listener mà bạn đã loại bỏ
+    }
+}
 
         // window.removeSkill = removeSkill;
         // Cancel Edit
@@ -738,26 +736,42 @@
                 window.location.href = '/activity-history.html';
             }
         }
+        function getSafeValue(value) {
+            // Sử dụng ?? để xử lý null/undefined
+            return value ?? '';
+        }
+        
         function fillFormData(data) {
+            const profile = data ?? {};
+            console.log('dữ liệu ban đầu: ' + JSON.stringify(profile));
+
             // 1. Thông tin cá nhân
-            document.getElementById('fullName').value = data.fullName;
-            document.getElementById('studentId').value = data.studentId;
-            document.getElementById('contactEmail').value = data.contactEmail;
-            document.getElementById('phone').value = data.phone;
-            document.getElementById('dateOfBirth').value = formatDateForInput(data.dateOfBirth);
-            document.getElementById('gender').value = data.gender; // Dùng .value cho select
+            // Sử dụng hàm tiện ích getSafeValue() để tránh lặp lại ?? ''
+            document.getElementById('fullName').value = getSafeValue(profile.fullName);
+            document.getElementById('studentId').value = getSafeValue(profile.studentId);
+            document.getElementById('contactEmail').value = getSafeValue(profile.contactEmail);
+            document.getElementById('phone').value = getSafeValue(profile.phone);
+
+            const rawDate = getSafeValue(profile.dateOfBirth);
+            
+            console.log('raw date: ' + rawDate);
+            console.log('debug formatdate', formatDateForDisplay(rawDate));
+            
+            document.getElementById('dateOfBirth').value = rawDate ? formatDateForDisplay(rawDate) : '';
+
+            document.getElementById('gender').value = getSafeValue(profile.gender);
 
             // 2. Thông tin học tập
-            document.getElementById('faculty').value = data.faculty;
-            document.getElementById('major').value = data.major;
-            document.getElementById('academicYear').value = data.academicYear;
-            document.getElementById('class').value = data.class;
+            document.getElementById('faculty').value = getSafeValue(profile.faculty);
+            document.getElementById('major').value = getSafeValue(profile.major);
+            document.getElementById('academicYear').value = getSafeValue(profile.academicYear);
+            document.getElementById('class').value = getSafeValue(profile.class);
 
             // 3. Kỹ năng & Giới thiệu
-            document.getElementById('bio').value = data.bio;
+            document.getElementById('bio').value = getSafeValue(profile.bio);
 
-            // Xử lý Kỹ năng (skills)
-            loadSkills(data.skills);
+            // Xử lý Kỹ năng (skills) - Vẫn nên xử lý riêng cho mảng
+            loadSkills(profile.skills ?? []);
             console.log("xong thực hiện fill form")
         }
         ///format tạm thời, xử lý validation thường là của backend
@@ -843,6 +857,7 @@
 
                 // 2. Lấy đối tượng profile (mydata.data là Object)
                 const profileData = mydata.data;
+                console.log('dữ liệu của profile:', profileData);
                 // 3. Truyền dữ liệu profile (Object) vào hàm điền form
                 fillFormData(profileData);
 
@@ -862,8 +877,8 @@
             }
         }
         function initializePage() {
-        initProfilePage();
-        initSkillDeletion();
+            initProfilePage();
+            initSkillDeletion();
         }
         // Khởi tạo trang khi load
         if (document.readyState === 'loading') {
@@ -873,6 +888,16 @@
             // DOM đã sẵn sàng (interactive hoặc complete), chạy hàm ngay lập tức
             initializePage();
         }
+       document.addEventListener('DOMContentLoaded', function() {
+        flatpickr("#dateOfBirth", {
+            // Định dạng hiển thị/gửi đi: Ngày/Tháng/Năm
+            dateFormat: "d/m/Y", 
+            // Ngôn ngữ Tiếng Việt (Tùy chọn)
+            locale: "vn", 
+            // Giới hạn ngày sinh không được ở tương lai
+            maxDate: "today" 
+        });
+    });
         // window.addEventListener('DOMContentLoaded', initProfilePage);
     </script>
 </body>

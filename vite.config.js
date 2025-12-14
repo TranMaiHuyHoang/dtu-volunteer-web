@@ -28,6 +28,7 @@ const aliasConfig = {
   '@': path.resolve(currentDir, './src'),
   '/js': path.resolve(currentDir, './src/public/js'),
   '/css': path.resolve(currentDir, './src/public/css'),
+  '@utils': path.resolve(currentDir, './src/utils'),
 };
 
 console.log('\n🔗 [CONFIG] Alias configuration:');

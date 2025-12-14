@@ -59,7 +59,6 @@ const studentProfileSchema = new mongoose.Schema({
     },
     class: { 
         type: String, 
-        required: true, 
         trim: true 
     },
 

@@ -142,6 +142,8 @@ app.use(errorHandler); // Đảm bảo middleware xử lý lỗi được đặt
 
 let PORT = process.env.PORT || 3000;
 
+
+
 const connectToMongoDB = async () => {
     // 1. Log khi bắt đầu kết nối
     info(`Attempting to connect to MongoDB at: ${process.env.MONGO_URL}`); 
