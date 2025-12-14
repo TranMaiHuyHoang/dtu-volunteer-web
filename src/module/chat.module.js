@@ -37,5 +37,18 @@ router.post('/clear', (req, res) => {
   messages.length = 0;
   res.json({ ok: true });
 });
+router.get('/messages/:id', (req, res) => {
+  const { id } = req.params;
+  const includeDeleted = String(req.query.includeDeleted || 'false') === 'true';
+
+  const msg = findMsg(id);
+  if (!msg) return res.status(404).json({ error: 'Message not found' });
+
+  if (!includeDeleted && msg.deleted) {
+    return res.status(404).json({ error: 'Message not found' });
+  }
+
+  res.json(msg);
+});
 
 export default router;
