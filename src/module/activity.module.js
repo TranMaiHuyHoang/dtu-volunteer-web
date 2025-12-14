@@ -16,3 +16,7 @@ module.exports = {
     hoang,
     newFunction
 };
+
+function unusedFunction() {
+    console.log("This function is not used.");
+}
