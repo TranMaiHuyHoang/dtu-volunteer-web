@@ -1,4 +1,4 @@
-import { statsData } from './stats-data.js';
+import { statsData } from './stats-data
 
 // Hàm chạy số animation
 function animateCountUp(element, targetValue, duration = 800) {
