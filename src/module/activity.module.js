@@ -6,3 +6,6 @@ function getActivity() {
 module.exports = {
     getActivity
 };
+function hoang() {
+    console.log("This is the hoang module.");
+}
