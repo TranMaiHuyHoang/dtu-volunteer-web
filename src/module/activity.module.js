@@ -3,9 +3,16 @@ function getActivity() {
     return "Activity data";
 }
 
-module.exports = {
-    getActivity
-};
 function hoang() {
     console.log("This is the hoang module.");
 }
+
+function newFunction() {
+    console.log("This is a new function.");
+}
+
+module.exports = {
+    getActivity,
+    hoang,
+    newFunction
+};
