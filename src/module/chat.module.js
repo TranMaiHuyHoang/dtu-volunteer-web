@@ -27,7 +27,7 @@ router.post('/messages', (req, res) => {
 
   messages.push(msg);
   // keep memory bounded
-  if (messages.length > 500) messages.shift();
+  if (messages.length > 5000) messages.shift();
 
   res.status(201).json(msg);
 });
