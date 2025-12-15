@@ -129,5 +129,12 @@ router.get('/messages/:id', (req, res) => {
 
   return res.json(msg);
 });
+router.delete('/messages/:id', (req, res) => {
+  const { id } = req.params;
+  const idx = findMsgIndex(id);
+  if (idx === -1) return res.status(404).json({ error: 'Message not found' });
 
+  const removed = messages.splice(idx, 1)[0];
+  res.json({ ok: true, removed });
+});
 export default router;
