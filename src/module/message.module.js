@@ -55,3 +55,4 @@ function appendMessage(text) {
   message += text;
   return message;
 }
+function prependMessage(text) {
