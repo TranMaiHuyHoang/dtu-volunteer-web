@@ -137,19 +137,118 @@ router.delete('/messages/:id', (req, res) => {
   const removed = messages.splice(idx, 1)[0];
   res.json({ ok: true, removed });
 });
+// Utility function to check for non-empty strings
+const asNonEmptyString = (str) => {
+  return typeof str === 'string' && str.trim() !== '' ? str.trim() : null;
+};
+
+// Utility function to find a message by ID
+const findMsg = (id) => messages.find(msg => msg.id === id);
+
+// PATCH route for editing a message
 router.patch('/messages/:id', (req, res) => {
   const { id } = req.params;
   const text = asNonEmptyString(req.body?.text);
+  const { user, editedAt = new Date().toISOString() } = req.body;
 
-  if (!text) return res.status(400).json({ error: 'Message text is required' });
+  // Validate the new text content
+  if (!text) {
+    return res.status(400).json({ error: 'Message text is required and cannot be empty.' });
+  }
+
+  // Validate the user (optional)
+  if (user && typeof user !== 'string') {
+    return res.status(400).json({ error: 'User name must be a string if provided.' });
+  }
 
   const msg = findMsg(id);
-  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
 
+  // Check if message exists
+  if (!msg) {
+    return res.status(404).json({ error: 'Message not found.' });
+  }
+
+  // Check if the message is deleted
+  if (msg.deleted) {
+    return res.status(400).json({ error: 'Cannot edit a deleted message.' });
+  }
+
+  // Update the message text and metadata
   msg.text = text;
-  msg.editedAt = new Date().toISOString();
+  msg.editedAt = editedAt;
+  if (user) msg.user = user;  // Optionally update the user if provided
 
-  res.json(msg);
+  // Log the edit action (for auditing purposes)
+  console.log(`Message ${id} updated by ${msg.user} at ${editedAt}`);
+
+  // Return the updated message with success status
+  res.status(200).json({
+    success: true,
+    message: 'Message updated successfully.',
+    data: msg,
+  });
 });
+
+// DELETE route to soft-delete a message
+router.delete('/messages/:id', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+
+  if (!msg) {
+    return res.status(404).json({ error: 'Message not found.' });
+  }
+
+  // Mark the message as deleted, instead of physically removing it
+  msg.deleted = true;
+  msg.deletedAt = new Date().toISOString();
+
+  // Log the delete action
+  console.log(`Message ${id} marked as deleted at ${msg.deletedAt}`);
+
+  res.status(200).json({
+    success: true,
+    message: 'Message deleted successfully.',
+    data: msg,
+  });
+});
+
+// POST route to restore a soft-deleted message
+router.post('/messages/restore/:id', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+
+  if (!msg) {
+    return res.status(404).json({ error: 'Message not found.' });
+  }
+
+  // Check if the message is deleted
+  if (!msg.deleted) {
+    return res.status(400).json({ error: 'Message is not deleted, no need to restore.' });
+  }
+
+  // Restore the message
+  msg.deleted = false;
+  msg.deletedAt = null;
+
+  // Log the restore action
+  console.log(`Message ${id} restored at ${new Date().toISOString()}`);
+
+  res.status(200).json({
+    success: true,
+    message: 'Message restored successfully.',
+    data: msg,
+  });
+});
+
+// GET route to fetch all messages (with option for filtering by deletion status)
+router.get('/messages', (req, res) => {
+  const includeDeleted = String(req.query.includeDeleted || 'false') === 'true';
+
+  // Filter messages based on deletion status
+  const filteredMessages = messages.filter((msg) => includeDeleted || !msg.deleted);
+
+  res.json(filteredMessages);
+});
+
 
 export default router;
