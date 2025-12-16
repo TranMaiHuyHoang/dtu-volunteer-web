@@ -137,4 +137,19 @@ router.delete('/messages/:id', (req, res) => {
   const removed = messages.splice(idx, 1)[0];
   res.json({ ok: true, removed });
 });
+router.patch('/messages/:id', (req, res) => {
+  const { id } = req.params;
+  const text = asNonEmptyString(req.body?.text);
+
+  if (!text) return res.status(400).json({ error: 'Message text is required' });
+
+  const msg = findMsg(id);
+  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
+
+  msg.text = text;
+  msg.editedAt = new Date().toISOString();
+
+  res.json(msg);
+});
+
 export default router;
