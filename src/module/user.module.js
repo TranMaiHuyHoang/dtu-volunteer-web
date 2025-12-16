@@ -83,3 +83,32 @@ export {
     themeUser,
     getUsers
 };
+// user.module.js
+const STORAGE_KEY = "users";
+
+function getUsers() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
+
+function saveUsers(users) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+}
+
+function register(username, password) {
+    const users = getUsers();
+
+    if (!username || !password) return false;
+
+    if (users.some(u => u.username === username)) return false;
+
+    users.push({ username, password });
+    saveUsers(users);
+    return true;
+}
+
+function login(username, password) {
+    const users = getUsers();
+    return users.some(u => u.username === username && u.password === password);
+}
+
+export { register, login };
