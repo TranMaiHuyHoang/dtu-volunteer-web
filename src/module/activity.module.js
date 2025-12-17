@@ -59,3 +59,13 @@ function searchActivities(keyword) {
     );
 }
 module.exports.searchActivities = searchActivities;
+
+function registerActivity(userId, activityId) {
+    return {
+        message: "Đăng ký tham gia thành công",
+        userId,
+        activityId,
+        status: "pending"
+    };
+}
+module.exports.registerActivity = registerActivity;
