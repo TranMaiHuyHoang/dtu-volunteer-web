@@ -249,6 +249,24 @@ router.get('/messages', (req, res) => {
 
   res.json(filteredMessages);
 });
+router.get('/messages/search', (req, res) => {
+  const q = String(req.query.q || '').trim().toLowerCase();
+  const user = String(req.query.user || '').trim().toLowerCase();
+  const tag = String(req.query.tag || '').trim().toLowerCase();
+  const limit = clamp(parseIntSafe(req.query.limit, 100), 1, 500);
+
+  if (!q && !user && !tag) {
+    return res.status(400).json({ error: 'Provide at least one filter: q, user, tag' });
+  }
+
+  const result = messages
+    .filter(m => !m.deleted)
+    .filter(m => (q ? (m.text.toLowerCase().includes(q) || m.user.toLowerCase().includes(q)) : true))
+    .filter(m => (user ? m.user.toLowerCase() === user : true))
+    .filter(m => (tag ? (m.tags || []).map(t => t.toLowerCase()).includes(tag) : true));
+
+  res.json(result.slice(-limit));
+});
 
 
 export default router;
