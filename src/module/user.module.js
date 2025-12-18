@@ -135,3 +135,9 @@ export {
     getCurrentUser,
     isAdmin
 };
+function setMessage(newMessage) {
+  message = newMessage;
+}
+function printMessage() {
+  console.log(message);
+}
