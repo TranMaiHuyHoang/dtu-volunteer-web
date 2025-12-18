@@ -308,5 +308,31 @@ router.put('/messages/:id/tags', (req, res) => {
   res.json(msg);
 });
 
+router.post('/messages/:id/pin', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
+
+  msg.pinned = true;
+  msg.pinnedAt = new Date().toISOString();
+  res.json(msg);
+});
+
+router.post('/messages/:id/unpin', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
+
+  msg.pinned = false;
+  delete msg.pinnedAt;
+  res.json(msg);
+});
+
+router.get('/messages/pinned', (req, res) => {
+  const pinned = messages.filter(m => !m.deleted && m.pinned);
+  // newest pinned first
+  pinned.sort((a, b) => (b.pinnedAt || '').localeCompare(a.pinnedAt || ''));
+  res.json(pinned.slice(0, 50));
+});
 
 export default router;
