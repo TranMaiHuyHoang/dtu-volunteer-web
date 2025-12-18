@@ -39,3 +39,46 @@ router.post('/clear', (req, res) => {
 });
 
 export default router;
+// Biến lưu trữ message
+let message = "Hello, World!";
+
+// Lấy message
+function getMessage() {
+  return message;
+}
+
+// Cập nhật message mới
+function setMessage(newMessage) {
+  message = newMessage;
+}
+
+// In message ra console
+function printMessage() {
+  console.log(message);
+}
+
+// Reset message về giá trị mặc định
+function resetMessage() {
+  message = "Hello, World!";
+}
+
+// Kiểm tra message có rỗng không
+function isMessageEmpty() {
+  return message.trim() === "";
+}
+
+// Thêm nội dung vào cuối message
+function appendMessage(text) {
+  message += text;
+}
+
+// Xuất các hàm (nếu dùng module)
+export {
+  getMessage,
+  setMessage,
+  printMessage,
+  resetMessage,
+  isMessageEmpty,
+  appendMessage
+};
+
