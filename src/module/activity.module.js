@@ -71,3 +71,9 @@ function registerActivity(userId, activityId) {
 module.exports.registerActivity = registerActivity;
 
 function approveActivityRegistration(registrationId) {
+    return {
+        message: "Phê duyệt đăng ký thành công",
+        registrationId,
+        status: "approved"
+    };
+}
