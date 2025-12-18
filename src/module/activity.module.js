@@ -69,3 +69,5 @@ function registerActivity(userId, activityId) {
     };
 }
 module.exports.registerActivity = registerActivity;
+
+function approveActivityRegistration(registrationId) {
