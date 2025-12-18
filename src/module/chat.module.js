@@ -267,6 +267,46 @@ router.get('/messages/search', (req, res) => {
 
   res.json(result.slice(-limit));
 });
+function normalizeTags(tags) {
+  if (!Array.isArray(tags)) return [];
+  const cleaned = tags
+    .map(t => (typeof t === 'string' ? t.trim() : ''))
+    .filter(Boolean)
+    .map(t => t.toLowerCase());
+  // unique
+  return [...new Set(cleaned)].slice(0, 20);
+}
+
+router.post('/messages/:id/tags/add', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
+
+  const add = normalizeTags(req.body?.tags);
+  msg.tags = [...new Set([...(msg.tags || []), ...add])];
+
+  res.json(msg);
+});
+
+router.post('/messages/:id/tags/remove', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
+
+  const rm = new Set(normalizeTags(req.body?.tags));
+  msg.tags = (msg.tags || []).filter(t => !rm.has(t.toLowerCase()));
+
+  res.json(msg);
+});
+
+router.put('/messages/:id/tags', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
+
+  msg.tags = normalizeTags(req.body?.tags);
+  res.json(msg);
+});
 
 
 export default router;
