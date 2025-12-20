@@ -834,5 +834,31 @@ router.get('/messages/pinned', (req, res) => {
   pinned.sort((a, b) => (b.pinnedAt || '').localeCompare(a.pinnedAt || ''));
   res.json(pinned.slice(0, 50));
 });
+router.post('/messages/:id/soft-delete', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+  if (!msg) return res.status(404).json({ error: 'Message not found' });
+
+  msg.deleted = true;
+  msg.deletedAt = new Date().toISOString();
+  res.json({ ok: true, msg });
+});
+
+router.post('/messages/:id/restore', (req, res) => {
+  const { id } = req.params;
+  const msg = findMsg(id);
+  if (!msg) return res.status(404).json({ error: 'Message not found' });
+
+  msg.deleted = false;
+  delete msg.deletedAt;
+  res.json({ ok: true, msg });
+});
+
+// Nếu muốn thay GET /messages của bạn thành bản có includeDeleted:
+router.get('/messages', (req, res) => {
+  const includeDeleted = String(req.query.includeDeleted || 'false') === 'true';
+  const list = includeDeleted ? messages : messages.filter(m => !m.deleted);
+  res.json(list.slice(-100));
+});
 
 export default router;
