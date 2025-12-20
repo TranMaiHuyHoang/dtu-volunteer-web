@@ -1,6 +1,7 @@
 // user.module.js
 const STORAGE_KEY = "users";
 const CURRENT_USER_KEY = "current_user";
+const LOGIN_LOG_KEY = "login_logs";
 
 /* =====================
    Utils
@@ -26,11 +27,27 @@ function clearCurrentUser() {
 }
 
 /* =====================
+   Validate
+===================== */
+function validateUsername(username) {
+    return username && username.length >= 3;
+}
+
+function validatePassword(password) {
+    return password && password.length >= 6;
+}
+
+/* =====================
    Register
 ===================== */
 function register(username, password, role = "user") {
-    if (!username || !password) {
-        console.error("Thiếu username hoặc password");
+    if (!validateUsername(username)) {
+        console.error("Username phải >= 3 ký tự");
+        return false;
+    }
+
+    if (!validatePassword(password)) {
+        console.error("Password phải >= 6 ký tự");
         return false;
     }
 
@@ -45,7 +62,8 @@ function register(username, password, role = "user") {
         username,
         password,
         role,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        status: "active"
     });
 
     saveUsers(users);
@@ -68,7 +86,13 @@ function login(username, password) {
         return false;
     }
 
+    if (user.status === "blocked") {
+        console.error("Tài khoản bị khóa");
+        return false;
+    }
+
     setCurrentUser(user);
+    logLogin(username);
     console.log("Đăng nhập thành công:", username);
     return true;
 }
@@ -82,7 +106,7 @@ function logout() {
 }
 
 /* =====================
-   Update password
+   Password
 ===================== */
 function updatePassword(oldPassword, newPassword) {
     const currentUser = getCurrentUser();
@@ -104,8 +128,43 @@ function updatePassword(oldPassword, newPassword) {
     return true;
 }
 
+/* Admin reset password */
+function resetPassword(username, newPassword) {
+    if (!isAdmin()) return false;
+
+    const users = getUsers();
+    const user = users.find(u => u.username === username);
+    if (!user) return false;
+
+    user.password = newPassword;
+    saveUsers(users);
+    console.log("Admin reset password cho:", username);
+    return true;
+}
+
 /* =====================
-   Delete user
+   Role & Permission
+===================== */
+function isAdmin() {
+    const user = getCurrentUser();
+    return user && user.role === "admin";
+}
+
+function updateRole(username, role) {
+    if (!isAdmin()) return false;
+
+    const users = getUsers();
+    const user = users.find(u => u.username === username);
+    if (!user) return false;
+
+    user.role = role;
+    saveUsers(users);
+    console.log("Đã cập nhật role:", username, role);
+    return true;
+}
+
+/* =====================
+   User management
 ===================== */
 function deleteUser(username) {
     let users = getUsers();
@@ -114,12 +173,77 @@ function deleteUser(username) {
     console.log("Đã xóa user:", username);
 }
 
+function findUser(username) {
+    return getUsers().find(u => u.username === username);
+}
+
+function countUsers() {
+    return getUsers().length;
+}
+
 /* =====================
-   Check role
+   Login log
 ===================== */
-function isAdmin() {
-    const user = getCurrentUser();
-    return user && user.role === "admin";
+function logLogin(username) {
+    const logs = JSON.parse(localStorage.getItem(LOGIN_LOG_KEY)) || [];
+    logs.push({
+        username,
+        time: new Date().toISOString()
+    });
+    localStorage.setItem(LOGIN_LOG_KEY, JSON.stringify(logs));
+}
+
+function getLoginLogs() {
+    return JSON.parse(localStorage.getItem(LOGIN_LOG_KEY)) || [];
+}
+
+/* =====================
+   Guards
+===================== */
+function requireLogin() {
+    if (!getCurrentUser()) {
+        alert("Bạn cần đăng nhập");
+        return false;
+    }
+    return true;
+}
+
+function requireAdmin() {
+    if (!isAdmin()) {
+        alert("Không có quyền truy cập");
+        return false;
+    }
+    return true;
+}
+
+/* =====================
+   Seed admin
+===================== */
+function seedAdmin() {
+    const users = getUsers();
+    if (!users.some(u => u.role === "admin")) {
+        users.push({
+            username: "admin",
+            password: "admin123",
+            role: "admin",
+            createdAt: new Date().toISOString()
+        });
+        saveUsers(users);
+        console.log("Đã tạo admin mặc định");
+    }
+}
+
+/* =====================
+   Message helper (fix lỗi cuối file)
+===================== */
+let message = "";
+
+function setMessage(newMessage) {
+    message = newMessage;
+}
+
+function printMessage() {
+    console.log(message);
 }
 
 /* =====================
@@ -130,14 +254,18 @@ export {
     login,
     logout,
     updatePassword,
+    resetPassword,
     deleteUser,
+    updateRole,
     getUsers,
     getCurrentUser,
-    isAdmin
+    findUser,
+    countUsers,
+    isAdmin,
+    requireLogin,
+    requireAdmin,
+    seedAdmin,
+    getLoginLogs,
+    setMessage,
+    printMessage
 };
-function setMessage(newMessage) {
-  message = newMessage;
-}
-function printMessage() {
-  console.log(message);
-}
