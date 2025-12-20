@@ -77,3 +77,14 @@ function approveActivityRegistration(registrationId) {
         status: "approved"
     };
 }
+
+module.exports.approveActivityRegistration = approveActivityRegistration;
+
+function approveActivity(activityId) {
+    return {
+        message: "Phê duyệt hoạt động thành công",
+        activityId,
+        status: "approved"
+    };
+}
+module.exports.approveActivity = approveActivity;
