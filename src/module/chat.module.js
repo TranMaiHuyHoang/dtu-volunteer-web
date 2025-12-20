@@ -860,5 +860,79 @@ router.get('/messages', (req, res) => {
   const list = includeDeleted ? messages : messages.filter(m => !m.deleted);
   res.json(list.slice(-100));
 });
+router.post('/messages/:id/reply', (req, res) => {
+  const { id } = req.params;
+  const parent = findMsg(id);
+  if (!parent || parent.deleted) return res.status(404).json({ error: 'Parent message not found' });
+
+  const user = asNonEmptyString(req.body?.user) || 'Anonymous';
+  const text = asNonEmptyString(req.body?.text);
+  if (!text) return res.status(400).json({ error: 'Message text is required' });
+
+  const threadId = parent.threadId || parent.id;
+
+  const msg = {
+    id: genId(),
+    user,
+    text,
+    ts: new Date().toISOString(),
+    replyTo: parent.id,
+    threadId,
+  };
+
+  messages.push(msg);
+  if (messages.length > 500) messages.shift();
+
+  res.status(201).json(msg);
+});
+
+router.get('/threads/:threadId', (req, res) => {
+  const { threadId } = req.params;
+  const thread = messages
+    .filter(m => !m.deleted)
+    .filter(m => m.id === threadId || m.threadId === threadId)
+    .sort((a, b) => a.ts.localeCompare(b.ts));
+
+  if (!thread.length) return res.status(404).json({ error: 'Thread not found' });
+
+  res.json(thread);
+});
+router.post('/messages/:id/reply', (req, res) => {
+  const { id } = req.params;
+  const parent = findMsg(id);
+  if (!parent || parent.deleted) return res.status(404).json({ error: 'Parent message not found' });
+
+  const user = asNonEmptyString(req.body?.user) || 'Anonymous';
+  const text = asNonEmptyString(req.body?.text);
+  if (!text) return res.status(400).json({ error: 'Message text is required' });
+
+  const threadId = parent.threadId || parent.id;
+
+  const msg = {
+    id: genId(),
+    user,
+    text,
+    ts: new Date().toISOString(),
+    replyTo: parent.id,
+    threadId,
+  };
+
+  messages.push(msg);
+  if (messages.length > 500) messages.shift();
+
+  res.status(201).json(msg);
+});
+
+router.get('/threads/:threadId', (req, res) => {
+  const { threadId } = req.params;
+  const thread = messages
+    .filter(m => !m.deleted)
+    .filter(m => m.id === threadId || m.threadId === threadId)
+    .sort((a, b) => a.ts.localeCompare(b.ts));
+
+  if (!thread.length) return res.status(404).json({ error: 'Thread not found' });
+
+  res.json(thread);
+});
 
 export default router;
