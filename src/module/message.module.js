@@ -6,3 +6,4 @@ function getMessage() {
   return message;
 }
 
+

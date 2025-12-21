@@ -935,4 +935,4 @@ router.get('/threads/:threadId', (req, res) => {
   res.json(thread);
 });
 
-export default router;
+
