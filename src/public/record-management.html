@@ -5,53 +5,102 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Quản lý hồ sơ</title>
+	<style>
+		body {
+			background: #f7f9fc;
+			/* Màu nền nhạt hơn */
+			font-family: 'Inter', sans-serif;
+			/* Font chữ hiện đại */
+		}
+	</style>
+	<link rel="stylesheet" href="/css/record-management.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
 	<!-- <link rel="stylesheet" href="/css/message.css"> -->
 </head>
 
 <body>
 	<main>
-		<div id="app" class="container" style="max-width: 1000px; margin: 20px auto;">
-			<h2 style="margin: 10px 0 20px 0;">Quản lý hồ sơ</h2>
+		<div id="app" class="container" style="max-width: 1100px; margin: 20px auto;">
+		<!-- 1 KHỐI CARD DUY NHẤT -->
+        <div class="big-card">
+			<h2 class="title-page">Quản lý hồ sơ</h2>
+				<!-- Form tìm kiếm -->
+				<div class="search-row">
+					<input id="searchInput" class="search-input" type="text" placeholder="Tìm theo tên, email, SĐT...">
+					<button id="btnSearch" class="btn btn-primary">Tìm</button>
+					<button id="btnRefresh" class="btn btn-secondary">Làm mới</button>
+				</div>
 
-			<div id="response" class="message-container"></div>
+				<hr class="divider">
 
-			<!-- Form tìm kiếm -->
-			<div style="display: flex; gap: 10px; margin-bottom: 16px;">
-				<input id="searchInput" type="text" placeholder="Tìm theo tên, email, SĐT..."
-					style="flex:1; padding: 10px;">
-				<button id="btnSearch" class="btn btn-primary">Tìm</button>
-				<button id="btnRefresh" class="btn">Làm mới</button>
-			</div>
+				<!-- Form thêm / sửa -->
+				<h3 id="formTitle">Thêm hồ sơ</h3>
 
-			<!-- Form thêm/sửa -->
-			<div style="border:1px solid #e5e7eb; padding: 12px; border-radius: 8px; margin-bottom: 16px;">
-				<h3 id="formTitle" style="margin-bottom: 10px;">Thêm hồ sơ</h3>
-				<input id="name" placeholder="Họ tên" style="width:100%; padding: 8px; margin-bottom:8px;">
-				<input id="email" placeholder="Email" style="width:100%; padding: 8px; margin-bottom:8px;">
-				<input id="phone" placeholder="Số điện thoại" style="width:100%; padding: 8px; margin-bottom:8px;">
-				<input id="address" placeholder="Địa chỉ" style="width:100%; padding: 8px; margin-bottom:8px;">
-				<textarea id="notes" placeholder="Ghi chú"
-					style="width:100%; padding: 8px; margin-bottom:8px;"></textarea>
+				<div class="input-group">
+					<i class="fa-solid fa-user"></i>
+					<input id="name" class="input" placeholder="Họ tên">
+				</div>
+
+				<div class="input-group">
+					<i class="fa-solid fa-envelope"></i>
+					<input id="email" class="input" placeholder="Email">
+				</div>
+
+				<div class="input-group">
+					<i class="fa-solid fa-phone"></i>
+					<input id="phone" class="input" placeholder="Số điện thoại">
+				</div>
+
+				<div class="input-group">
+					<i class="fa-solid fa-location-dot"></i>
+					<input id="address" class="input" placeholder="Địa chỉ">
+				</div>
+
+				<div class="input-group textarea-group">
+					<i class="fa-solid fa-note-sticky"></i>
+					<textarea id="notes" class="input" placeholder="Ghi chú"></textarea>
+				</div>
+
 				<div style="display:flex; gap:8px;">
-					<button id="btnSubmit" class="btn btn-primary">Lưu</button>
+					<button id="btnSubmit" class="btn btn-primary">💾 Lưu</button>
 					<button id="btnCancelEdit" class="btn" style="display:none;">Hủy</button>
 				</div>
-			</div>
 
-			<!-- Bảng danh sách -->
-			<table style="width:100%; border-collapse: collapse;">
-				<thead>
-					<tr style="text-align:left; border-bottom: 1px solid #e5e7eb;">
-						<th style="padding: 8px;">Họ tên</th>
-						<th style="padding: 8px;">Email</th>
-						<th style="padding: 8px;">SĐT</th>
-						<th style="padding: 8px;">Địa chỉ</th>
-						<th style="padding: 8px; width: 160px;">Thao tác</th>
-					</tr>
-				</thead>
-				<tbody id="recordsTbody"></tbody>
-			</table>
-			<div id="emptyState" style="display:none; padding: 16px; text-align:center; color:#6b7280;">Chưa có dữ liệu
+				<hr class="divider">
+
+				<!-- Bảng -->
+				<table>
+					<thead>
+						<tr>
+							<th>Họ tên</th>
+							<th>Email</th>
+							<th>SĐT</th>
+							<th>Địa chỉ</th>
+							<th style="width:160px;">Thao tác</th>
+						</tr>
+					</thead>
+					<tbody id="recordsTbody"></tbody>
+				</table>
+
+				<div class="pagination-wrapper">
+					<div class="rows-per-page">
+						Hiển thị:
+						<select id="rowsPerPage">
+							<option value="5">5 dòng</option>
+							<option value="10" selected>10 dòng</option>
+							<option value="20">20 dòng</option>
+						</select>
+					</div>
+
+					<div id="pagination" class="pagination"></div>
+				</div>
+
+				<div id="emptyState" style="display:none; padding: 16px; text-align:center; color:#6b7280;">
+					Chưa có dữ liệu
+				</div>
+
 			</div>
 		</div>
 	</main>
@@ -97,16 +146,21 @@
 				const tr = document.createElement('tr');
 				tr.style.borderBottom = '1px solid #f3f4f6';
 				tr.innerHTML = `
-					<td style=\"padding: 8px;\">${p.name || ''}</td>
-					<td style=\"padding: 8px;\">${p.email || ''}</td>
-					<td style=\"padding: 8px;\">${p.phone || ''}</td>
-					<td style=\"padding: 8px;\">${p.address || ''}</td>
-					<td style=\"display: none;\">${p.notes || ''}</td>
-					<td style=\"padding: 8px;\">
-						<button data-edit=\"${p._id}\" class=\"btn\">Sửa</button>
-						<button data-delete=\"${p._id}\" class=\"btn btn-danger\">Xóa</button>
-					</td>
-				`;
+						<td style=\"padding: 8px;\">${p.name || ''}</td>
+						<td style=\"padding: 8px;\">${p.email || ''}</td>
+						<td style=\"padding: 8px;\">${p.phone || ''}</td>
+						<td style=\"padding: 8px;\">${p.address || ''}</td>
+						<td style=\"display: none;\">${p.notes || ''}</td>
+						<td style=\"padding: 8px;\">
+							<button data-edit="${p._id}" class="btn-edit">
+								<i class="fa-solid fa-pen-to-square"></i> Sửa
+							</button>
+
+							<button data-delete="${p._id}" class="btn-delete">
+								<i class="fa-solid fa-trash"></i> Xóa
+							</button>
+						</td>
+					`;
 				tbody.appendChild(tr);
 			});
 		};
@@ -115,63 +169,46 @@
 			try {
 				const q = query ? `?q=${encodeURIComponent(query)}` : '';
 				const data = await fetchApi(`/records${q}`, 'GET', null, '', { useSession: true });
-				renderRows(data.items);
+				fullData = data.items || [];
+
+				currentPage = 1;
+				updateUI();
 			} catch (err) {
 				showMessage(err.message || 'Lỗi tải dữ liệu', 'error', 'response');
 			}
 		}
 
 		async function submitForm() {
-			const payload = getFormData();
+            const payload = getFormData();
 
-			// 1. Kiểm tra đầu vào phía client (vẫn giữ lại)
-			if (!payload.name || !payload.email) {
-				showMessage('Vui lòng nhập Họ tên và Email', 'error', 'response');
-				return;
-			}
+            // 1. Kiểm tra đầu vào phía client (vẫn giữ lại)
+            if (!payload.name || !payload.email) {
+                showMessage('Vui lòng nhập Họ tên và Email', 'error', 'response');
+                return;
+            }
 
-			let apiPromise;
+            let apiPromise;
 
-			if (editingId) {
-				// Cập nhật (PUT)
-				apiPromise = fetchApi(`/records/${editingId}`, 'PUT', payload, '', { useSession: true });
-			} else {
-				// Tạo mới (POST)
-				apiPromise = fetchApi('/records', 'POST', payload, '', { useSession: true });
-			}
+            if (editingId) {
+                // Cập nhật (PUT)
+                apiPromise = fetchApi(`/records/${editingId}`, 'PUT', payload, '', { useSession: true });
+            } else {
+                // Tạo mới (POST)
+                apiPromise = fetchApi('/records', 'POST', payload, '', { useSession: true });
+            }
 
-			// 2. Sử dụng executeApiCall để xử lý toàn bộ logic gọi API và hiển thị thông báo
-			const result = await executeApiCall(
-				apiPromise,
-				async (data) => {
-							resetForm();
-							await loadRecords(el('searchInput').value.trim());
-				}
-			);
+            // 2. Sử dụng executeApiCall để xử lý toàn bộ logic gọi API và hiển thị thông báo
+            const result = await executeApiCall(
+                apiPromise,
+                async (data) => {
+                    resetForm();
+                    await loadRecords(el('searchInput').value.trim());
+                }
+            );
 
-			// Không cần try...catch lớn nữa
-			// Lỗi (error) và Thất bại (data.status != 'success') đã được xử lý bên trong executeApiCall
-		}
-		// async function submitForm() {
-		// 	try {
-		// 		const payload = getFormData();
-		// 		if (!payload.name || !payload.email) {
-		// 			showMessage('Vui lòng nhập Họ tên và Email', 'error', 'response');
-		// 			return;
-		// 		}
-		// 		if (editingId) {
-		// 			await fetchApi(`/records/${editingId}`, 'PUT', payload, '', { useSession: true });
-		// 			showMessage('Cập nhật thành công', 'success', 'response');
-		// 		} else {
-		// 			await fetchApi('/records', 'POST', payload, '', { useSession: true });
-		// 			showMessage('Tạo hồ sơ thành công', 'success', 'response');
-		// 		}
-		// 		resetForm();
-		// 		await loadRecords(el('searchInput').value.trim());
-		// 	} catch (err) {
-		// 		showMessage(err.message || 'Thao tác thất bại', 'error', 'response');
-		// 	}
-		// }
+            // Không cần try...catch lớn nữa
+            // Lỗi (error) và Thất bại (data.status != 'success') đã được xử lý bên trong executeApiCall
+        }
 
 		async function deleteItem(id) {
 			if (!confirm('Xóa hồ sơ này?')) return;
@@ -213,8 +250,93 @@
 			if (delId) deleteItem(delId);
 		});
 
+
+		// Pagination state
+		let currentPage = 1;
+		let rowsPerPage = 10;
+		let fullData = []; // dữ liệu gốc
+		document.getElementById("rowsPerPage").addEventListener("change", function () {
+			rowsPerPage = parseInt(this.value);
+			currentPage = 1;
+			updateUI();
+		});
+
+		// Tạo nút trang
+		function renderPagination(totalItems) {
+			const totalPages = Math.ceil(totalItems / rowsPerPage);
+			const paginationDiv = document.getElementById("pagination");
+			paginationDiv.innerHTML = "";
+
+			// Nút Previous
+			const prevBtn = document.createElement("button");
+			prevBtn.textContent = "« Prev";
+			prevBtn.disabled = currentPage === 1;
+			prevBtn.onclick = () => { currentPage--; updateUI(); };
+			paginationDiv.appendChild(prevBtn);
+
+			// Các số trang
+			for (let i = 1; i <= totalPages; i++) {
+				const btn = document.createElement("button");
+				btn.textContent = i;
+				if (i === currentPage) btn.classList.add("active");
+				btn.onclick = () => { currentPage = i; updateUI(); };
+				paginationDiv.appendChild(btn);
+			}
+
+			// Nút Next
+			const nextBtn = document.createElement("button");
+			nextBtn.textContent = "Next »";
+			nextBtn.disabled = currentPage === totalPages;
+			nextBtn.onclick = () => { currentPage++; updateUI(); };
+			paginationDiv.appendChild(nextBtn);
+		}
+
+		// Cập nhật UI theo trang
+		function updateUI() {
+			const start = (currentPage - 1) * rowsPerPage;
+			const end = start + rowsPerPage;
+
+			renderRows(fullData.slice(start, end));
+			renderPagination(fullData.length);
+		}
+
+		        const debounce = (func, delay = 500) => {
+            let timeoutId;
+            return (...args) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    func.apply(null, args);
+                }, delay);
+            };
+        };
+
+		        // **Tạo phiên bản Debounced của loadRecords**
+        const debouncedLoadRecords = debounce((query) => {
+            loadRecords(query);
+        }, 400);
+        // Events
+        el('btnSubmit').addEventListener('click', submitForm);
+        el('btnCancelEdit').addEventListener('click', resetForm);
+        // el('btnSearch').addEventListener('click', () => loadRecords(el('searchInput').value.trim()));
+        el('searchInput').addEventListener('input', (e) => {
+            // Gọi hàm tìm kiếm đã được Debounce
+            debouncedLoadRecords(e.target.value.trim());
+        });
+        el('btnRefresh').addEventListener('click', () => {
+            el('searchInput').value = '';
+            loadRecords();
+        });
+        document.getElementById('recordsTbody').addEventListener('click', (e) => {
+            const editId = e.target.getAttribute('data-edit');
+            const delId = e.target.getAttribute('data-delete');
+            if (editId) startEditRow(editId);
+            if (delId) deleteItem(delId);
+        });
+
+
 		// Init
 		loadRecords();
+
 	</script>
 </body>
 

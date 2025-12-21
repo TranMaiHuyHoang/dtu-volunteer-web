@@ -18,7 +18,7 @@
 
 
     <script type="module">
-        import { showLoggedInUI, redirectAfterLogin } from '/js/utils/authUI.js';
+        import { showLoggedInUI } from '/js/utils/authUI.js';
         async function redirectAfterSuccess() {
             // Token đã được lưu vào cookie (httpOnly) khi googleCallback redirect
             // Không cần gọi API để lấy token nữa
@@ -29,12 +29,12 @@
             }
             
             // Redirect về trang cũ hoặc trang mặc định
-            if (typeof redirectAfterLogin === 'function') {
-                redirectAfterLogin();
-            } else {
-                // Fallback nếu authUI.js chưa load
-                window.location.href = '/';
-            }
+            // if (typeof redirectAfterLogin === 'function') {
+            //     redirectAfterLogin();
+            // } else {
+            //     // Fallback nếu authUI.js chưa load
+            //     window.location.href = '/';
+            // }
         }
         
         // Tự động chạy khi page load

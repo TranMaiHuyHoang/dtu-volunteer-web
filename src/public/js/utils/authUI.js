@@ -248,11 +248,11 @@ function saveRedirectURL(url = null) {
     }
 }
 
-function redirectAfterLogin(defaultUrl = '/') {
-    const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || defaultUrl;
-    sessionStorage.removeItem('redirectAfterLogin');
-    window.location.href = redirectUrl;
-}
+// function redirectAfterLogin(defaultUrl = '/') {
+//     const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || defaultUrl;
+//     sessionStorage.removeItem('redirectAfterLogin');
+//     window.location.href = redirectUrl;
+// }
 
 
 window.refreshAuthUI = refreshAuthUI;
