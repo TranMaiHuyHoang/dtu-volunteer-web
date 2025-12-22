@@ -934,5 +934,37 @@ router.get('/threads/:threadId', (req, res) => {
 
   res.json(thread);
 });
+const reactionTypes = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
+
+router.post('/messages/:id/react', (req, res) => {
+  const { id } = req.params;
+  const user = asNonEmptyString(req.body?.user) || 'Anonymous';
+  const type = asNonEmptyString(req.body?.type);
+
+  if (!type || !reactionTypes.includes(type)) {
+    return res.status(400).json({ error: `type must be one of: ${reactionTypes.join(', ')}` });
+  }
+
+  const msg = findMsg(id);
+  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
+
+  msg.reactions = msg.reactions || { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 };
+  msg.reactedBy = msg.reactedBy || {};
+
+  const perUser = msg.reactedBy[user] || {};
+  const already = !!perUser[type];
+
+  // toggle
+  if (already) {
+    perUser[type] = false;
+    msg.reactions[type] = Math.max(0, (msg.reactions[type] || 0) - 1);
+  } else {
+    perUser[type] = true;
+    msg.reactions[type] = (msg.reactions[type] || 0) + 1;
+  }
+
+  msg.reactedBy[user] = perUser;
+  res.json({ ok: true, msg });
+});
 
 export default router;
