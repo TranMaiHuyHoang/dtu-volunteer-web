@@ -965,6 +965,52 @@ router.post('/messages/:id/react', (req, res) => {
 
   msg.reactedBy[user] = perUser;
   res.json({ ok: true, msg });
+  router.get('/messages/export', (req, res) => {
+  // export all (including deleted/pinned/etc.)
+  res.json({
+    exportedAt: new Date().toISOString(),
+    count: messages.length,
+    messages,
+  });
+});
+
+router.post('/messages/import', (req, res) => {
+  const incoming = req.body?.messages;
+  if (!Array.isArray(incoming)) return res.status(400).json({ error: 'messages must be an array' });
+
+  // minimal validation
+  const cleaned = incoming
+    .filter(m => m && typeof m === 'object')
+    .map(m => ({
+      id: typeof m.id === 'string' ? m.id : genId(),
+      user: typeof m.user === 'string' && m.user.trim() ? m.user.trim() : 'Anonymous',
+      text: typeof m.text === 'string' ? m.text : '',
+      ts: typeof m.ts === 'string' ? m.ts : new Date().toISOString(),
+      editedAt: typeof m.editedAt === 'string' ? m.editedAt : undefined,
+      deleted: typeof m.deleted === 'boolean' ? m.deleted : undefined,
+      deletedAt: typeof m.deletedAt === 'string' ? m.deletedAt : undefined,
+      pinned: typeof m.pinned === 'boolean' ? m.pinned : undefined,
+      pinnedAt: typeof m.pinnedAt === 'string' ? m.pinnedAt : undefined,
+      tags: Array.isArray(m.tags) ? m.tags.filter(t => typeof t === 'string') : undefined,
+      replyTo: typeof m.replyTo === 'string' ? m.replyTo : undefined,
+      threadId: typeof m.threadId === 'string' ? m.threadId : undefined,
+      reactions: typeof m.reactions === 'object' ? m.reactions : undefined,
+      reactedBy: typeof m.reactedBy === 'object' ? m.reactedBy : undefined,
+      attachments: Array.isArray(m.attachments) ? m.attachments : undefined,
+      meta: typeof m.meta === 'object' ? m.meta : undefined,
+    }))
+    .filter(m => m.text.trim().length > 0); // bỏ message rỗng
+
+  // replace store (demo)
+  messages.length = 0;
+  messages.push(...cleaned);
+
+  // keep bounded
+  while (messages.length > 500) messages.shift();
+
+  res.json({ ok: true, imported: cleaned.length });
+});
+
 });
 
 
