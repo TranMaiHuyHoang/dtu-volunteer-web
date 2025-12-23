@@ -860,5 +860,157 @@ router.get('/messages', (req, res) => {
   const list = includeDeleted ? messages : messages.filter(m => !m.deleted);
   res.json(list.slice(-100));
 });
+router.post('/messages/:id/reply', (req, res) => {
+  const { id } = req.params;
+  const parent = findMsg(id);
+  if (!parent || parent.deleted) return res.status(404).json({ error: 'Parent message not found' });
 
-export default router;
+  const user = asNonEmptyString(req.body?.user) || 'Anonymous';
+  const text = asNonEmptyString(req.body?.text);
+  if (!text) return res.status(400).json({ error: 'Message text is required' });
+
+  const threadId = parent.threadId || parent.id;
+
+  const msg = {
+    id: genId(),
+    user,
+    text,
+    ts: new Date().toISOString(),
+    replyTo: parent.id,
+    threadId,
+  };
+
+  messages.push(msg);
+  if (messages.length > 500) messages.shift();
+
+  res.status(201).json(msg);
+});
+
+router.get('/threads/:threadId', (req, res) => {
+  const { threadId } = req.params;
+  const thread = messages
+    .filter(m => !m.deleted)
+    .filter(m => m.id === threadId || m.threadId === threadId)
+    .sort((a, b) => a.ts.localeCompare(b.ts));
+
+  if (!thread.length) return res.status(404).json({ error: 'Thread not found' });
+
+  res.json(thread);
+});
+router.post('/messages/:id/reply', (req, res) => {
+  const { id } = req.params;
+  const parent = findMsg(id);
+  if (!parent || parent.deleted) return res.status(404).json({ error: 'Parent message not found' });
+
+  const user = asNonEmptyString(req.body?.user) || 'Anonymous';
+  const text = asNonEmptyString(req.body?.text);
+  if (!text) return res.status(400).json({ error: 'Message text is required' });
+
+  const threadId = parent.threadId || parent.id;
+
+  const msg = {
+    id: genId(),
+    user,
+    text,
+    ts: new Date().toISOString(),
+    replyTo: parent.id,
+    threadId,
+  };
+
+  messages.push(msg);
+  if (messages.length > 500) messages.shift();
+
+  res.status(201).json(msg);
+});
+
+router.get('/threads/:threadId', (req, res) => {
+  const { threadId } = req.params;
+  const thread = messages
+    .filter(m => !m.deleted)
+    .filter(m => m.id === threadId || m.threadId === threadId)
+    .sort((a, b) => a.ts.localeCompare(b.ts));
+
+  if (!thread.length) return res.status(404).json({ error: 'Thread not found' });
+
+  res.json(thread);
+});
+const reactionTypes = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
+
+router.post('/messages/:id/react', (req, res) => {
+  const { id } = req.params;
+  const user = asNonEmptyString(req.body?.user) || 'Anonymous';
+  const type = asNonEmptyString(req.body?.type);
+
+  if (!type || !reactionTypes.includes(type)) {
+    return res.status(400).json({ error: `type must be one of: ${reactionTypes.join(', ')}` });
+  }
+
+  const msg = findMsg(id);
+  if (!msg || msg.deleted) return res.status(404).json({ error: 'Message not found' });
+
+  msg.reactions = msg.reactions || { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 };
+  msg.reactedBy = msg.reactedBy || {};
+
+  const perUser = msg.reactedBy[user] || {};
+  const already = !!perUser[type];
+
+  // toggle
+  if (already) {
+    perUser[type] = false;
+    msg.reactions[type] = Math.max(0, (msg.reactions[type] || 0) - 1);
+  } else {
+    perUser[type] = true;
+    msg.reactions[type] = (msg.reactions[type] || 0) + 1;
+  }
+
+  msg.reactedBy[user] = perUser;
+  res.json({ ok: true, msg });
+  router.get('/messages/export', (req, res) => {
+  // export all (including deleted/pinned/etc.)
+  res.json({
+    exportedAt: new Date().toISOString(),
+    count: messages.length,
+    messages,
+  });
+});
+
+router.post('/messages/import', (req, res) => {
+  const incoming = req.body?.messages;
+  if (!Array.isArray(incoming)) return res.status(400).json({ error: 'messages must be an array' });
+
+  // minimal validation
+  const cleaned = incoming
+    .filter(m => m && typeof m === 'object')
+    .map(m => ({
+      id: typeof m.id === 'string' ? m.id : genId(),
+      user: typeof m.user === 'string' && m.user.trim() ? m.user.trim() : 'Anonymous',
+      text: typeof m.text === 'string' ? m.text : '',
+      ts: typeof m.ts === 'string' ? m.ts : new Date().toISOString(),
+      editedAt: typeof m.editedAt === 'string' ? m.editedAt : undefined,
+      deleted: typeof m.deleted === 'boolean' ? m.deleted : undefined,
+      deletedAt: typeof m.deletedAt === 'string' ? m.deletedAt : undefined,
+      pinned: typeof m.pinned === 'boolean' ? m.pinned : undefined,
+      pinnedAt: typeof m.pinnedAt === 'string' ? m.pinnedAt : undefined,
+      tags: Array.isArray(m.tags) ? m.tags.filter(t => typeof t === 'string') : undefined,
+      replyTo: typeof m.replyTo === 'string' ? m.replyTo : undefined,
+      threadId: typeof m.threadId === 'string' ? m.threadId : undefined,
+      reactions: typeof m.reactions === 'object' ? m.reactions : undefined,
+      reactedBy: typeof m.reactedBy === 'object' ? m.reactedBy : undefined,
+      attachments: Array.isArray(m.attachments) ? m.attachments : undefined,
+      meta: typeof m.meta === 'object' ? m.meta : undefined,
+    }))
+    .filter(m => m.text.trim().length > 0); // bỏ message rỗng
+
+  // replace store (demo)
+  messages.length = 0;
+  messages.push(...cleaned);
+
+  // keep bounded
+  while (messages.length > 500) messages.shift();
+
+  res.json({ ok: true, imported: cleaned.length });
+});
+
+});
+
+
