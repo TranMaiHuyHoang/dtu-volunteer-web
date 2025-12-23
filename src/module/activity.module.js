@@ -88,3 +88,21 @@ function approveActivity(activityId) {
     };
 }
 module.exports.approveActivity = approveActivity;
+function rejectActivity(activityId, reason) {
+    return {
+        message: "Từ chối hoạt động thành công",
+        activityId,
+        reason,
+        status: "rejected"
+    };
+}
+module.exports.rejectActivity = rejectActivity;
+function rejectActivityRegistration(registrationId, reason) {
+    return {
+        message: "Từ chối đăng ký hoạt động thành công",
+        registrationId,
+        reason,
+        status: "rejected"
+    };
+}
+module.exports.rejectActivityRegistration = rejectActivityRegistration;
