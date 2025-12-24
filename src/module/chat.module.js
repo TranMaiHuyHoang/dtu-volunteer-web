@@ -976,40 +976,300 @@ router.post('/messages/:id/react', (req, res) => {
 
 router.post('/messages/import', (req, res) => {
   const incoming = req.body?.messages;
-  if (!Array.isArray(incoming)) return res.status(400).json({ error: 'messages must be an array' });
 
-  // minimal validation
-  const cleaned = incoming
-    .filter(m => m && typeof m === 'object')
-    .map(m => ({
-      id: typeof m.id === 'string' ? m.id : genId(),
-      user: typeof m.user === 'string' && m.user.trim() ? m.user.trim() : 'Anonymous',
-      text: typeof m.text === 'string' ? m.text : '',
-      ts: typeof m.ts === 'string' ? m.ts : new Date().toISOString(),
-      editedAt: typeof m.editedAt === 'string' ? m.editedAt : undefined,
-      deleted: typeof m.deleted === 'boolean' ? m.deleted : undefined,
-      deletedAt: typeof m.deletedAt === 'string' ? m.deletedAt : undefined,
-      pinned: typeof m.pinned === 'boolean' ? m.pinned : undefined,
-      pinnedAt: typeof m.pinnedAt === 'string' ? m.pinnedAt : undefined,
-      tags: Array.isArray(m.tags) ? m.tags.filter(t => typeof t === 'string') : undefined,
-      replyTo: typeof m.replyTo === 'string' ? m.replyTo : undefined,
-      threadId: typeof m.threadId === 'string' ? m.threadId : undefined,
-      reactions: typeof m.reactions === 'object' ? m.reactions : undefined,
-      reactedBy: typeof m.reactedBy === 'object' ? m.reactedBy : undefined,
-      attachments: Array.isArray(m.attachments) ? m.attachments : undefined,
-      meta: typeof m.meta === 'object' ? m.meta : undefined,
-    }))
-    .filter(m => m.text.trim().length > 0); // bỏ message rỗng
+  if (!Array.isArray(incoming)) {
+    return res.status(400).json({
+      error: 'messages must be an array',
+      example: { messages: [{ id: '...', user: '...', text: '...', ts: '2025-01-01T00:00:00.000Z' }] },
+    });
+  }
 
-  // replace store (demo)
-  messages.length = 0;
-  messages.push(...cleaned);
+  // ===== options =====
+  const mode = String(req.query.mode ?? 'replace').trim().toLowerCase(); // replace | merge
+  const dedupe = String(req.query.dedupe ?? 'keep_last').trim().toLowerCase(); // keep_last | keep_first
+  const maxCap = Number(req.query.max);
+  const MAX_CAP_FALLBACK = typeof MAX_MESSAGES === 'number' ? MAX_MESSAGES : 5000;
+  const MAX_CAP = Number.isFinite(maxCap) ? Math.max(1, Math.min(MAX_CAP_FALLBACK, Math.trunc(maxCap))) : MAX_CAP_FALLBACK;
 
-  // keep bounded
-  while (messages.length > 500) messages.shift();
+  if (!['replace', 'merge'].includes(mode)) {
+    return res.status(400).json({ error: 'mode must be replace or merge' });
+  }
+  if (!['keep_last', 'keep_first'].includes(dedupe)) {
+    return res.status(400).json({ error: 'dedupe must be keep_last or keep_first' });
+  }
 
-  res.json({ ok: true, imported: cleaned.length });
+  // ===== local helpers (self-contained) =====
+  const nowIso = () => new Date().toISOString();
+
+  const safeString = (v) => (typeof v === 'string' ? v.trim() : '');
+
+  const parseIsoOrNull = (v) => {
+    const s = safeString(v);
+    if (!s) return null;
+    const ms = Date.parse(s);
+    return Number.isNaN(ms) ? null : new Date(ms).toISOString();
+  };
+
+  const isPlainObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+
+  const normalizeId = (v) => {
+    const s = safeString(v);
+    if (!s) return null;
+    // allow a-zA-Z0-9_- only (same policy as earlier)
+    if (!/^[a-zA-Z0-9_-]{1,128}$/.test(s)) return null;
+    return s;
+  };
+
+  const normalizeTags = (v) => {
+    if (!Array.isArray(tags)) return [];
+    const cleaned = tags
+      .map((t) => (typeof t === 'string' ? t.trim() : ''))
+      .filter(Boolean)
+      .map((t) => t.toLowerCase());
+    return [...new Set(cleaned)].slice(0, 20);
+  };
+
+  const normalizeAttachments = (v) => {
+    if (!Array.isArray(atts)) return [];
+    return atts
+      .filter((a) => isPlainObject(a))
+      .slice(0, 10)
+      .map((a) => ({
+        id: normalizeId(a.id) || genId(),
+        name: safeString(a.name) || 'file',
+        url: safeString(a.url),
+        mime: safeString(a.mime) || undefined,
+        size: Number.isFinite(Number(a.size)) ? Number(a.size) : undefined,
+        uploadedAt: parseIsoOrNull(a.uploadedAt) || nowIso(),
+      }))
+      .filter((a) => !!a.url); // must have url
+  };
+
+  const normalizeReactions = (v)=> {
+    // allow only known keys, clamp to >=0
+    const keys = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
+    const out = {};
+    if (!isPlainObject(v)) return undefined;
+    for (const k of keys) {
+      const val = Number(v[k]);
+      if (Number.isFinite(val)) out[k] = Math.max(0, Math.trunc(val));
+    }
+    return Object.keys(out).length ? out : undefined;
+  };
+
+  const normalizeReactedBy = (v) => {
+    // keep minimal sanity, avoid huge payload
+    if (!isPlainObject(rb)) return undefined;
+
+    const out = {};
+    const users = Object.keys(rb).slice(0, 200); // cap
+    for (const u of users) {
+      const per = (v)[u];
+      if (!isPlainObject(per)) continue;
+      const entry = {};
+      for (const key of ['like', 'love', 'haha', 'wow', 'sad', 'angry']) {
+        if (typeof per[key] === 'boolean') entry[key] = per[key];
+      }
+      if (Object.keys(entry).length) out[String(u).slice(0, 64)] = entry;
+    }
+
+    return Object.keys(out).length ? out : undefined;
+  };
+
+  const normalizeMeta = (meta) => {
+    // shallow object only; cap size by key count
+    if (!isPlainObject(meta)) return undefined;
+    const out = {};
+    for (const k of Object.keys(meta).slice(0, 50)) {
+      out[String(k).slice(0, 64)] = meta[k];
+    }
+    return out;
+  };
+
+  // ===== report =====
+  const report = {
+    received: incoming.length,
+    accepted: 0,
+    imported: 0, // new ids
+    updated: 0, // existing ids (merge mode)
+    skipped: 0, // invalid or empty
+    invalid: [],
+    duplicates: 0,
+    mode,
+    dedupe,
+    maxCap: MAX_CAP,
+  };
+
+  /**
+   * ===== Clean + validate each item =====
+   * Requirements:
+   * - text must be non-empty after trim
+   * - ts must be ISO parseable or fallback now
+   * - id: if invalid => generate new id (or skip - here we generate)
+   */
+  const cleaned = [];
+
+  for (let i = 0; i < incoming.length; i++) {
+    const m = incoming[i];
+
+    if (!isPlainObject(m)) {
+      report.skipped++;
+      report.invalid.push({ index: i, reason: 'Item must be an object' });
+      continue;
+    }
+
+    const textRaw = safeString(m.text);
+    const text = textRaw.trim();
+    if (!text) {
+      report.skipped++;
+      report.invalid.push({ index: i, reason: 'text is required' });
+      continue;
+    }
+
+    const id = normalizeId(m.id) || genId();
+    const user = safeString(m.user) || 'Anonymous';
+
+    const ts = parseIsoOrNull(m.ts) || nowIso();
+    const editedAt = parseIsoOrNull(m.editedAt) || undefined;
+    const deletedAt = parseIsoOrNull(m.deletedAt) || undefined;
+    const pinnedAt = parseIsoOrNull(m.pinnedAt) || undefined;
+
+    const deleted = typeof m.deleted === 'boolean' ? m.deleted : undefined;
+    const pinned = typeof m.pinned === 'boolean' ? m.pinned : undefined;
+
+    const tags = Array.isArray(m.tags) ? normalizeTags(m.tags) : undefined;
+
+    const replyTo = normalizeId(m.replyTo) || undefined;
+    const threadId = normalizeId(m.threadId) || undefined;
+
+    const reactions = normalizeReactions(m.reactions);
+    const reactedBy = normalizeReactedBy(m.reactedBy);
+
+    const attachments = normalizeAttachments(m.attachments);
+    const meta = normalizeMeta(m.meta);
+
+    cleaned.push({
+      id,
+      user,
+      text,
+      ts,
+      editedAt,
+      deleted,
+      deletedAt,
+      pinned,
+      pinnedAt,
+      tags,
+      replyTo,
+      threadId,
+      reactions,
+      reactedBy,
+      attachments: attachments.length ? attachments : undefined,
+      meta,
+    });
+
+    report.accepted++;
+  }
+
+  // ===== Dedupe within incoming =====
+  // - keep_last: item later overrides earlier
+  // - keep_first: first wins
+  const seen = new Map();
+  if (dedupe === 'keep_first') {
+    for (const item of cleaned) {
+      if (seen.has(item.id)) {
+        report.duplicates++;
+        continue;
+      }
+      seen.set(item.id, item);
+    }
+  } else {
+    // keep_last
+    for (const item of cleaned) {
+      if (seen.has(item.id)) report.duplicates++;
+      seen.set(item.id, item);
+    }
+  }
+  const deduped = Array.from(seen.values());
+
+  // ===== Apply mode =====
+  if (mode === 'replace') {
+    // Replace entire store with deduped
+    messages.length = 0;
+    messages.push(...deduped);
+
+    // Enforce cap: keep newest by ts
+    messages.sort((a, b) => (Date.parse(a.ts) || 0) - (Date.parse(b.ts) || 0));
+    if (messages.length > MAX_CAP) {
+      messages.splice(0, messages.length - MAX_CAP);
+    }
+
+    report.imported = messages.length;
+  } else {
+    // merge mode: insert new, update existing by id
+    const byId = new Map();
+    for (const m of messages) byId.set(m.id, m);
+
+    for (const item of deduped) {
+      const existing = byId.get(item.id);
+      if (!existing) {
+        messages.push(item);
+        byId.set(item.id, item);
+        report.imported++;
+      } else {
+        // Update fields (prefer incoming when defined)
+        // NOTE: text/user/ts are always present in item
+        const prevTs = existing.ts;
+
+        existing.user = item.user ?? existing.user;
+        existing.text = item.text ?? existing.text;
+        existing.ts = item.ts ?? existing.ts;
+
+        // Optional fields (only overwrite if incoming is not undefined)
+        if (item.editedAt !== undefined) existing.editedAt = item.editedAt;
+        if (item.deleted !== undefined) existing.deleted = item.deleted;
+        if (item.deletedAt !== undefined) existing.deletedAt = item.deletedAt;
+        if (item.pinned !== undefined) existing.pinned = item.pinned;
+        if (item.pinnedAt !== undefined) existing.pinnedAt = item.pinnedAt;
+        if (item.tags !== undefined) existing.tags = item.tags;
+        if (item.replyTo !== undefined) existing.replyTo = item.replyTo;
+        if (item.threadId !== undefined) existing.threadId = item.threadId;
+        if (item.reactions !== undefined) existing.reactions = item.reactions;
+        if (item.reactedBy !== undefined) existing.reactedBy = item.reactedBy;
+        if (item.attachments !== undefined) existing.attachments = item.attachments;
+        if (item.meta !== undefined) existing.meta = { ...(existing.meta || {}), ...(item.meta || {}) };
+
+        // Optional: keep the latest ts if somehow decreased
+        // Here: do nothing. If you want enforce monotonic:
+        // if (Date.parse(existing.ts) < Date.parse(prevTs)) existing.ts = prevTs;
+
+        report.updated++;
+      }
+    }
+
+    // Enforce cap: keep newest by ts
+    messages.sort((a, b) => (Date.parse(a.ts) || 0) - (Date.parse(b.ts) || 0));
+    if (messages.length > MAX_CAP) {
+      messages.splice(0, messages.length - MAX_CAP);
+    }
+  }
+
+  // ===== Return detailed report =====
+  return res.json({
+    ok: true,
+    report,
+    summary: {
+      storeSize: messages.length,
+      imported: report.imported,
+      updated: report.updated,
+      skipped: report.skipped,
+      duplicates: report.duplicates,
+      mode: report.mode,
+      dedupe: report.dedupe,
+      maxCap: report.maxCap,
+    },
+  });
 });
+
 
 });
 
