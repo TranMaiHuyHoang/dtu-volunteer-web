@@ -3,11 +3,14 @@ import { verifyPassword } from '../utils/hash.js';
 import generateAccessToken from '../utils/generateAccessToken.js'; 
 import AuthError from '../errors/AuthError.js';
 import { mapUserData, formatUserInfo } from '../utils/userMapper.js';
-
+import logger from '../config/logger.js';
 
 const buildAuthResponse = (user, provider = 'local') => {
+  logger.info(`>>> buildAuthResponse() INPUT USER: ${user}`);
   const { payload, userInfo } = mapUserData(user, provider);
   const token = generateAccessToken(payload);
+    logger.info(`>>> mapUserData() OUTPUT userInfo: ${userInfo}`);
+
   return { token, user: userInfo };
 };
 

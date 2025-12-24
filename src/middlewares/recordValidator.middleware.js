@@ -1,4 +1,4 @@
-import { nameRules, emailRules, phoneRules, addressRules, notesRules, validateIdParam } from './baseRulesValidate.js';
+import { nameRules, emailRules, phoneRules, addressRules, notesRules, validateIdParam } from './validationRules/baseRulesValidate.js';
 
 const createRecordValidator = [
     // Name và Email BẮT BUỘC (áp dụng thêm notEmpty() vào base rule)

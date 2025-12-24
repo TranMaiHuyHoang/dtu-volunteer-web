@@ -32,6 +32,12 @@ import { postLogoutLog } from './middlewares/logout.middleware.js';
 import httpLogger from './middlewares/httpLogger.middleware.js';
 import path from 'path';
 import ViteExpress from 'vite-express';
+import mongoose from 'mongoose';
+mongoose.set('debug', true);
+
+
+
+
 
 //env config
 import urlConfig  from './config/urlConfig.js';
@@ -135,6 +141,8 @@ app.use(errorHandler); // Đảm bảo middleware xử lý lỗi được đặt
 
 
 let PORT = process.env.PORT || 3000;
+
+
 
 const connectToMongoDB = async () => {
     // 1. Log khi bắt đầu kết nối

@@ -38,7 +38,7 @@
             setElementHTML('registrations-list', '');
             
             const [error, registrations] = await to(
-                fetchApi(`/registrations/project/${projectId}`, 'GET', null, '', { useSession: true })
+                fetchApi(`/registrations/project/${projectId}`, 'GET', null, { useSession: true })
             );
             
             if (error) {
@@ -100,7 +100,7 @@
             setElementContent('message', 'Đang cập nhật...');
             
             const [error, result] = await to(
-                fetchApi(`/registrations/${registrationId}`, 'PATCH', { status: newStatus }, '', { useSession: true })
+                fetchApi(`/registrations/${registrationId}`, 'PATCH', { status: newStatus }, { useSession: true })
             );
             
             if (error) {

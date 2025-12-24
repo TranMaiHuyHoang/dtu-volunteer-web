@@ -112,7 +112,6 @@
 		import { fetchApi } from '/js/utils/fetchApi.js';
 		import { executeApiCall } from '/js/utils/apiExecutor.js';
 		let editingId = null;
-
 		const el = (id) => document.getElementById(id);
 		const tbody = el('recordsTbody');
 		const emptyState = el('emptyState');
@@ -168,7 +167,11 @@
 		async function loadRecords(query = '') {
 			try {
 				const q = query ? `?q=${encodeURIComponent(query)}` : '';
+<<<<<<< HEAD
 				const data = await fetchApi(`/records${q}`, 'GET', null, '', { useSession: true });
+=======
+				const data = await fetchApi(`/records${q}`, 'GET', null, { useSession: true });
+>>>>>>> 52203030bb34a7492dc04b587052c8ca74182db4
 				fullData = data.items || [];
 
 				currentPage = 1;
@@ -191,10 +194,17 @@
 
             if (editingId) {
                 // Cập nhật (PUT)
+<<<<<<< HEAD
                 apiPromise = fetchApi(`/records/${editingId}`, 'PUT', payload, '', { useSession: true });
             } else {
                 // Tạo mới (POST)
                 apiPromise = fetchApi('/records', 'POST', payload, '', { useSession: true });
+=======
+                apiPromise = fetchApi(`/records/${editingId}`, 'PUT', payload, { useSession: true });
+            } else {
+                // Tạo mới (POST)
+                apiPromise = fetchApi('/records', 'POST', payload, { useSession: true });
+>>>>>>> 52203030bb34a7492dc04b587052c8ca74182db4
             }
 
             // 2. Sử dụng executeApiCall để xử lý toàn bộ logic gọi API và hiển thị thông báo
@@ -213,7 +223,7 @@
 		async function deleteItem(id) {
 			if (!confirm('Xóa hồ sơ này?')) return;
 			try {
-				await fetchApi(`/records/${id}`, 'DELETE', null, '', { useSession: true });
+				await fetchApi(`/records/${id}`, 'DELETE', null, { useSession: true });
 				showMessage('Đã xóa', 'success', 'response');
 				await loadRecords(el('searchInput').value.trim());
 			} catch (err) {

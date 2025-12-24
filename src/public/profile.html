@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chỉnh Sửa Thông Tin - DTU Volunteer Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 
@@ -21,7 +23,7 @@
             line-height: 1.6;
         }
 
- 
+
         .header-right {
             display: flex;
             align-items: center;
@@ -410,6 +412,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -430,14 +433,12 @@
             <p class="page-subtitle">Cập nhật thông tin để ban tổ chức có thể liên hệ với bạn dễ dàng hơn</p>
         </div>
 
-        <!-- Success Message -->
         <div class="success-message" id="successMessage">
             <i class="fa-solid fa-circle-check"></i>
             <span>Cập nhật thông tin thành công!</span>
         </div>
 
         <div class="profile-card">
-            <!-- Avatar Section -->
             <div class="avatar-section">
                 <div class="avatar-container">
                     <div class="avatar-image" id="avatarPreview">
@@ -457,7 +458,6 @@
                 </div>
             </div>
 
-            <!-- Personal Information -->
             <form id="profileForm">
                 <div class="form-section">
                     <div class="section-title">
@@ -470,29 +470,29 @@
                             <label class="form-label">
                                 Họ và tên <span class="required">*</span>
                             </label>
-                            <input type="text" class="form-input" id="fullName" value="Trần Mai Huy Hoàng" required>
+                            <input type="text" class="form-input" id="fullName" name="fullName" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">
                                 Mã sinh viên <span class="required">*</span>
                             </label>
-                            <input type="text" class="form-input" id="studentId" value="28210206131" required>
+                            <input type="text" class="form-input" id="studentId" name="studentId" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">
-                                Email <span class="required">*</span>
+                                Email liên lạc <span class="required">*</span>
                             </label>
-                            <input type="email" class="form-input" id="email" value="tranmhuyhoang@dtu.edu.vn" required>
+                            <input type="email" class="form-input" id="contactEmail" name="contactEmail" required>
                             <div class="form-hint">Email này sẽ được dùng để nhận thông báo</div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">
                                 Số điện thoại <span class="required">*</span>
                             </label>
-                            <input type="tel" class="form-input" id="phone" value="0935417964" required>
+                            <input type="tel" class="form-input" id="phone" name="phone" required>
                         </div>
                     </div>
 
@@ -501,13 +501,14 @@
                             <label class="form-label">
                                 Ngày sinh
                             </label>
-                            <input type="date" class="form-input" id="birthDate" value="2003-05-15">
+                            <!-- <input type="date" class="form-input" id="dateOfBirth" name="dateOfBirth" placeholder="dd/mm/yyyy"> -->
+                            <input type="text" class="form-input" id="dateOfBirth" name="dateOfBirth" placeholder="dd/mm/yyyy">
                         </div>
                         <div class="form-group">
                             <label class="form-label">
                                 Giới tính
                             </label>
-                            <select class="form-select" id="gender">
+                            <select class="form-select" id="gender" name="gender">
                                 <option value="male">Nam</option>
                                 <option value="female">Nữ</option>
                                 <option value="other">Khác</option>
@@ -516,7 +517,6 @@
                     </div>
                 </div>
 
-                <!-- Academic Information -->
                 <div class="form-section">
                     <div class="section-title">
                         <i class="fa-solid fa-graduation-cap"></i>
@@ -528,9 +528,9 @@
                             <label class="form-label">
                                 Khoa <span class="required">*</span>
                             </label>
-                            <select class="form-select" id="faculty" required>
+                            <select class="form-select" id="faculty" name="faculty" required>
                                 <option value="">Chọn khoa</option>
-                                <option value="cntt" selected>Công nghệ thông tin</option>
+                                <option value="cntt">Công nghệ thông tin</option>
                                 <option value="kttt">Kinh tế - Thương mại</option>
                                 <option value="xddd">Xây dựng - Điện điện tử</option>
                                 <option value="nn">Ngoại ngữ</option>
@@ -541,7 +541,7 @@
                             <label class="form-label">
                                 Ngành học <span class="required">*</span>
                             </label>
-                            <input type="text" class="form-input" id="major" value="Software Engineering" required>
+                            <input type="text" class="form-input" id="major" name="major" required>
                         </div>
                     </div>
 
@@ -550,23 +550,23 @@
                             <label class="form-label">
                                 Năm học
                             </label>
-                            <select class="form-select" id="year">
+                            <select class="form-select" id="academicYear" name="academicYear">
+
                                 <option value="1">Năm 1</option>
                                 <option value="2">Năm 2</option>
                                 <option value="3">Năm 3</option>
-                                <option value="4" selected>Năm 4</option>
+                                <option value="4">Năm 4</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">
                                 Lớp
-                            </label>
-                            <input type="text" class="form-input" id="class" value="C1SE.78">
+                            </label><input type="text" class="form-input" id="class" name="class">
+
                         </div>
                     </div>
                 </div>
 
-                <!-- Skills & Interests -->
                 <div class="form-section">
                     <div class="section-title">
                         <i class="fa-solid fa-star"></i>
@@ -576,19 +576,7 @@
                     <div class="form-group">
                         <label class="form-label">Kỹ năng</label>
                         <div class="skills-container" id="skillsContainer">
-                            <span class="skill-tag">
-                                English
-                                <i class="fa-solid fa-xmark" onclick="removeSkill(this)"></i>
-                            </span>
-                            <span class="skill-tag">
-                                Programming
-                                <i class="fa-solid fa-xmark" onclick="removeSkill(this)"></i>
-                            </span>
-                            <span class="skill-tag">
-                                Teaching
-                                <i class="fa-solid fa-xmark" onclick="removeSkill(this)"></i>
-                            </span>
-                            <button type="button" class="btn-add-skill" onclick="addSkill()">
+                            <button type="button" class="btn-add-skill" id="btnAddSkill">
                                 <i class="fa-solid fa-plus"></i> Thêm kỹ năng
                             </button>
                         </div>
@@ -596,14 +584,14 @@
 
                     <div class="form-group">
                         <label class="form-label">Giới thiệu bản thân</label>
-                        <textarea class="form-textarea" id="bio" placeholder="Viết vài dòng về bản thân, sở thích và lý do tham gia hoạt động tình nguyện...">Mình là sinh viên năm 4 ngành Software Engineering tại DTU. Mình yêu thích các hoạt động tình nguyện, đặc biệt là giảng dạy và hỗ trợ cộng đồng. Mục tiêu của mình là góp phần tạo ra những thay đổi tích cực cho xã hội.</textarea>
+                        <textarea class="form-textarea" id="bio" name="bio"
+                            placeholder="Viết vài dòng về bản thân, sở thích và lý do tham gia hoạt động tình nguyện..."></textarea>
                         <div class="form-hint">Tối đa 500 ký tự</div>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <button type="button" class="btn-cancel" onclick="cancelEdit()">
+                    <button type="button" class="btn-cancel" id="cancelBtn">
                         <i class="fa-solid fa-xmark"></i> Hủy
                     </button>
                     <button type="submit" class="btn-save">
@@ -612,14 +600,24 @@
                 </div>
             </form>
         </div>
+        
     </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     <script type="module" src="/js/layout.js"></script>
 
     <script type="module">
         import { clientLog } from '/js/utils/clientLogger.js';
+        import { fetchApi } from '/js/utils/fetchApi.js';
+        import { executeApiCall } from '/js/utils/apiExecutor.js';
+        import { formatDateForDisplay } from '/js/utils/formatDate.js';
+        // import { formatDateForDisplay } from '@utils/formatDate.js';
+
         clientLog('info', 'User accessed profile edit page');
         // Avatar Upload
-        document.getElementById('avatarInput').addEventListener('change', function(e) {
+        document.getElementById('avatarInput').addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
                 // Kiểm tra kích thước file (5MB)
@@ -630,8 +628,8 @@
 
                 // Preview ảnh
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('avatarPreview').innerHTML = 
+                reader.onload = function (event) {
+                    document.getElementById('avatarPreview').innerHTML =
                         `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
                 };
                 reader.readAsDataURL(file);
@@ -639,97 +637,269 @@
         });
 
         // Remove Avatar
-        document.getElementById('removeAvatarBtn').addEventListener('click', function() {
+        document.getElementById('removeAvatarBtn').addEventListener('click', function () {
             if (confirm('Bạn có chắc chắn muốn xóa ảnh đại diện?')) {
                 document.getElementById('avatarPreview').innerHTML = '<i class="fa-solid fa-user"></i>';
                 document.getElementById('avatarInput').value = '';
             }
         });
 
-        // Add Skill
+        function removeSkill(event) {
+            // Ngăn chặn sự kiện lan truyền để tránh các hành vi không mong muốn
+            event.stopPropagation();
+
+            // event.target là phần tử được click (icon <i>).
+            // Dùng parentElement để lấy thẻ <span>.skill-tag bao bọc
+            event.target.parentElement.remove();
+        }
+
+        // Hàm khởi tạo (Chỉ chạy 1 lần khi trang tải)
+        function initSkillDeletion() {
+            const skillsContainer = document.getElementById('skillsContainer');
+
+            // ⭐ GÁN EVENT LISTENER DUY NHẤT VÀO CONTAINER
+            skillsContainer.addEventListener('click', function (event) {
+                const target = event.target;
+
+                // Kiểm tra xem phần tử được click có phải là icon xóa (.fa-xmark) không
+                if (target.classList.contains('fa-xmark')) {
+                    // Nếu đúng, gọi hàm removeSkill
+                    removeSkill(event);
+                }
+            });
+        }
+
+        // ---------------------------------------------------------------------
+
+        // Hàm Phụ: Tải Kỹ năng vào Skills Container
+        function loadSkills(skillsArray) {
+            const skillsContainer = document.getElementById('skillsContainer');
+
+            const addButton = skillsContainer.querySelector('.btn-add-skill');
+            skillsContainer.innerHTML = '';
+
+            skillsArray.forEach(skill => {
+                const skillTagHtml = `
+            <span class="skill-tag">
+                ${skill}
+                <i class="fa-solid fa-xmark"></i> 
+                </span>
+
+        `;
+                skillsContainer.insertAdjacentHTML('beforeend', skillTagHtml);
+            });
+
+            skillsContainer.appendChild(addButton);
+        }
+
+        // Add Skill (Đã loại bỏ việc gán listener)
+
         function addSkill() {
-            const skillName = prompt('Nhập tên kỹ năng:');
-            if (skillName && skillName.trim()) {
-                const skillsContainer = document.getElementById('skillsContainer');
-                const addButton = skillsContainer.querySelector('.btn-add-skill');
-                
-                const newSkill = document.createElement('span');
-                newSkill.className = 'skill-tag';
-                newSkill.innerHTML = `
-                    ${skillName.trim()}
-                    <i class="fa-solid fa-xmark" onclick="removeSkill(this)"></i>
-                `;
-                
-                skillsContainer.insertBefore(newSkill, addButton);
-            }
-        }
+            const MAX_SKILL_LENGTH = 25;
+    // 1. Nhập tên kỹ năng
+    const skillName = prompt('Nhập tên kỹ năng (Tối đa ' + MAX_SKILL_LENGTH + ' ký tự):');
 
-        // Remove Skill
-        function removeSkill(element) {
-            element.parentElement.remove();
+    if (skillName && skillName.trim()) {
+        const trimmedSkillName = skillName.trim();
+        
+        // ⭐ BƯỚC MỚI: KIỂM TRA ĐỘ DÀI KÝ TỰ
+        if (trimmedSkillName.length > MAX_SKILL_LENGTH) {
+            // Thông báo lỗi nếu quá dài
+            alert('Tên kỹ năng quá dài. Vui lòng nhập tối đa ' + MAX_SKILL_LENGTH + ' ký tự.');
+            return; // Chặn việc thêm kỹ năng
         }
+        
+        // Nếu hợp lệ, tiếp tục thêm tag
+        const skillsContainer = document.getElementById('skillsContainer');
+        const addButton = skillsContainer.querySelector('.btn-add-skill');
 
+        const newSkill = document.createElement('span');
+        newSkill.className = 'skill-tag';
+        newSkill.innerHTML = `
+            ${trimmedSkillName}
+            <i class="fa-solid fa-xmark"></i> 
+        `;
+
+        skillsContainer.insertBefore(newSkill, addButton);
+
+        // Lưu ý: Vẫn giữ nguyên logic xóa listener mà bạn đã loại bỏ
+    }
+}
+
+        // window.removeSkill = removeSkill;
         // Cancel Edit
+        document.getElementById("cancelBtn").addEventListener("click", () => {
+            cancelEdit();
+        });
         function cancelEdit() {
             if (confirm('Bạn có chắc chắn muốn hủy? Các thay đổi sẽ không được lưu.')) {
                 window.location.href = '/activity-history.html';
             }
         }
+        function getSafeValue(value) {
+            // Sử dụng ?? để xử lý null/undefined
+            return value ?? '';
+        }
+        
+        function fillFormData(data) {
+            const profile = data ?? {};
+            console.log('dữ liệu ban đầu: ' + JSON.stringify(profile));
+
+            // 1. Thông tin cá nhân
+            // Sử dụng hàm tiện ích getSafeValue() để tránh lặp lại ?? ''
+            document.getElementById('fullName').value = getSafeValue(profile.fullName);
+            document.getElementById('studentId').value = getSafeValue(profile.studentId);
+            document.getElementById('contactEmail').value = getSafeValue(profile.contactEmail);
+            document.getElementById('phone').value = getSafeValue(profile.phone);
+
+            const rawDate = getSafeValue(profile.dateOfBirth);
+            
+            console.log('raw date: ' + rawDate);
+            console.log('debug formatdate', formatDateForDisplay(rawDate));
+            
+            document.getElementById('dateOfBirth').value = rawDate ? formatDateForDisplay(rawDate) : '';
+
+            document.getElementById('gender').value = getSafeValue(profile.gender);
+
+            // 2. Thông tin học tập
+            document.getElementById('faculty').value = getSafeValue(profile.faculty);
+            document.getElementById('major').value = getSafeValue(profile.major);
+            document.getElementById('academicYear').value = getSafeValue(profile.academicYear);
+            document.getElementById('class').value = getSafeValue(profile.class);
+
+            // 3. Kỹ năng & Giới thiệu
+            document.getElementById('bio').value = getSafeValue(profile.bio);
+
+            // Xử lý Kỹ năng (skills) - Vẫn nên xử lý riêng cho mảng
+            loadSkills(profile.skills ?? []);
+            console.log("xong thực hiện fill form")
+        }
+        ///format tạm thời, xử lý validation thường là của backend
+        function getFormErrors(formData) {
+            const errors = [];
+
+            // Kiểm tra và thêm lỗi cụ thể vào mảng
+            if (!formData.fullName || formData.fullName.trim() === '') {
+                errors.push('Họ và tên không được để trống.');
+            }
+            if (!formData.contactEmail || formData.contactEmail.trim() === '') {
+                errors.push('Email không được để trống.');
+            }
+
+            if (!formData.phone || formData.phone.trim() === '') {
+                errors.push('Số điện thoại không được để trống.');
+            }
+
+            return errors;
+        }
 
         // Form Submit
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
+        document.getElementById('profileForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             clientLog('info', 'Profile form submission initiated');
-            // Thu thập dữ liệu form
-            const formData = {
-                fullName: document.getElementById('fullName').value,
-                studentId: document.getElementById('studentId').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                birthDate: document.getElementById('birthDate').value,
-                gender: document.getElementById('gender').value,
-                faculty: document.getElementById('faculty').value,
-                major: document.getElementById('major').value,
-                year: document.getElementById('year').value,
-                class: document.getElementById('class').value,
-                bio: document.getElementById('bio').value,
-                skills: Array.from(document.querySelectorAll('.skill-tag')).map(tag => 
-                    tag.textContent.trim()
-                )
-            };
-            clientLog('debug', `Collected formData: ${JSON.stringify(formData)}`);
-            // Validation cơ bản
-            if (!formData.fullName || !formData.email || !formData.phone) {
-                alert('Vui lòng điền đầy đủ các trường bắt buộc!');
-                return;
+            const formElement = e.target;
+            const data = new FormData(formElement);
+            // 1. Chuyển FormData thành đối tượng JSON cơ bản
+            const formData = Object.fromEntries(data.entries());
+
+
+            // 2. Xử lý trường 'skills' riêng biệt (vì FormData không thu thập các thẻ span)
+            formData.skills = Array.from(document.querySelectorAll('.skill-tag')).map(tag =>
+                tag.textContent.trim()
+            );
+
+            const errors = getFormErrors(formData);
+
+            // 2. XỬ LÝ KẾT QUẢ
+            if (errors.length > 0) {
+                // Hiển thị thông báo chi tiết
+                const errorMessage = 'Vui lòng kiểm tra lại thông tin:\n' + errors.join('\n');
+                alert(errorMessage);
+
+                return; // Dừng
             }
 
             // Giả lập gửi request đến backend
             console.log('Dữ liệu gửi đi:', formData);
 
-            // Hiển thị thông báo thành công
-            const successMessage = document.getElementById('successMessage');
-            successMessage.classList.add('show');
-            clientLog('info', 'Success message displayed');
-            // Scroll lên đầu trang
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            let apiPromise = fetchApi(`/profile`, 'PUT', formData, { useSession: true });
+            const result = await executeApiCall(
+                apiPromise,
+                async (data) => {
+                    // 1. Cuộn lên đầu trang
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Ẩn thông báo sau 3 giây và chuyển về dashboard
-            setTimeout(() => {
-                successMessage.classList.remove('show');
-                clientLog('info', 'Redirecting after successful simulation');
-                window.location.href = '/activity-history.html';
-            }, 3000);
-            
+                    // KHÔNG CÒN CHUYỂN HƯỚNG NỮA. Người dùng sẽ ở lại trang profile.
+
+                    // MẸO: Bạn có thể thêm logic để tải lại dữ liệu profile mới 
+                    // vào form tại đây, nếu cần (ví dụ: initProfilePage();)
+                    console.log("Profile updated successfully, staying on page.");
+                },
+            );
+
         });
 
         // Auto-hide success message on scroll
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             const successMessage = document.getElementById('successMessage');
             if (successMessage.classList.contains('show')) {
                 successMessage.classList.remove('show');
             }
         });
+
+
+        async function initProfilePage() { // PHẢI LÀ ASYNC để dùng await
+            console.log("đang tạo trang và tải dữ liệu...");
+
+            try {
+                // 1. Tải dữ liệu thực tế từ API
+                const mydata = await fetchApi('/profile', 'GET', null, { useSession: true });
+
+                // 2. Lấy đối tượng profile (mydata.data là Object)
+                const profileData = mydata.data;
+                console.log('dữ liệu của profile:', profileData);
+                // 3. Truyền dữ liệu profile (Object) vào hàm điền form
+                fillFormData(profileData);
+
+
+                console.log("Đã load và điền dữ liệu thành công!");
+                const btnAddSkill = document.getElementById('btnAddSkill'); // Sử dụng ID thay vì class
+
+                if (btnAddSkill) {
+                    // Gán hàm addSkill cho sự kiện 'click'. Không dùng ngoặc đơn ()
+                    btnAddSkill.addEventListener('click', addSkill);
+                    console.log("Đã gán sự kiện click cho nút Thêm kỹ năng.");
+                }
+
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu profile:", error);
+                // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
+            }
+        }
+        function initializePage() {
+            initProfilePage();
+            initSkillDeletion();
+        }
+        // Khởi tạo trang khi load
+        if (document.readyState === 'loading') {
+            // DOM chưa sẵn sàng, lắng nghe sự kiện
+            window.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            // DOM đã sẵn sàng (interactive hoặc complete), chạy hàm ngay lập tức
+            initializePage();
+        }
+       document.addEventListener('DOMContentLoaded', function() {
+        flatpickr("#dateOfBirth", {
+            // Định dạng hiển thị/gửi đi: Ngày/Tháng/Năm
+            dateFormat: "d/m/Y", 
+            // Ngôn ngữ Tiếng Việt (Tùy chọn)
+            locale: "vn", 
+            // Giới hạn ngày sinh không được ở tương lai
+            maxDate: "today" 
+        });
+    });
+        // window.addEventListener('DOMContentLoaded', initProfilePage);
     </script>
 </body>
+
 </html>

@@ -1,42 +1,38 @@
-<!-- <header> -->
-        <div class="header-container">
-            <div class="logo-section">
-                <div class="logo-icon">DTU</div>
-                <div class="logo-text">
-                    <div class="logo-title">DTU Volunteer</div>
-                    <div class="logo-subtitle">Connect & Impact</div>
-                </div>
+<div class="header-container">
+    <div class="logo-section">
+        <div class="logo-icon">DTU</div>
+        <div class="logo-text">
+            <div class="logo-title">DTU Volunteer</div>
+            <div class="logo-subtitle">Kết nối & Cống hiến</div>
+        </div>
+    </div>
+
+    <nav class="main-nav">
+        <div class="nav-links" data-nav-container>
+        </div>
+    </nav>
+
+    <div class="header-right">
+        <div class="dropdown-group" data-auth-required>
+            <div class="menu-toggle">
+                <span class="toggle-text">Mục khác</span>
+                <i class="fa-solid fa-bars"></i>
             </div>
 
-        <nav>
-            <div class="nav-links" data-nav-container>
-                <!-- Navigation links được render động -->
-            </div>
-        </nav>
-
-            <div class="header-right">
-                <!-- <div class="search-icon">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </div> -->
-                <button class="btn-dashboard">
-                    <i class="fa-solid fa-user"></i>
-                    My Dashboard
-                </button>
+            <div class="dropdown-menu" data-menu-id="user-actions">
+                <a href="/profile/page">Hồ sơ cá nhân</a>
+                <!-- <a href="/activities/page">Hoạt động</a> -->
+                <a href="/list-history">Lịch sử đăng ký</a>
+                <a href="/activity-history">Lịch sử hoạt động</a>
+                <!-- <a href="#" data-auth-action="logout">Đăng xuất</a> -->
+                <!-- <a href="/logout">Đăng xuất</a> -->
             </div>
         </div>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-        <script type="module" src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    <!-- <script defer>
-        (function() {
-            const toggleButton = document.querySelector('.dtu-header .mobile-menu-toggle');
-            const navList = document.querySelector('.dtu-header nav .nav-links');
-
-            if (!toggleButton || !navList) return;
-
-            toggleButton.addEventListener('click', () => {
-                navList.classList.toggle('is-open');
-            });
-        })();
-    </script> -->
-<!-- </header> -->
-
+         <button class="btn-home">
+        <i class="fa-solid fa-home"></i>
+        Trang Chủ
+    </button>
+    </div>
+</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>

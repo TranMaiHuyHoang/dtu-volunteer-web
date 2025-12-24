@@ -53,7 +53,7 @@
             setElementContent('message', 'Đang tạo...');
             
             const [error, res] = await to(
-                fetchApi('/projects', 'POST', data, '', { useSession: true })
+                fetchApi('/projects', 'POST', data, { useSession: true })
             );
             
             if (error) {

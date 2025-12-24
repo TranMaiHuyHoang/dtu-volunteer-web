@@ -3,14 +3,14 @@ import { ensureScriptLoaded } from './dom-utils.js';
 //import {refreshAuthUI } from '../utils/authUI.js'; 
 
 /**
- * Gắn sự kiện click cho nút My Dashboard và Logo để chuyển hướng về trang chủ ("/").
+ * Gắn sự kiện click cho nút Home và Logo để chuyển hướng về trang chủ ("/").
  * @param {HTMLElement} headerElement - Phần tử header chứa các nút điều hướng.
  */
 
 function bindDashboardAndLogoEvents(headerElement) {
-            // Gắn sự kiện cho nút My Dashboard để quay về trang chủ
+            // Gắn sự kiện cho nút Home để quay về trang chủ
             try {
-                const dashboardBtn = headerElement.querySelector('.btn-dashboard');
+                const dashboardBtn = headerElement.querySelector('.btn-home');
                 if (dashboardBtn) {
                     dashboardBtn.addEventListener('click', () => {
                         window.location.href = '/';
@@ -36,67 +36,43 @@ function bindDashboardAndLogoEvents(headerElement) {
  * 
  * @returns {Promise<void>} - Promise trả về sau khi cập nhật partials và scripts đã hoàn thành.
  */
+/**
+ * 🧩 Helper: Tải nội dung Header từ server và Inject vào DOM.
+ * Mục đích: Tách biệt logic tải/inject khỏi luồng chính.
+ */
+async function injectPartialHeader() {
+    const headerElement = document.querySelector('header');
+    
+    if (!headerElement) {
+        clientLog('error', 'Không tìm thấy thẻ <header> để inject nội dung.');
+        return false; // Thất bại
+    }
 
-async function updatePartialsLayout() {
-    clientLog('info', 'Bắt đầu cập nhật partials và scripts.');
-
-    // 1. Tải và Inject Header (Sử dụng hàm helper và chỉ giữ lại log lỗi quan trọng)
     try {
-        const headerElement = document.querySelector('header');
-        if (!headerElement) {
-            clientLog('error', 'Không tìm thấy thẻ <header> để inject nội dung.');
-            return;
-        }
         const res = await fetch('/partials/header.html');
+        
         if (!res.ok) {
-            clientLog('error', `HTTP Error: ${res.status} khi tải header.`);
-            throw new Error('Header resource unavailable.');
+            clientLog('error', `Lỗi HTTP: ${res.status} khi tải header.`);
+            return false; // Thất bại
         }
         
         const headerContent = await res.text();
         
-        if (headerElement && headerContent) {
+        if (headerContent) {
             headerElement.innerHTML = headerContent;
-            bindDashboardAndLogoEvents(headerElement);
-            // Giữ lại log info để xác nhận inject thành công
-            clientLog('info', `Đã inject header thành công. Chiều dài: ${headerContent.length}`);
+            // Gắn sự kiện (Giả định hàm này đã tồn tại và hoạt động)
+            bindDashboardAndLogoEvents(headerElement); 
+            return true; // Thành công
         } else {
             clientLog('error', 'Nội dung header rỗng, không inject.');
+            return false; // Thất bại
         }
-        
     } catch (error) {
-        // Bắt lỗi fetch, lỗi mạng, hoặc lỗi HTTP (4xx, 5xx)
+        // Bắt lỗi mạng hoặc lỗi Fetch
         clientLog('error', 'LỖI LAYOUT: Lỗi khi tải/inject header: ' + error.message);
-        return; // Dừng lại nếu phần layout cốt lõi thất bại
+        return false; // Thất bại
     }
-
-    // 2. Tải Footer theo điều kiện (Sử dụng try...catch để tách biệt lỗi)
-    try {
-        await loadPartialFooter();
-    } catch (error) {
-        clientLog('error', 'Lỗi khi tải partial footer: ' + error.message);
-    }
-
-    // 3. Tải và cập nhật scripts
-
-    // Tải scripts (ensureScriptLoaded có xử lý lỗi bên trong)
-    await ensureScriptLoaded('/js/utils/authUi.config.js');
-    await ensureScriptLoaded('/js/utils/authUI.js', true);
-
-    // Sử dụng window.refreshAuthUI sau khi đã sửa lỗi scope
-    if (typeof window.refreshAuthUI === 'function') {
-        try {
-            await window.refreshAuthUI();
-        } catch (error) {
-            clientLog('error', 'Lỗi khi gọi refreshAuthUI: ' + error.message);
-        }
-    }
-
-    await ensureScriptLoaded('/js/utils/auth.js', true);
-
-    clientLog('info', 'Quá trình cập nhật partials và scripts đã hoàn thành. Bây giờ, ứng dụng đã sẵn sàng để sử dụng.');
 }
-
 
 async function loadPartialFooter() {
     const footerElement = document.querySelector('footer');
@@ -117,5 +93,60 @@ async function loadPartialFooter() {
     // BƯỚC QUAN TRỌNG: Thêm lớp CSS mặc định
     footerElement.classList.add('default-layout');
 }
+
+
+/** ----------------------------------------------------
+ * 🧠 HÀM CHÍNH: CẬP NHẬT LAYOUT VÀ KHỞI TẠO (MASTER FUNCTION)
+ * Mục đích: Điều phối 3 bước: Header, Footer, Scripts.
+ * ---------------------------------------------------- */
+async function updatePartialsLayout() {
+    clientLog('info', 'Bắt đầu cập nhật layout header/footer và scripts.');
+
+    // =======================================================
+    // BƯỚC 1: TẢI VÀ INJECT HEADER
+    // =======================================================
+    const headerSuccess = await injectPartialHeader();
+    
+    // Nếu Header thất bại, không cần làm gì thêm, dừng lại ngay
+    if (!headerSuccess) {
+        clientLog('error', 'Quá trình cập nhật layout thất bại do Header không thể tải.');
+        return; 
+    }
+
+    // =======================================================
+    // BƯỚC 2: TẢI VÀ INJECT FOOTER (Có thể bỏ qua lỗi)
+    // =======================================================
+    // Sử dụng try/catch cục bộ để Footer có lỗi thì vẫn chạy Scripts
+    try {
+        // Giả định hàm này tồn tại và xử lý logic tải footer
+        await loadPartialFooter(); 
+    } catch (error) {
+        clientLog('error', 'Lỗi (không nghiêm trọng) khi tải partial footer: ' + error.message);
+    }
+
+    // =======================================================
+    // BƯỚC 3: TẢI VÀ KHỞI TẠO CÁC SCRIPTS
+    // =======================================================
+    
+    // Tải scripts chính (Giả định ensureScriptLoaded có xử lý lỗi bên trong)
+    await ensureScriptLoaded('/js/utils/authUi.config.js');
+    await ensureScriptLoaded('/js/utils/authUI.js', true); 
+
+    // Cập nhật trạng thái Đăng nhập/Đăng xuất cho toàn bộ giao diện (UI)
+    if (typeof window.refreshAuthUI === 'function') {
+        try {
+            await window.refreshAuthUI();
+        } catch (error) {
+            clientLog('error', 'Lỗi khi gọi window.refreshAuthUI: ' + error.message);
+        }
+    }
+
+    // Tải script xác thực cuối cùng
+    await ensureScriptLoaded('/js/utils/auth.js', true);
+
+    clientLog('info', 'Quá trình cập nhật layout và khởi tạo scripts đã hoàn thành.');
+}
+
+
 
 export { updatePartialsLayout };

@@ -3,35 +3,6 @@
 
 GET {{baseUrl}}
 
-###
-
-POST {{baseUrl}}/login
-Content-Type: application/json
-
-{
-    "email": "dangtunaminh@gmail.com",
-    "password": "password"
-}
-
-
-###
-POST {{baseUrl}}/register
-Content-Type: application/json
-
-{
-    "email": "tuanminh6@gmail.com",
-    "password": "Password123",
-    "username": "tuanminh6"
-}
-###
-POST {{baseUrl}}/register
-Content-Type: application/json
-
-{
-    "email": "tuanminh4@gmail.com",
-    "password": "Password123",
-    "username": "tuanminh4"
-}
 
 
 ###
@@ -41,8 +12,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-    "email": "tuanminh4@gmail.com",
-    "password": "Password123"
+    "email": "abcxyz1@gmail.com",
+    "password": "Passabcxyz123"
 }
 
 ### nếu là Admin
@@ -85,25 +56,6 @@ Authorization: Bearer {{userToken}}
   "message": "Bạn có một thông báo mới từ hệ thống"
 }
 
-# Example Request:
-# {
-#   "userId": "60d0fe4f5311236168a109ca",
-#   "message": "Bạn có một thông báo mới từ hệ thống"
-# }
-
-### Example Response
-# {
-#   "message": "Đã gửi thông báo",
-#   "note": {
-#     "_id": "60d0fe4f5311236168a109cb",
-#     "userId": "60d0fe4f5311236168a109ca",
-#     "message": "Bạn có một thông báo mới từ hệ thống",
-#     "isRead": false,
-#     "createdAt": "2025-10-27T13:55:33.000Z",
-#     "__v": 0
-#   }
-# }
-
 POST {{baseUrl}}/registrations
 Content-Type: application/json
 Authorization: Bearer {{userToken}}
@@ -112,21 +64,6 @@ Authorization: Bearer {{userToken}}
     "projectId": "69048a5fc142b32af2157b72" 
     // Thay ID dự án thực tế vào đây
 }
-
-###
-
-POST {{baseUrl}}/projects
-Content-Type: application/json
-Authorization: Bearer {{userToken}}
-
-{
-    "title": "Dự án Môi Trường Xanh",
-    "description": "Tham gia vào chiến dịch làm sạch môi trường tại địa phương.",
-    "location": "Hà Nội",
-    "date": "2024-12-15T09:00:00Z",
-    "capacity": 50
-}
-
 ###
 
 POST {{baseUrl}}/records
@@ -137,3 +74,41 @@ Authorization: Bearer {{userToken}}
     "name": "123131@@@",
     "email": "Tình nguyện viên sự kiện"
 }
+
+###
+
+POST http://localhost:3000/activities/69247af0cb6be523620f7f03/register
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "studentProfileId": "69169bd151394f9503962c09"
+}
+
+
+### Test Cập nhật Avatar cho Student Profile
+
+# Thay thế <STUDENT_PROFILE_ID> bằng ID hợp lệ từ MongoDB của bạn
+# Ví dụ: 60f8c3c1b3f7e50015b67e7c
+
+# Thay đổi tên file 'test-image.jpg' thành đường dẫn file ảnh thật của bạn
+
+# Thay đổi tên file 'test-image.jpg' thành đường dẫn file ảnh thật của bạn
+@avatar_file = E:\code\dtu-volunteer-web\src\public\uploads\test-image.jpg
+
+POST http://localhost:3000/profile/68fcbf65522d0ac03ce02bff/avatar
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer {{userToken}}
+# Lưu ý: PHẢI CÓ một dòng trống ở đây
+# -----------------------------
+
+--WebAppBoundary
+Content-Disposition: form-data; name="avatar"; filename="test-image.jpg"
+Content-Type: image/jpeg 
+# Lưu ý: PHẢI CÓ một dòng trống ở đây
+
+< @avatar_file
+# Lưu ý: PHẢI CÓ một dòng trống ở đây
+
+--WebAppBoundary--
+# Lưu ý: PHẢI CÓ một dòng trống ở đây

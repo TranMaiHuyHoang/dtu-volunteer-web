@@ -3,12 +3,19 @@ import { hashPassword } from '../utils/hash.js';
 
 const userSchema = new Schema({
   googleId: {type: String },
-  username: { type: String, trim: true },
+  username: { type: String, trim: true, sparse: true,  // Cho phép null + unique khi có giá trị
+    unique: true, },
+  // ⭐ email dành riêng cho login
   email: {
     type: String, required: true, unique: true,
     set: (value) => typeof value === 'string' ? value.trim().toLowerCase() : value
   },
   password: { type: String, required: function() { return !this.googleId; } },
+  // ⭐ THÔNG TIN CHUNG
+  fullName: { type: String, required: true, trim: true }, // Tên đầy đủ
+  phone: { type: String, trim: true }, // Số điện thoại
+  avatarUrl: { type: String, default: null }, // Ảnh đại diện
+  
   role: {
     type: String,
     enum: ['admin', 'organizer', 'volunteer'], // Chỉ chấp nhận các giá trị này

@@ -30,7 +30,7 @@ async function fetchAndUpdate(apiPath, elementId, options = {}, formatter = null
 
     // 1. Fetch dữ liệu
     const [error, result] = await to(
-        fetchApi(apiPath, method, data, bearerToken, { useSession })
+        fetchApi(apiPath, method, data, { useSession, bearerToken })
     );
 
     // 2. Xử lý kết quả

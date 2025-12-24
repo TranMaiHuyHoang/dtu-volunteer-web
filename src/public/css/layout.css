@@ -26,6 +26,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            margin-right: 48px !important;
         }
 
         .logo-icon {
@@ -60,14 +61,15 @@
 /* Style cho container chứa links */
 nav .nav-links {
     display: flex; /* Đảm bảo các link nằm ngang */
-    gap: 35px;    /* Khoảng cách giữa các link */
+    gap: 28px;    /* Khoảng cách giữa các link */
+    white-space: nowrap; /* Ngăn không cho link xuống dòng */
 }
 
 /* Style cho TẤT CẢ các thẻ <a> bên trong .nav-links */
 nav .nav-links a { 
     color: #4A5568;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 14px;
     font-weight: 500;
     transition: color 0.3s ease;
 }
@@ -99,7 +101,7 @@ nav .nav-links a.active {
             color: #2563EB;
         } */
 
-        .btn-dashboard {
+        .btn-home {
             background: #1A202C;
             color: white;
             padding: 10px 20px;
@@ -114,38 +116,105 @@ nav .nav-links a.active {
             transition: background 0.3s ease;
         }
 
-        .btn-dashboard:hover {
+        .btn-home:hover {
             background: #2D3748;
         }
 
-/* header {
-    background-color: #f8f9fa;
-    padding: 1rem 0;
-    border-bottom: 1px solid #dee2e6;
+/* ========================================================================= */
+/* === [DROPDOWN MENU ACTIONS] === (Bắt đầu khối code cho Dropdown Menu) */
+/* ========================================================================= */
+
+/* 1. Thiết lập vùng neo (Contextual Anchor) */
+/* Rất quan trọng: Dropdown sẽ định vị tương đối so với header-right */
+.header-right {
+    position: relative; /* Đặt làm điểm neo cho dropdown absolute */
+    /* Đảm bảo style cũ của header-right vẫn giữ nguyên (display: flex, align-items: center, gap: 20px) */
 }
 
-header nav {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+/* 2. Style cho Nút Kích hoạt (Menu Toggle) */
+.menu-toggle {
+    cursor: pointer;
+    padding: 10px;
+    
+    /* QUAN TRỌNG: Hiển thị chữ và icon ngang hàng */
+    display: flex; 
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa chữ và icon */
+    
+    color: #4A5568; /* Màu chữ đồng nhất với link menu */
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
 }
 
-header nav a {
+.menu-toggle:hover {
+    color: #2563EB; /* Hiệu ứng hover */
+}
+
+.toggle-icon {
+    font-size: 20px; /* Icon nhỏ hơn so với 24px ban đầu */
+}
+
+.dropdown-group {
+    position: relative; 
+    display: flex; 
+    align-items: center;
+}
+
+/* 3. Ẩn Dropdown Mặc định */
+.dropdown-menu {
+    display: none; 
+}
+
+
+
+/* 4. HIỂN THỊ DROPDOWN KHI CÓ CLASS 'is-open' (Trạng thái Mở) */
+.dropdown-menu.is-open {
+    /* Vị trí */
+    position: absolute;
+    top: 100%;       /* Đặt ngay dưới đáy phần tử cha (.header-right) */
+    right: 0;        /* Căn theo góc phải của header-right */
+    z-index: 1000;
+    
+    /* Hình thức */
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    padding: 5px 0;
+    border-radius: 6px;
+    min-width: 180px; /* Chiều rộng tối thiểu */
+    
+    /* Bố cục */
+    display: flex; 
+    flex-direction: column; /* Xếp các mục menu dọc */
+}
+
+/* 5. Style cho các Link trong Dropdown */
+.dropdown-menu a {
+    color: #333; 
     text-decoration: none;
-    color: #495057;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    font-size: 0.95rem; /* Đồng nhất với kích thước link trong nav-links */
+    padding: 8px 15px;
+    display: block;
+    font-weight: 500;
 }
 
-header nav a:hover {
-    background-color: #e9ecef;
-    color: #212529;
-} */
+.dropdown-menu a:hover {
+    background-color: #f0f0f0;
+}
 
+/* 6. Vô hiệu hóa ảnh hưởng của is-open lên Menu Chính */
+/* Đảm bảo class 'is-open' KHÔNG làm hỏng menu ngang nếu nó bị áp dụng nhầm */
+nav .nav-links.is-open {
+    display: flex !important;
+    position: static !important;
+    flex-direction: row !important;
+    /* Loại bỏ tất cả các thuộc tính mobile khác nếu có */
+}
+
+/* ========================================================================= */
+/* === [END DROPDOWN MENU ACTIONS] === */
+/* ========================================================================= */
 main {
     max-width: 1200px;
     margin: 0 auto;
