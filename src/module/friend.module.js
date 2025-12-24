@@ -1,222 +1,239 @@
-import { Friend } from "../models/friend_model.js";
-import { User } from "../models/user_model.js";
-import { createNotification } from "./notification_controller.js";
+/* ================================
+   GET FRIEND REQUESTS (PENDING)
+================================ */
+export const getFriendRequests = async (req, res) => {
+  try {
+    const currentUserId = req.id;
 
-// Send friend request or accept
-export const followUser = async (req, res) => {
-  const { requesterId, recipientId } = req.body;
+    const requests = await Friend.find({
+      recipient: currentUserId,
+      status: "pending"
+    })
+      .populate("requester", "fullname email profile")
+      .sort({ createdAt: -1 });
 
-  if (!recipientId) {
-    return res.status(400).json({
-      message: "Recipient ID is required",
+    return res.status(200).json({
+      success: true,
+      count: requests.length,
+      requests,
+      message: "Danh sách lời mời kết bạn"
+    });
+  } catch (error) {
+    console.error("Error getFriendRequests:", error);
+    return res.status(500).json({
       success: false,
+      message: "Không thể tải lời mời kết bạn"
     });
   }
-
-  if (requesterId === recipientId) {
-    return res.status(400).json({
-      message: "Cannot follow yourself",
-      success: false,
-    });
-  }
-
-  const existingFriendship = await Friend.findOne({
-    $or: [
-      { requester: requesterId, recipient: recipientId },
-      { requester: recipientId, recipient: requesterId }
-    ]
-  });
-
-  if (existingFriendship) {
-    if (existingFriendship.status === 'accepted') {
-      return res.status(400).json({
-        message: "Already friends",
-        success: false,
-      });
-    }
-
-    if (existingFriendship.status === 'pending' && existingFriendship.requester.toString() === requesterId) {
-      return res.status(400).json({
-        message: "Friend request already sent",
-        success: false,
-      });
-    }
-
-    // If pending and recipient is accepting
-    if (existingFriendship.status === 'pending' && existingFriendship.recipient.toString() === requesterId) {
-      existingFriendship.status = 'accepted';
-      await existingFriendship.save();
-
-      // Create notification for requester
-      const recipient = await User.findById(recipientId);
-      await createNotification(requesterId, 'friend_accepted', {
-        accepterName: recipient.fullname,
-        relatedUser: recipientId,
-        relatedFriend: existingFriendship._id
-      });
-
-      return res.status(200).json({
-        message: "Friend request accepted",
-        success: true,
-        friendship: existingFriendship
-      });
-    }
-  }
-
-  // Create new friend request
-  const newFriendship = await Friend.create({
-    requester: requesterId,
-    recipient: recipientId,
-    status: 'pending'
-  });
-
-  // Create notification for recipient
-  const requester = await User.findById(requesterId);
-  await createNotification(recipientId, 'friend_request', {
-    requesterName: requester.fullname,
-    relatedUser: requesterId,
-    relatedFriend: newFriendship._id
-  });
-
-  return res.status(201).json({
-    message: "Friend request sent",
-    success: true,
-    friendship: newFriendship
-  });
 };
 
-// Unfollow/Remove friend
-export const unfollowUser = async (req, res) => {
+/* ================================
+   REJECT FRIEND REQUEST
+================================ */
+export const rejectFriendRequest = async (req, res) => {
   try {
-    const userId = req.id;
+    const currentUserId = req.id;
     const { friendId } = req.body;
 
     if (!friendId) {
       return res.status(400).json({
-        message: "Friend ID is required",
         success: false,
+        message: "Friend ID is required"
       });
     }
 
     const friendship = await Friend.findOneAndDelete({
-      $or: [
-        { requester: userId, recipient: friendId },
-        { requester: friendId, recipient: userId }
-      ]
+      requester: friendId,
+      recipient: currentUserId,
+      status: "pending"
     });
 
     if (!friendship) {
       return res.status(404).json({
-        message: "Friendship not found",
         success: false,
+        message: "Friend request not found"
       });
     }
 
     return res.status(200).json({
-      message: "Unfollowed successfully",
       success: true,
+      message: "Đã từ chối lời mời kết bạn"
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error rejectFriendRequest:", error);
     return res.status(500).json({
-      message: "Failed to unfollow",
       success: false,
+      message: "Không thể từ chối lời mời"
     });
   }
 };
 
-// Get all users (community)
-export const getFriends = async (req, res) => {
+/* ================================
+   GET FRIEND LIST
+================================ */
+export const getFriendList = async (req, res) => {
   try {
     const currentUserId = req.id;
-    console.log('Fetching friends for user:', currentUserId);
 
-    // Lấy tất cả users trừ chính mình, chỉ lấy role 'user'
-    const users = await User.find({
-      _id: { $ne: currentUserId },
-      role: 'user' // Chỉ lấy users, không lấy admin
+    const friendships = await Friend.find({
+      status: "accepted",
+      $or: [
+        { requester: currentUserId },
+        { recipient: currentUserId }
+      ]
     })
-      .select('fullname email phoneNumber role profile')
-      .sort({ createdAt: -1 });
+      .populate("requester", "fullname email profile")
+      .populate("recipient", "fullname email profile")
+      .sort({ updatedAt: -1 });
 
-    console.log(`Found ${users.length} users`);
+    const friends = friendships.map(f => {
+      const friend =
+        f.requester._id.toString() === currentUserId
+          ? f.recipient
+          : f.requester;
 
-    // Format response
-    const friends = users.map(user => ({
-      _id: user._id,
-      fullname: user.fullname || 'User',
-      email: user.email || '',
-      phoneNumber: user.phoneNumber || '',
-      role: user.role || 'user',
-      profile: {
-        bio: user.profile?.bio || '',
-        profilePhoto: user.profile?.profilePhoto || '',
-        location: user.profile?.location || '',
-        skills: user.profile?.skills || [],
-        resume: user.profile?.resume || '',
-        resumeOriginalName: user.profile?.resumeOriginalName || ''
-      }
-    }));
+      return {
+        _id: friend._id,
+        fullname: friend.fullname,
+        email: friend.email,
+        profile: friend.profile
+      };
+    });
 
     return res.status(200).json({
-      friends,
-      count: friends.length,
       success: true,
-      message: "Danh sách cộng đồng được tải thành công"
+      count: friends.length,
+      friends,
+      message: "Danh sách bạn bè"
     });
   } catch (error) {
-    console.error('Error in getFriends:', error);
+    console.error("Error getFriendList:", error);
     return res.status(500).json({
-      message: error.message || "Không thể tải danh sách cộng đồng",
       success: false,
+      message: "Không thể tải danh sách bạn bè"
     });
   }
 };
 
-// Accept friend request
-export const acceptFriendRequest = async (req, res) => {
-  const { userId: requesterId, body: { friendId: recipientId } } = req;
+/* ================================
+   CHECK FRIEND STATUS
+================================ */
+export const checkFriendStatus = async (req, res) => {
+  try {
+    const currentUserId = req.id;
+    const { userId } = req.params;
 
-  if (!recipientId) {
-    return res.status(400).json({
-      message: "Recipient ID is required",
+    const friendship = await Friend.findOne({
+      $or: [
+        { requester: currentUserId, recipient: userId },
+        { requester: userId, recipient: currentUserId }
+      ]
+    });
+
+    if (!friendship) {
+      return res.status(200).json({
+        success: true,
+        status: "none"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      status: friendship.status,
+      isRequester: friendship.requester.toString() === currentUserId
+    });
+  } catch (error) {
+    console.error("Error checkFriendStatus:", error);
+    return res.status(500).json({
       success: false,
+      message: "Không thể kiểm tra trạng thái bạn bè"
     });
   }
+};
 
-  const friendship = await Friend.findOne({
-    $or: [
-      { requester: recipientId, recipient: requesterId, status: 'pending' },
-      { requester: requesterId, recipient: recipientId, status: 'pending' }
-    ]
-  });
+/* ================================
+   COUNT FRIENDS
+================================ */
+export const countFriends = async (req, res) => {
+  try {
+    const userId = req.id;
 
-  if (!friendship) {
-    return res.status(404).json({
-      message: "Friend request not found",
+    const count = await Friend.countDocuments({
+      status: "accepted",
+      $or: [
+        { requester: userId },
+        { recipient: userId }
+      ]
+    });
+
+    return res.status(200).json({
+      success: true,
+      count
+    });
+  } catch (error) {
+    console.error("Error countFriends:", error);
+    return res.status(500).json({
       success: false,
+      message: "Không thể đếm số bạn bè"
     });
   }
+};
 
-  if (friendship.recipient.toString() !== requesterId) {
-    return res.status(403).json({
-      message: "You can only accept requests sent to you",
+/* ================================
+   FRIEND SUGGESTIONS
+================================ */
+export const suggestFriends = async (req, res) => {
+  try {
+    const currentUserId = req.id;
+
+    const friendships = await Friend.find({
+      $or: [
+        { requester: currentUserId },
+        { recipient: currentUserId }
+      ]
+    });
+
+    const excludedIds = new Set([currentUserId]);
+
+    friendships.forEach(f => {
+      excludedIds.add(f.requester.toString());
+      excludedIds.add(f.recipient.toString());
+    });
+
+    const suggestions = await User.find({
+      _id: { $nin: Array.from(excludedIds) },
+      role: "user"
+    })
+      .select("fullname email profile")
+      .limit(10);
+
+    return res.status(200).json({
+      success: true,
+      suggestions,
+      message: "Gợi ý kết bạn"
+    });
+  } catch (error) {
+    console.error("Error suggestFriends:", error);
+    return res.status(500).json({
       success: false,
+      message: "Không thể gợi ý bạn bè"
     });
   }
+};
 
-  friendship.status = 'accepted';
-  await friendship.save();
-
-  const accepter = await User.findById(requesterId);
-  await createNotification(recipientId, 'friend_accepted', {
-    accepterName: accepter.fullname,
-    relatedUser: requesterId,
-    relatedFriend: friendship._id
-  });
-
-  return res.status(200).json({
-    message: "Friend request accepted",
-    success: true,
-    friendship
-  });
+/* ================================
+   CLEANUP FRIENDSHIPS (HELPER)
+================================ */
+export const removeAllFriendshipsOfUser = async (userId) => {
+  try {
+    await Friend.deleteMany({
+      $or: [
+        { requester: userId },
+        { recipient: userId }
+      ]
+    });
+    console.log(`Removed all friendships of user ${userId}`);
+  } catch (error) {
+    console.error("Error removeAllFriendshipsOfUser:", error);
+  }
+};
